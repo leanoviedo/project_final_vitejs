@@ -1,11 +1,5 @@
-import FormLogin from "./components/FormLogin";
-
-const App = () => {
-  return (
-    <>
-      <FormLogin></FormLogin>
-    </>
-  );
-};
+function App() {
+  return <></>;
+}
 
 export default App;
