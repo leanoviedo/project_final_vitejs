@@ -6,7 +6,7 @@ import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 
-function FormLogin() {
+const FormLogin = () => {
   return (
     <>
       <Grid
@@ -17,15 +17,15 @@ function FormLogin() {
       >
         <Grid>
           <Typography component="h1" variant="h5">
-            Sign in
+            iniciar sesión
           </Typography>
           <TextField
             margin="normal"
             required
             fullWidth
             id="email"
-            label="Email Address"
-            name="email"
+            label="correo electronico"
+            name="correo electronico"
             autoComplete="email"
             autoFocus
           />
@@ -33,8 +33,8 @@ function FormLogin() {
             margin="normal"
             required
             fullWidth
-            name="password"
-            label="Password"
+            name="contraseña"
+            label="contraseña"
             type="password"
             id="password"
             autoComplete="current-password"
@@ -42,7 +42,7 @@ function FormLogin() {
 
           <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
-            label="Remember me"
+            label="Acuerdate de mi "
           />
         </Grid>
         <Grid>
@@ -52,21 +52,21 @@ function FormLogin() {
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
           >
-            Sign In
+            iniciar sesión
           </Button>
         </Grid>
         <Grid>
           <Link href="#" variant="body2">
-            Forgot password?
+            has ovidado tu contraseña?
           </Link>
           <Grid>
             <Link href="#" variant="body2">
-              {"Don't have an account? Sign Up"}
+              {"No tienes una cuenta? registrate "}
             </Link>
           </Grid>
         </Grid>
       </Grid>
     </>
   );
-}
+};
 export default FormLogin;
