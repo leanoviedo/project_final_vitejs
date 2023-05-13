@@ -1,10 +1,9 @@
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
+import { Link } from "react-router-dom";
 import Grid from "@mui/material/Grid";
+import { Box } from "@mui/material";
 
 const FormLogin = () => {
   return (
@@ -19,31 +18,28 @@ const FormLogin = () => {
           <Typography component="h1" variant="h5">
             iniciar sesión
           </Typography>
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            id="email"
-            label="correo electronico"
-            name="correo electronico"
-            autoComplete="email"
-            autoFocus
-          />
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            name="contraseña"
-            label="contraseña"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-          />
-
-          <FormControlLabel
-            control={<Checkbox value="remember" color="primary" />}
-            label="Acuerdate de mi "
-          />
+          <Box component="form">
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label="correo electronico"
+              name="correo electronico"
+              autoComplete="email"
+              autoFocus
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="contraseña"
+              label="contraseña"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+            />
+          </Box>
         </Grid>
         <Grid>
           <Button
@@ -56,11 +52,9 @@ const FormLogin = () => {
           </Button>
         </Grid>
         <Grid>
-          <Link href="#" variant="body2">
-            has ovidado tu contraseña?
-          </Link>
+          <Link to="#">has ovidado tu contraseña?</Link>
           <Grid>
-            <Link href="#" variant="body2">
+            <Link to="/FormRegistration">
               {"No tienes una cuenta? registrate "}
             </Link>
           </Grid>
