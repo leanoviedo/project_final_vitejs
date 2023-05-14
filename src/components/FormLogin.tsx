@@ -13,19 +13,22 @@ const FormLogin = () => {
         direction="column"
         justifyContent="center"
         alignItems="center"
+        spacing={2}
       >
-        <Grid>
-          <Typography component="h1" variant="h5">
-            iniciar sesión
+        <Grid item>
+          <Typography component="h1" variant="h5" align="center">
+            Iniciar sesión
           </Typography>
-          <Box component="form">
+        </Grid>
+        <Grid item>
+          <Box component="form" sx={{ width: 300 }}>
             <TextField
               margin="normal"
               required
               fullWidth
               id="email"
-              label="correo electronico"
-              name="correo electronico"
+              label="Correo Electrónico"
+              name="email"
               autoComplete="email"
               autoFocus
             />
@@ -33,34 +36,28 @@ const FormLogin = () => {
               margin="normal"
               required
               fullWidth
-              name="contraseña"
-              label="contraseña"
+              name="password"
+              label="Contraseña"
               type="password"
               id="password"
               autoComplete="current-password"
             />
           </Box>
         </Grid>
-        <Grid>
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            sx={{ mt: 3, mb: 2 }}
-          >
-            iniciar sesión
+        <Grid item>
+          <Button type="submit" fullWidth variant="contained" sx={{ mt: 2 }}>
+            Iniciar sesión
           </Button>
         </Grid>
-        <Grid>
-          <Link to="#">has ovidado tu contraseña?</Link>
-          <Grid>
-            <Link to="/FormRegistration">
-              {"No tienes una cuenta? registrate "}
-            </Link>
-          </Grid>
+        <Grid item>
+          <Link to="#">¿Has olvidado tu contraseña?</Link>
+        </Grid>
+        <Grid item>
+          <Link to="/FormRegistration">¿No tienes una cuenta? Regístrate</Link>
         </Grid>
       </Grid>
     </>
   );
 };
+
 export default FormLogin;

@@ -9,105 +9,97 @@ import { Link } from "react-router-dom";
 
 const FormRegistration = () => {
   return (
-    <>
-      <Container>
-        <Grid
-          container
-          direction="column"
-          justifyContent="center"
-          alignItems="center"
-          sx={{ minHeight: "100 vh" }}
-        >
-          <Grid item>
-            <Typography component="h1" variant="h5">
-              Registrate
-            </Typography>
-            <Box component="form">
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="Nombre2"
-                label="Nombre"
-                name="Nombre"
-                autoComplete="Nombre"
-                helperText="ingrese su nombre "
-                autoFocus
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="Apellido"
-                label="Apellido"
-                id="Apellido"
-                autoComplete="Apellido"
-                helperText="ingrese su Apellido "
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="email1"
-                label="correo electronico"
-                name="correo electronico"
-                autoComplete="email"
-                autoFocus
-                helperText="ingrese su correo   "
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="email2"
-                label="repetir correo electronico"
-                name="repetir correo electronico"
-                autoComplete="email"
-                autoFocus
-                helperText="repetita su correo  "
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="contraseña"
-                label="contraseña"
-                type="password"
-                id="contraseña"
-                autoComplete="current-password"
-                helperText="ingrese su contraseña "
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="repetir contraseña"
-                label="repetir contraseña"
-                type="password"
-                id="password2"
-                autoComplete="current-password"
-                helperText="repita su contraseña "
-              />
-
-              <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
-                label="Acuerdo de privacidad "
-              />
-            </Box>
-          </Grid>
-          <Grid>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              <Link to="/FormLogin">registrate</Link>
-            </Button>
-          </Grid>
+    <Container>
+      <Grid
+        container
+        direction="column"
+        justifyContent="center"
+        alignItems="center"
+        spacing={2}
+        sx={{ minHeight: "100vh" }}
+      >
+        <Grid item>
+          <Typography variant="h5" align="center">
+            Regístrate
+          </Typography>
         </Grid>
-      </Container>
-    </>
+        <Grid item>
+          <Box
+            component="form"
+            sx={{
+              width: 300,
+              "& .MuiTextField-root": { marginBottom: "16px" },
+            }}
+          >
+            <TextField
+              fullWidth
+              id="nombre"
+              label="Nombre"
+              name="nombre"
+              autoComplete="nombre"
+              autoFocus
+            />
+            <TextField
+              fullWidth
+              name="apellido"
+              label="Apellido"
+              id="apellido"
+              autoComplete="apellido"
+            />
+            <TextField
+              fullWidth
+              id="email1"
+              label="Correo electrónico"
+              name="correo electronico"
+              autoComplete="email"
+            />
+            <TextField
+              fullWidth
+              id="email2"
+              label="Repetir correo electrónico"
+              name="repetir correo electronico"
+              autoComplete="email"
+            />
+            <TextField
+              fullWidth
+              name="contraseña"
+              label="Contraseña"
+              type="password"
+              id="contraseña"
+              autoComplete="current-password"
+            />
+            <TextField
+              fullWidth
+              name="repetir contraseña"
+              label="Repetir contraseña"
+              type="password"
+              id="password2"
+              autoComplete="current-password"
+            />
+
+            <FormControlLabel
+              control={<Checkbox value="remember" color="primary" />}
+              label="Acuerdo de privacidad"
+            />
+          </Box>
+        </Grid>
+        <Grid item>
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+          >
+            <Link
+              to="/FormLogin"
+              style={{ color: "white", textDecoration: "none" }}
+            >
+              Regístrate
+            </Link>
+          </Button>
+        </Grid>
+      </Grid>
+    </Container>
   );
 };
 

@@ -1,5 +1,4 @@
-import RoutesForm from "./rutes/RutesForm";
-
+import RoutesForm from "./routes/RoutesForm";
 
 const App = () => {
   return (
