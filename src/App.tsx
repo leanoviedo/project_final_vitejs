@@ -1,9 +1,9 @@
-import FormLogin from "./components/FormLogin";
+import RoutesForm from "./routes/RoutesForm";
 
 const App = () => {
   return (
     <>
-      <FormLogin></FormLogin>
+      <RoutesForm />
     </>
   );
 };
