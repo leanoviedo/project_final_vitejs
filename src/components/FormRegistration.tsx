@@ -64,10 +64,7 @@ const FormRegistration = () => {
 
     const existingStore = users.find((user) => user.email === userData.email);
 
- 
-
     if (existingStore) {
-
       setUserData((prevUserData) => ({
         ...prevUserData,
         first: existingStore.name.first,
@@ -76,8 +73,6 @@ const FormRegistration = () => {
       }));
       if (existingStore.picture) {
         setAvatarSrc(existingStore.picture.large);
-      
-   
       } else {
         const updatedpassword = {
           ...existingStore,

@@ -2,14 +2,14 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../Store";
 
 interface UserData {
-  picture:any;
+  picture: any;
   name: any;
   email: string;
-  first:string
+  first: string;
   last: string;
   phone: string;
   password: string;
-  login:any
+  login: any;
 }
 
 interface UsersState {
@@ -18,7 +18,6 @@ interface UsersState {
 
 const initialState: UsersState = {
   users: [],
-  
 };
 
 export const usersSlice = createSlice({
@@ -28,7 +27,6 @@ export const usersSlice = createSlice({
     setUsers: (state, action: PayloadAction<UserData[]>) => {
       state.users = action.payload;
     },
-
   },
 });
 

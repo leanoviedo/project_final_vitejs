@@ -28,7 +28,7 @@ export const RegistrationSlice = createSlice({
   },
 });
 
-export const { addRegistrationData  } = RegistrationSlice.actions;
+export const { addRegistrationData } = RegistrationSlice.actions;
 
 export const selectRegistrationData = (state: RootState) =>
   state.registration.registrationData;
