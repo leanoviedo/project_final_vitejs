@@ -1,13 +1,103 @@
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import Grid from "@mui/material/Grid";
-import { Box, Card, Container } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../hooks";
+import UsersService from "../services/UserServices";
+import {
+  Avatar,
+  Box,
+  Button,
+  Card,
+  Container,
+  Grid,
+  TextField,
+  Typography,
+  Dialog,
+  DialogContent,
+  DialogActions,
+} from "@mui/material";
+
 import { Link } from "react-router-dom";
+import { addRegistrationData } from "../redux/slices/RegistrationSlices";
 
 const FormRegistration = () => {
+  const { users } = useAppSelector((state) => state.user);
+  const Navigate = useNavigate();
+
+  const [userData, setUserData] = useState({
+    email: "",
+    first: "",
+    last: "",
+    phone: "",
+    password: "",
+  });
+  const [avatarSrc, setAvatarSrc] = useState("");
+
+  const [openModal, setOpenModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
+
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(UsersService());
+  }, [dispatch]);
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setUserData((prevUserData) => ({
+      ...prevUserData,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!userData.email || !userData.password) {
+      setModalMessage("Por favor, complete todos los campos");
+      setOpenModal(true);
+      return;
+    }
+
+    const existingStore = users.find((user) => user.email === userData.email);
+
+ 
+
+    if (existingStore) {
+
+      setUserData((prevUserData) => ({
+        ...prevUserData,
+        first: existingStore.name.first,
+        last: existingStore.name.last,
+        phone: existingStore.phone,
+      }));
+      if (existingStore.picture) {
+        setAvatarSrc(existingStore.picture.large);
+      
+   
+      } else {
+        const updatedpassword = {
+          ...existingStore,
+          password: userData.password,
+        };
+        dispatch(addRegistrationData(updatedpassword));
+        setModalMessage("Registro exitoso");
+        setOpenModal(true);
+      }
+      setTimeout(function () {
+        Navigate("/FormLogin");
+      }, 2000);
+    } else {
+      setModalMessage(
+        "No se encontró un usuario registrado con ese correo electrónico"
+      );
+      setOpenModal(true);
+    }
+  };
+
   return (
     <Container>
       <Grid
@@ -18,15 +108,21 @@ const FormRegistration = () => {
         spacing={2}
         sx={{ minHeight: "100vh" }}
       >
-        <Card sx={{ p: 5, boxShadow: 3 }}>
+        <Card sx={{ p: 3, boxShadow: 3 }}>
           <Grid item>
             <Typography variant="h5" align="center" sx={{ mb: 3 }}>
               Regístrate
             </Typography>
           </Grid>
+          <Avatar
+            alt=""
+            src={avatarSrc}
+            sx={{ width: "100px", height: "100px", ml: 16 }}
+          />
           <Grid item>
             <Box
               component="form"
+              onSubmit={handleSubmit}
               sx={{
                 width: 300,
                 m: 2,
@@ -34,71 +130,81 @@ const FormRegistration = () => {
             >
               <TextField
                 fullWidth
-                id="nombre"
-                label="Nombre"
-                name="nombre"
-                autoComplete="nombre"
-                autoFocus
-                sx={{ mb: 2 }}
-              />
-              <TextField
-                fullWidth
-                name="apellido"
-                label="Apellido"
-                id="apellido"
-                autoComplete="apellido"
-                sx={{ mb: 2 }}
-              />
-              <TextField
-                fullWidth
-                id="email1"
+                id="email"
                 label="Correo electrónico"
-                name="correo electronico"
-                autoComplete="email"
+                name="email"
+                autoFocus
+                value={userData.email}
+                onChange={handleChange}
+                helperText="Ingrese un correo electrónico válido"
+                error={!userData.email}
+                sx={{ mb: 2 }}
+                required
+              />
+              <TextField
+                fullWidth
+                id="first"
+                label="Nombre"
+                value={userData.first}
+                name="first"
+                onChange={handleChange}
+                helperText="Ingrese su nombre"
+                error={false}
                 sx={{ mb: 2 }}
               />
               <TextField
                 fullWidth
-                id="email2"
-                label="Repetir correo electrónico"
-                name="repetir correo electronico"
-                autoComplete="email"
+                name="last"
+                label="Apellido"
+                id="last"
+                value={userData.last}
+                onChange={handleChange}
+                helperText="Ingrese su apellido"
+                error={false}
                 sx={{ mb: 2 }}
               />
               <TextField
                 fullWidth
-                name="contraseña"
+                id="phone"
+                label="Número de Contacto"
+                name="phone"
+                value={userData.phone}
+                onChange={handleChange}
+                helperText="Ingrese un número de teléfono válido"
+                error={false}
+                sx={{ mb: 2 }}
+              />
+              <TextField
+                fullWidth
+                name="password"
                 label="Contraseña"
                 type="password"
-                id="contraseña"
-                autoComplete="current-password"
+                id="password"
+                value={userData.password}
+                onChange={handleChange}
+                helperText="Ingrese una contraseña"
+                error={false}
                 sx={{ mb: 2 }}
+                required
               />
-              <TextField
-                fullWidth
-                name="repetir contraseña"
-                label="Repetir contraseña"
-                type="password"
-                id="password2"
-                autoComplete="current-password"
-                sx={{ mb: 2 }}
-              />
-              <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
-                label="Acuerdo de privacidad"
-                sx={{ mb: 2 }}
-              />
-            </Box>
-          </Grid>
-          <Grid item>
-            <Button type="submit" fullWidth variant="contained">
+              <Button type="submit" fullWidth variant="contained">
+                Regístrate
+              </Button>
               <Link
                 to="/FormLogin"
                 style={{ color: "white", textDecoration: "none" }}
               >
-                Regístrate
+                Iniciar sesión
               </Link>
-            </Button>
+            </Box>
+            <Dialog open={openModal} onClose={handleCloseModal}>
+              <DialogContent>
+                <Typography>{modalMessage}</Typography>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleCloseModal}>Cerrar</Button>
+              </DialogActions>
+            </Dialog>
           </Grid>
         </Card>
       </Grid>

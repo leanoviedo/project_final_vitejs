@@ -49,16 +49,11 @@ const FormLogin = () => {
             </Box>
           </Grid>
           <Grid item>
-            <Button type="submit" fullWidth variant="contained" sx={{ mt: 2 }}>
+            <Button type="submit" fullWidth variant="contained">
               Iniciar sesión
             </Button>
           </Grid>
           <Grid item sx={{ mt: 2 }}>
-            <Link to="#" style={{ textDecoration: "none" }}>
-              <Typography>¿Has olvidado tu contraseña?</Typography>
-            </Link>
-          </Grid>
-          <Grid item>
             <Link to="/FormRegistration" style={{ textDecoration: "none" }}>
               <Typography> ¿No tienes una cuenta? Regístrate</Typography>
             </Link>
