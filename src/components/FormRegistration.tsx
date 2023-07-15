@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../hooks";
+import { addUser } from "../redux/slices/RegistrationSlices";
+import UserServices from "../services/UserServices";
 
 import {
   Avatar,
@@ -8,21 +10,18 @@ import {
   Button,
   Card,
   Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
   Grid,
   TextField,
   Typography,
-  Dialog,
-  DialogContent,
-  DialogActions,
 } from "@mui/material";
-
-import { Link } from "react-router-dom";
-import { addRegistrationData } from "../redux/slices/RegistrationSlices";
-import UserServices from "../services/UserServices";
 
 const FormRegistration = () => {
   const { users } = useAppSelector((state) => state.user);
-  const Navigate = useNavigate();
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   const [userData, setUserData] = useState({
     email: "",
@@ -31,12 +30,10 @@ const FormRegistration = () => {
     phone: "",
     password: "",
   });
-  const [avatarSrc, setAvatarSrc] = useState("");
 
+  const [avatarSrc, setAvatarSrc] = useState("");
   const [openModal, setOpenModal] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
-
-  const dispatch = useAppDispatch();
 
   useEffect(() => {
     dispatch(UserServices());
@@ -57,41 +54,39 @@ const FormRegistration = () => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!userData.email || !userData.password) {
-      setModalMessage("Por favor, complete todos los campos");
-      setOpenModal(true);
-      return;
-    }
+    const existingUser = users.find((user) => user.email === userData.email);
 
-    const existingStore = users.find((user) => user.email === userData.email);
-
-    if (existingStore) {
+    if (existingUser) {
       setUserData((prevUserData) => ({
         ...prevUserData,
-        first: existingStore.name.first,
-        last: existingStore.name.last,
-        phone: existingStore.phone,
+        first: existingUser.name.first,
+        last: existingUser.name.last,
+        phone: existingUser.phone,
+        password: userData.password,
       }));
-      if (existingStore.picture) {
-        setAvatarSrc(existingStore.picture.large);
-      } else {
-        const updatedpassword = {
-          ...existingStore,
-          password: userData.password,
-        };
-        dispatch(addRegistrationData(updatedpassword));
-        setModalMessage("Registro exitoso");
-        setOpenModal(true);
+
+      if (existingUser.picture) {
+        setAvatarSrc(existingUser.picture.large);
       }
+
+      const updatedPassword = {
+        ...existingUser,
+        password: userData.password,
+      };
+
+      dispatch(addUser(updatedPassword));
+
+      // Uncomment the setTimeout code if you want to navigate to "/FormLogin" after 5 seconds
       setTimeout(function () {
-        Navigate("/FormLogin");
-      }, 2000);
+        navigate("/FormLogin");
+      }, 5000);
+
+      setModalMessage("Registro exitoso");
     } else {
-      setModalMessage(
-        "No se encontró un usuario registrado con ese correo electrónico"
-      );
-      setOpenModal(true);
+      setModalMessage("No es un cliente previo");
     }
+
+    setOpenModal(true);
   };
 
   return (
@@ -133,7 +128,7 @@ const FormRegistration = () => {
                 value={userData.email}
                 onChange={handleChange}
                 helperText="Ingrese un correo electrónico válido"
-                error={!userData.email}
+                error={false}
                 sx={{ mb: 2 }}
                 required
               />
@@ -186,12 +181,6 @@ const FormRegistration = () => {
               <Button type="submit" fullWidth variant="contained">
                 Regístrate
               </Button>
-              <Link
-                to="/FormLogin"
-                style={{ color: "white", textDecoration: "none" }}
-              >
-                Iniciar sesión
-              </Link>
             </Box>
             <Dialog open={openModal} onClose={handleCloseModal}>
               <DialogContent>

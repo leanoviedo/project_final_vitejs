@@ -10,7 +10,6 @@ interface UserData {
 }
 
 interface RegistrationState {
-  [x: string]: any;
   registrationData: UserData[];
 }
 
@@ -22,13 +21,13 @@ export const RegistrationSlice = createSlice({
   name: "registration",
   initialState,
   reducers: {
-    addRegistrationData: (state, action: PayloadAction<UserData>) => {
+    addUser: (state, action: PayloadAction<UserData>) => {
       state.registrationData.push(action.payload);
     },
   },
 });
 
-export const { addRegistrationData } = RegistrationSlice.actions;
+export const { addUser } = RegistrationSlice.actions;
 
 export const selectRegistrationData = (state: RootState) =>
   state.registration.registrationData;
