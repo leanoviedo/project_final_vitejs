@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { addUser } from "../redux/slices/RegistrationSlices";
 import UserServices from "../services/UserServices";
-
 import {
   Avatar,
   Box,
@@ -51,10 +50,18 @@ const FormRegistration = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    setUserData((prevUserData) => ({
+      ...prevUserData,
+      email: value,
+      first: "",
+      last: "",
+      phone: "",
+      password: "",
+    }));
 
-    const existingUser = users.find((user) => user.email === userData.email);
+    const existingUser = users.find((user) => user.email === value);
 
     if (existingUser) {
       setUserData((prevUserData) => ({
@@ -62,13 +69,21 @@ const FormRegistration = () => {
         first: existingUser.name.first,
         last: existingUser.name.last,
         phone: existingUser.phone,
-        password: userData.password,
+        password: prevUserData.password,
       }));
 
       if (existingUser.picture) {
         setAvatarSrc(existingUser.picture.large);
       }
+    }
+  };
 
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const existingUser = users.find((user) => user.email === userData.email);
+
+    if (existingUser) {
       const updatedPassword = {
         ...existingUser,
         password: userData.password,
@@ -76,12 +91,10 @@ const FormRegistration = () => {
 
       dispatch(addUser(updatedPassword));
 
-      // Uncomment the setTimeout code if you want to navigate to "/FormLogin" after 5 seconds
+      setModalMessage("Registro exitoso");
       setTimeout(function () {
         navigate("/FormLogin");
-      }, 5000);
-
-      setModalMessage("Registro exitoso");
+      }, 4000);
     } else {
       setModalMessage("No es un cliente previo");
     }
@@ -126,7 +139,7 @@ const FormRegistration = () => {
                 name="email"
                 autoFocus
                 value={userData.email}
-                onChange={handleChange}
+                onChange={handleEmailChange}
                 helperText="Ingrese un correo electrónico válido"
                 error={false}
                 sx={{ mb: 2 }}
@@ -138,7 +151,7 @@ const FormRegistration = () => {
                 label="Nombre"
                 value={userData.first}
                 name="first"
-                onChange={handleChange}
+                onChange={handleEmailChange}
                 helperText="Ingrese su nombre"
                 error={false}
                 sx={{ mb: 2 }}
@@ -149,7 +162,7 @@ const FormRegistration = () => {
                 label="Apellido"
                 id="last"
                 value={userData.last}
-                onChange={handleChange}
+                onChange={handleEmailChange}
                 helperText="Ingrese su apellido"
                 error={false}
                 sx={{ mb: 2 }}
@@ -160,7 +173,7 @@ const FormRegistration = () => {
                 label="Número de Contacto"
                 name="phone"
                 value={userData.phone}
-                onChange={handleChange}
+                onChange={handleEmailChange}
                 helperText="Ingrese un número de teléfono válido"
                 error={false}
                 sx={{ mb: 2 }}
