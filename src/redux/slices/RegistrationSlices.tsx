@@ -24,6 +24,9 @@ export const RegistrationSlice = createSlice({
     addUser: (state, action: PayloadAction<UserData>) => {
       state.registrationData.push(action.payload);
     },
+    // registrationLogin: (state, action: PayloadAction<UserData[]>) => {
+    //   state.registrationData = action.payload;
+    // },
   },
 });
 
