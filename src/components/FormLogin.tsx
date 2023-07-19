@@ -47,7 +47,7 @@ const FormLogin = () => {
         registration.password === userLogin.password
     );
     if (existingLogin) {
-      navigate("/loading-page");
+      navigate("/LoadingPages");
     } else {
       setModalMessage("Credenciales inválidas");
       setOpenModal(true);
@@ -104,12 +104,10 @@ const FormLogin = () => {
               onChange={handleInputChange}
               autoComplete="current-password"
             />
+            <Button type="submit" fullWidth variant="contained">
+              Iniciar sesión
+            </Button>
           </Box>
-        </Grid>
-        <Grid item>
-          <Button type="submit" fullWidth variant="contained">
-            Iniciar sesión
-          </Button>
         </Grid>
         <Grid item sx={{ mt: 2 }}>
           <Link to="/FormRegistration" style={{ textDecoration: "none" }}>
