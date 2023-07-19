@@ -11,7 +11,7 @@ import {
   DialogContent,
 } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
-import { useAppSelector } from "../hooks";
+import { useAppSelector } from "../redux/hooks";
 import { selectRegistrationData } from "../redux/slices/RegistrationSlices";
 
 const FormLogin = () => {
