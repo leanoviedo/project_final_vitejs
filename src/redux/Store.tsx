@@ -4,8 +4,8 @@ import registrationReducer from "./slices/RegistrationSlices.tsx";
 
 const store = configureStore({
   reducer: {
-    user: usersReducer,
-    registration: registrationReducer,
+    usersList: usersReducer,
+    registrationlist: registrationReducer,
   },
 });
 
