@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import FormRegistration from "../components/FormRegistration";
 import FormLogin from "../components/FormLogin";
-import LoadingPages from "../components/LoadingPages";
+import LandingPage from "../components/LandingPage";
 
 const RoutesForm = () => {
   return (
@@ -9,7 +9,7 @@ const RoutesForm = () => {
       <Route path="/" element={<FormLogin />} />
       <Route path="/FormLogin" element={<FormLogin />} />
       <Route path="/FormRegistration" element={<FormRegistration />} />
-      <Route path="/LoadingPages" element={<LoadingPages />}></Route>
+      <Route path="/LoadingPages" element={<LandingPage />}></Route>
     </Routes>
   );
 };

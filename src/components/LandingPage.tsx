@@ -1,6 +1,6 @@
 import { Grid, Typography } from "@mui/material";
 
-const LoadingPages = () => {
+const landingPage = () => {
   return (
     <Grid
       container
@@ -16,4 +16,4 @@ const LoadingPages = () => {
   );
 };
 
-export default LoadingPages;
+export default landingPage;

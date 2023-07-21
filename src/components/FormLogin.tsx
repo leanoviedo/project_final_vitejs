@@ -16,7 +16,6 @@ import { selectRegistrationData } from "../redux/slices/RegistrationSlices";
 
 const FormLogin = () => {
   const registrationData = useAppSelector(selectRegistrationData);
-  console.log(selectRegistrationData);
   const navigate = useNavigate();
 
   const [userLogin, setUserLogin] = useState({
@@ -31,16 +30,13 @@ const FormLogin = () => {
     setOpenModal(false);
     setModalMessage("");
   };
-  console.log("estoy aqui");
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUserLogin({ ...userLogin, [e.target.name]: e.target.value });
-    console.log([e.target.name], e.target.value);
   };
-  console.log("estoy aqui");
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("enviado");
     const existingLogin = registrationData.find(
       (registration) =>
         registration.email === userLogin.email &&
@@ -52,7 +48,6 @@ const FormLogin = () => {
       setModalMessage("Credenciales inválidas");
       setOpenModal(true);
     }
-    console.log(existingLogin, "enviado");
   };
 
   return (
