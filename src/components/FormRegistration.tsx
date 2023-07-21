@@ -18,7 +18,7 @@ import {
 } from "@mui/material";
 
 const FormRegistration = () => {
-  const { users } = useAppSelector((state) => state.user);
+  const { usersAvailable } = useAppSelector((state) => state.usersList);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -52,6 +52,7 @@ const FormRegistration = () => {
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
+
     setUserData((prevUserData) => ({
       ...prevUserData,
       email: value,
@@ -61,19 +62,22 @@ const FormRegistration = () => {
       password: "",
     }));
 
-    const existingUser = users.find((user) => user.email === value);
+    setAvatarSrc("");
 
-    if (existingUser) {
-      setUserData((prevUserData) => ({
-        ...prevUserData,
-        first: existingUser.name.first,
-        last: existingUser.name.last,
-        phone: existingUser.phone,
-        password: prevUserData.password,
-      }));
+    if (value) {
+      const existingUser = usersAvailable.find((user) => user.email === value);
 
-      if (existingUser.picture) {
-        setAvatarSrc(existingUser.picture.large);
+      if (existingUser) {
+        setUserData((prevUserData) => ({
+          ...prevUserData,
+          first: existingUser.name.first,
+          last: existingUser.name.last,
+          phone: existingUser.phone,
+        }));
+
+        if (existingUser.picture) {
+          setAvatarSrc(existingUser.picture.large);
+        }
       }
     }
   };
@@ -81,15 +85,21 @@ const FormRegistration = () => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const existingUser = users.find((user) => user.email === userData.email);
+    const existingUser = usersAvailable.find(
+      (user) => user.email === userData.email
+    );
 
     if (existingUser) {
-      const updatedPassword = {
+      
+      const updatedUser = {
         ...existingUser,
-        password: userData.password,
+        login: {
+          ...existingUser.login,
+          password: userData.password,
+        },
       };
 
-      dispatch(addUser(updatedPassword));
+      dispatch(addUser(updatedUser));
 
       setModalMessage("Registro exitoso");
       setTimeout(function () {
@@ -151,7 +161,7 @@ const FormRegistration = () => {
                 label="Nombre"
                 value={userData.first}
                 name="first"
-                onChange={handleEmailChange}
+                onChange={handleChange}
                 helperText="Ingrese su nombre"
                 error={false}
                 sx={{ mb: 2 }}
@@ -162,7 +172,7 @@ const FormRegistration = () => {
                 label="Apellido"
                 id="last"
                 value={userData.last}
-                onChange={handleEmailChange}
+                onChange={handleChange}
                 helperText="Ingrese su apellido"
                 error={false}
                 sx={{ mb: 2 }}
@@ -173,7 +183,7 @@ const FormRegistration = () => {
                 label="Número de Contacto"
                 name="phone"
                 value={userData.phone}
-                onChange={handleEmailChange}
+                onChange={handleChange}
                 helperText="Ingrese un número de teléfono válido"
                 error={false}
                 sx={{ mb: 2 }}
