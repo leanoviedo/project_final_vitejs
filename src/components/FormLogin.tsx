@@ -11,14 +11,15 @@ import {
   DialogContent,
 } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
-import { useAppSelector } from "../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { selectRegistrationData } from "../redux/slices/RegistrationSlices";
+import { setUserLogin } from "../redux/slices/UserLogin";
 
 const FormLogin = () => {
   const registrationData = useAppSelector(selectRegistrationData);
   const navigate = useNavigate();
-
-  const [userLogin, setUserLogin] = useState({
+  const dispatch = useAppDispatch();
+  const [userLogin, setUsersLogin] = useState({
     email: "",
     password: "",
   });
@@ -32,7 +33,7 @@ const FormLogin = () => {
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUserLogin({ ...userLogin, [e.target.name]: e.target.value });
+    setUsersLogin({ ...userLogin, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -40,9 +41,10 @@ const FormLogin = () => {
     const existingLogin = registrationData.find(
       (registration) =>
         registration.email === userLogin.email &&
-        registration.password === userLogin.password
+        registration.login.password === userLogin.password
     );
     if (existingLogin) {
+      dispatch(setUserLogin(existingLogin));
       navigate("/LoadingPages");
     } else {
       setModalMessage("Credenciales inválidas");
