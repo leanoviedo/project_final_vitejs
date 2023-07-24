@@ -7,11 +7,11 @@ interface UserLoginData {
 }
 
 interface UserLoginState {
-  userLogin: UserLoginData[];
+  userLogin: UserLoginData | null;
 }
 
 const initialState: UserLoginState = {
-  userLogin: [],
+  userLogin: null,
 };
 
 export const userLoginSlice = createSlice({
@@ -19,7 +19,7 @@ export const userLoginSlice = createSlice({
   initialState,
   reducers: {
     setUserLogin: (state, action: PayloadAction<UserLoginData>) => {
-      state.userLogin.push(action.payload);
+      state.userLogin = action.payload;
     },
   },
 });
