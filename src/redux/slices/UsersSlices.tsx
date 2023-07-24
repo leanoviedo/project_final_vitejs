@@ -13,11 +13,11 @@ interface UserData {
 }
 
 interface UsersState {
-  users: UserData[];
+  usersAvailable: UserData[];
 }
 
 const initialState: UsersState = {
-  users: [],
+  usersAvailable: [],
 };
 
 export const usersSlice = createSlice({
@@ -25,13 +25,13 @@ export const usersSlice = createSlice({
   initialState,
   reducers: {
     setUsers: (state, action: PayloadAction<UserData[]>) => {
-      state.users = action.payload;
+      state.usersAvailable = action.payload;
     },
   },
 });
 
 export const { setUsers } = usersSlice.actions;
 
-export const selectUsers = (state: RootState) => state.user;
+export const selectUsers = (state: RootState) => state.usersList;
 
 export default usersSlice.reducer;
