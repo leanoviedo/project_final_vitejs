@@ -11,9 +11,10 @@ import {
   MenuItem,
   FormHelperText,
   SelectChangeEvent,
+  OutlinedInput,
+  TextField,
 } from "@mui/material";
 import { Send as SendIcon } from "@mui/icons-material";
-
 
 import AirportServices from "../services/AirportServices";
 
@@ -23,8 +24,7 @@ interface LostObject {
   city: string;
   airport: string;
   date: string;
-  photo?: File;
-  field: any
+  photo?: string;
 }
 
 const LandingPage = () => {
@@ -34,8 +34,7 @@ const LandingPage = () => {
     city: "",
     airport: "",
     date: "",
-    photo: undefined,
-    field: ""
+    photo: "",
   });
 
   const [submitted, setSubmitted] = useState(false);
@@ -47,16 +46,8 @@ const LandingPage = () => {
     const fetchData = async () => {
       try {
         console.log("Fetching data...");
-        const airports = await AirportServices.fetchAirports();
-        const cities = await AirportServices.fetchCities();
         const countries = await AirportServices.fetchCountries();
-
-        console.log("Fetched airports:", airports);
-        console.log("Fetched cities:", cities);
         console.log("Fetched countries:", countries);
-
-        setAirportData(airports);
-        setCityData(cities);
         setCountryData(countries);
       } catch (error) {
         console.error(error);
@@ -69,6 +60,7 @@ const LandingPage = () => {
   const handleAirportChange = (event: SelectChangeEvent<string>) => {
     const { value } = event.target;
     console.log("Airport selected:", value);
+
     setLostObject((prev) => ({
       ...prev,
       airport: value,
@@ -78,34 +70,52 @@ const LandingPage = () => {
   const handleCityChange = (event: SelectChangeEvent<string>) => {
     const { value } = event.target;
     console.log("City selected:", value);
+
     setLostObject((prev) => ({
-      ...prev, city: value,
+      ...prev,
+      city: value,
     }));
+
+    AirportServices.fetchAirportsByCities(value)
+      .then((response) => {
+        console.log(response.data.response);
+        const airportsByCities = response.data.response;
+        setAirportData(airportsByCities);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   const handleCountryChange = (event: SelectChangeEvent<string>) => {
     const { value } = event.target;
     console.log("Country selected:", value);
+
     setLostObject((prev) => ({
       ...prev,
       country: value,
     }));
-  };
-  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const photoFile = e.target.files && e.target.files[0];
 
-    setLostObject((prev) => ({
-      ...prev,
-      photo: photoFile || undefined,
-    }));
+    AirportServices.fetchCitiesByCountry(value)
+      .then((response) => {
+        console.log(response.data.response);
+        const citiesByCountry = response.data.response;
+        setCityData(citiesByCountry);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
+
+  const handlePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setLostObject({ ...lostObject, [event.target.name]: event.target.value });
+  };
+
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     console.log("Submitting form with data:", lostObject);
     setSubmitted(true);
   };
-
-  console.log("Rendered component with state:", lostObject);
 
   return (
     <Container maxWidth="sm">
@@ -120,55 +130,16 @@ const LandingPage = () => {
       {!submitted ? (
         <Box component="form" onSubmit={handleSubmit}>
           <Grid container spacing={2}>
-            <Grid item xs={12}>
+            <Grid item xs={12} marginTop={2}>
               <FormControl fullWidth required>
-                <InputLabel>Aeropuerto</InputLabel>
+                <InputLabel id="country-label">Pais</InputLabel>
                 <Select
-                  name="airport"
-                  label="Aeropuerto"
-                  value={lostObject.airport}
-                  displayEmpty
-                  inputProps={{ 'aria-label': 'Without label' }}
-                  onChange={handleAirportChange}
-                >
-                  {airportData.map((airport: any, index: number) => (
-                    <MenuItem key={index} value={airport.code}>
-                      {airport.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-                <FormHelperText>Seleccione un aeropuerto</FormHelperText>
-              </FormControl>
-            </Grid>
-
-            <Grid item xs={12}>
-              <FormControl fullWidth required>
-                <InputLabel>Ciudad</InputLabel>
-                <Select
-                  name="city"
-                  value={lostObject.city}
-                  displayEmpty
-                  inputProps={{ 'aria-label': 'Without label' }}
-                  onChange={handleCityChange}
-                >
-                  {cityData.map((city: any, index: number) => (
-                    <MenuItem key={index} value={city.code}>
-                      {city.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-                <FormHelperText>Seleccione una ciudad</FormHelperText>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12}>
-              <FormControl fullWidth required>
-                <InputLabel>País</InputLabel>
-                <Select
-                  name="country"
+                  labelId="country-select-label"
+                  id="country-simple-select"
                   value={lostObject.country}
-                  displayEmpty
-                  inputProps={{ 'aria-label': 'Without label' }}
+                  label="country"
                   onChange={handleCountryChange}
+                  input={<OutlinedInput label="Pain" />}
                 >
                   {countryData.map((country: any, index: number) => (
                     <MenuItem key={index} value={country.code}>
@@ -176,17 +147,62 @@ const LandingPage = () => {
                     </MenuItem>
                   ))}
                 </Select>
-                <FormHelperText>Seleccione un país</FormHelperText>
               </FormControl>
             </Grid>
+
+            <Grid item xs={12} marginTop={2}>
+              <FormControl fullWidth required>
+                <InputLabel id="city-label">Ciudad</InputLabel>
+                <Select
+                  labelId="city-select-label"
+                  id="city-simple-select"
+                  value={lostObject.city}
+                  label="city"
+                  onChange={handleCityChange}
+                  input={<OutlinedInput label="Ciudad" />}
+                >
+                  {cityData.map((city: any, index: number) => (
+                    <MenuItem key={index} value={city.city_code}>
+                      {city.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+
+            <Grid item xs={12} marginTop={2}>
+              <FormControl fullWidth required>
+                <InputLabel id="demo-multiple-name-label">
+                  Aeropuerto
+                </InputLabel>
+                <Select
+                  labelId="airport-select-label"
+                  id="airport-simple-select"
+                  value={lostObject.airport}
+                  onChange={handleAirportChange}
+                  input={<OutlinedInput label="Aeropuerto" />}
+                >
+                  {airportData.map((airport: any, index: number) => (
+                    <MenuItem key={index} value={airport.name}>
+                      {airport.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+
             <Grid item xs={12}>
               <FormControl fullWidth>
-                <input
-                  type="file"
-                  accept="image/*"
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="photo"
+                  label="photo"
+                  name="photo"
+                  value={lostObject.photo}
                   onChange={handlePhotoChange}
                 />
-                <FormHelperText>Seleccione una foto del objeto</FormHelperText>
               </FormControl>
             </Grid>
             <Grid item xs={12} justifyContent={"center"} display={"flex"}>
@@ -204,7 +220,8 @@ const LandingPage = () => {
         </Box>
       ) : (
         <Typography variant="h5" align="center">
-          ¡Gracias por reportar tu objeto perdido! Tu reporte ha sido enviado con éxito.
+          ¡Gracias por reportar tu objeto perdido! Tu reporte ha sido enviado
+          con éxito.
         </Typography>
       )}
     </Container>
