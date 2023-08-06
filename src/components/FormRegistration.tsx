@@ -16,7 +16,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-
+import { ArrowCircleRight as ArrowCircleRightIcon, ArrowBack as ArrowBackIcon } from "@mui/icons-material";
 const FormRegistration = () => {
   const { usersAvailable } = useAppSelector((state) => state.usersList);
   const navigate = useNavigate();
@@ -90,7 +90,7 @@ const FormRegistration = () => {
     );
 
     if (existingUser) {
-      
+
       const updatedUser = {
         ...existingUser,
         login: {
@@ -201,7 +201,9 @@ const FormRegistration = () => {
                 sx={{ mb: 2 }}
                 required
               />
-              <Button type="submit" fullWidth variant="contained">
+              <Button type="submit" fullWidth variant="contained" color="primary"
+                startIcon={< ArrowCircleRightIcon />}
+                sx={{ mt: 2 }}>
                 Regístrate
               </Button>
             </Box>
@@ -215,6 +217,18 @@ const FormRegistration = () => {
             </Dialog>
           </Grid>
         </Card>
+
+        <Grid item sx={{ display: "flex", justifyContent: "center" }}>
+          <Button
+            href="/"
+            variant="contained"
+            color="primary"
+            startIcon={<ArrowBackIcon />}
+            sx={{ mt: 2, width: "150px" }} // Adjust width as needed
+          >
+            Atrás
+          </Button>
+        </Grid>
       </Grid>
     </Container>
   );
