@@ -20,7 +20,6 @@ import { Dayjs } from "dayjs";
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import { selectUserLogin } from "../redux/slices/UserLogin";
 import { setlostObject } from "../redux/slices/lostObjectSlice";
-import { useNavigate } from "react-router-dom";
 import CustomNavbar from "./CustomNavbar";
 interface LostObject {
   country: string;
@@ -47,7 +46,6 @@ const LandingPage = () => {
   const [countryData, setCountryData] = useState<any[]>([]);
   const userLogin = useAppSelector(selectUserLogin);
   const dispatch = useAppDispatch()
-  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchData = async () => {
@@ -66,7 +64,7 @@ const LandingPage = () => {
 
   useEffect(() => {
     setLostObject((prev) => ({
-      ...prev, '${userInfo}': userLogin
+      ...prev, ...userLogin, ...userLogin
     }));
   }, []);
 
@@ -136,9 +134,6 @@ const LandingPage = () => {
     console.log("Submitting form with data:", lostObject);
     setSubmitted(true);
     dispatch(setlostObject(lostObject));
-    setTimeout(function () {
-      navigate("/FormLogin");
-    }, 5000);
   };
 
 
@@ -247,11 +242,10 @@ const LandingPage = () => {
           </Card>
         </Grid>
       ) : (
-        <Typography variant="h5" align="center">
+        <Typography variant="h5" align="center" sx={{ marginTop: 5 }}>
           ¡Gracias por reportar tu objeto perdido! Tu reporte ha sido enviado
           con éxito.
         </Typography>
-
       )}
     </Grid>
   );

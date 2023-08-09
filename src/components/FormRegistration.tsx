@@ -114,23 +114,13 @@ const FormRegistration = () => {
   };
 
   return (
-
-    <Grid
-      container
-      // direction="column"
-      justifyContent="center"
-      alignItems="center"
-      spacing={2}
-
-    >
+    <Grid container justifyContent="center" alignItems="center">
       <CustomNavbar></CustomNavbar>
 
       <Card sx={{ p: 3, mt: 2, boxShadow: 3 }}>
-        <Grid item>
-          <Typography variant="h5" align="center" sx={{ mb: 3 }}>
-            Regístrate
-          </Typography>
-        </Grid>
+        <Typography variant="h5" align="center" sx={{ mb: 3 }}>
+          Regístrate
+        </Typography>
         <Avatar
           alt=""
           src={avatarSrc}
@@ -218,19 +208,18 @@ const FormRegistration = () => {
               <Button onClick={handleCloseModal}>Cerrar</Button>
             </DialogActions>
           </Dialog>
-          <Grid item sx={{}} >
-            <Button
-              href="/"
-              variant="contained"
-              color="primary"
-              startIcon={<ArrowBackIcon fontSize="large" />}
-
-            >
-            </Button>
-          </Grid>
         </Grid>
       </Card>
-
+      {/* Move the button to the bottom left */}
+      <Button
+        href="/"
+        variant="contained"
+        color="primary"
+        startIcon={<ArrowBackIcon fontSize="large" />}
+        sx={{ position: "absolute", bottom: "16px", left: "16px" }} // Adjust positioning
+      >
+        Atrás
+      </Button>
     </Grid>
   );
 };
