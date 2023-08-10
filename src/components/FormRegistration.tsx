@@ -8,7 +8,6 @@ import {
   Box,
   Button,
   Card,
-  Container,
   Dialog,
   DialogActions,
   DialogContent,
@@ -16,6 +15,8 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { ArrowCircleRight as ArrowCircleRightIcon, ArrowBack as ArrowBackIcon } from "@mui/icons-material";
+import CustomNavbar from "./CustomNavbar";
 
 const FormRegistration = () => {
   const { usersAvailable } = useAppSelector((state) => state.usersList);
@@ -90,7 +91,7 @@ const FormRegistration = () => {
     );
 
     if (existingUser) {
-      
+
       const updatedUser = {
         ...existingUser,
         login: {
@@ -113,110 +114,113 @@ const FormRegistration = () => {
   };
 
   return (
-    <Container>
-      <Grid
-        container
-        direction="column"
-        justifyContent="center"
-        alignItems="center"
-        spacing={2}
-        sx={{ minHeight: "100vh" }}
-      >
-        <Card sx={{ p: 3, boxShadow: 3 }}>
-          <Grid item>
-            <Typography variant="h5" align="center" sx={{ mb: 3 }}>
+    <Grid container justifyContent="center" alignItems="center">
+      <CustomNavbar></CustomNavbar>
+
+      <Card sx={{ p: 3, mt: 2, boxShadow: 3 }}>
+        <Typography variant="h5" align="center" sx={{ mb: 3 }}>
+          Regístrate
+        </Typography>
+        <Avatar
+          alt=""
+          src={avatarSrc}
+          sx={{ width: "100px", height: "100px", ml: 16 }}
+        />
+        <Grid item>
+          <Box
+            component="form"
+            onSubmit={handleSubmit}
+            sx={{
+              width: 300,
+              m: 2,
+            }}
+          >
+            <TextField
+              fullWidth
+              id="email"
+              label="Correo electrónico"
+              name="email"
+              autoFocus
+              value={userData.email}
+              onChange={handleEmailChange}
+              helperText="Ingrese un correo electrónico válido"
+              error={false}
+              sx={{ mb: 2 }}
+              required
+            />
+            <TextField
+              fullWidth
+              id="first"
+              label="Nombre"
+              value={userData.first}
+              name="first"
+              onChange={handleChange}
+              helperText="Ingrese su nombre"
+              error={false}
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              fullWidth
+              name="last"
+              label="Apellido"
+              id="last"
+              value={userData.last}
+              onChange={handleChange}
+              helperText="Ingrese su apellido"
+              error={false}
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              fullWidth
+              id="phone"
+              label="Número de Contacto"
+              name="phone"
+              value={userData.phone}
+              onChange={handleChange}
+              helperText="Ingrese un número de teléfono válido"
+              error={false}
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              fullWidth
+              name="password"
+              label="Contraseña"
+              type="password"
+              id="password"
+              value={userData.password}
+              onChange={handleChange}
+              helperText="Ingrese una contraseña"
+              error={false}
+              sx={{ mb: 2 }}
+              required
+            />
+            <Button type="submit" fullWidth variant="contained" color="primary"
+              startIcon={< ArrowCircleRightIcon />}
+              sx={{ mt: 2 }}>
               Regístrate
-            </Typography>
-          </Grid>
-          <Avatar
-            alt=""
-            src={avatarSrc}
-            sx={{ width: "100px", height: "100px", ml: 16 }}
-          />
-          <Grid item>
-            <Box
-              component="form"
-              onSubmit={handleSubmit}
-              sx={{
-                width: 300,
-                m: 2,
-              }}
-            >
-              <TextField
-                fullWidth
-                id="email"
-                label="Correo electrónico"
-                name="email"
-                autoFocus
-                value={userData.email}
-                onChange={handleEmailChange}
-                helperText="Ingrese un correo electrónico válido"
-                error={false}
-                sx={{ mb: 2 }}
-                required
-              />
-              <TextField
-                fullWidth
-                id="first"
-                label="Nombre"
-                value={userData.first}
-                name="first"
-                onChange={handleChange}
-                helperText="Ingrese su nombre"
-                error={false}
-                sx={{ mb: 2 }}
-              />
-              <TextField
-                fullWidth
-                name="last"
-                label="Apellido"
-                id="last"
-                value={userData.last}
-                onChange={handleChange}
-                helperText="Ingrese su apellido"
-                error={false}
-                sx={{ mb: 2 }}
-              />
-              <TextField
-                fullWidth
-                id="phone"
-                label="Número de Contacto"
-                name="phone"
-                value={userData.phone}
-                onChange={handleChange}
-                helperText="Ingrese un número de teléfono válido"
-                error={false}
-                sx={{ mb: 2 }}
-              />
-              <TextField
-                fullWidth
-                name="password"
-                label="Contraseña"
-                type="password"
-                id="password"
-                value={userData.password}
-                onChange={handleChange}
-                helperText="Ingrese una contraseña"
-                error={false}
-                sx={{ mb: 2 }}
-                required
-              />
-              <Button type="submit" fullWidth variant="contained">
-                Regístrate
-              </Button>
-            </Box>
-            <Dialog open={openModal} onClose={handleCloseModal}>
-              <DialogContent>
-                <Typography>{modalMessage}</Typography>
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={handleCloseModal}>Cerrar</Button>
-              </DialogActions>
-            </Dialog>
-          </Grid>
-        </Card>
-      </Grid>
-    </Container>
+            </Button>
+          </Box>
+          <Dialog open={openModal} onClose={handleCloseModal}>
+            <DialogContent>
+              <Typography>{modalMessage}</Typography>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleCloseModal}>Cerrar</Button>
+            </DialogActions>
+          </Dialog>
+        </Grid>
+      </Card>
+      {/* Move the button to the bottom left */}
+      <Button
+        href="/"
+        variant="contained"
+        color="primary"
+        startIcon={<ArrowBackIcon fontSize="large" />}
+        sx={{ position: "absolute", bottom: "16px", left: "16px" }} // Adjust positioning
+      >
+        Atrás
+      </Button>
+    </Grid>
   );
 };
 

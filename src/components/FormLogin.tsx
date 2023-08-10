@@ -14,6 +14,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { selectRegistrationData } from "../redux/slices/RegistrationSlices";
 import { setUserLogin } from "../redux/slices/UserLogin";
+import CustomNavbar from "./CustomNavbar";
 
 const FormLogin = () => {
   const registrationData = useAppSelector(selectRegistrationData);
@@ -47,7 +48,7 @@ const FormLogin = () => {
       dispatch(setUserLogin(existingLogin));
       navigate("/LoadingPages");
     } else {
-      setModalMessage("Credenciales inválidas");
+      setModalMessage("usuario no registratrado");
       setOpenModal(true);
     }
   };
@@ -55,26 +56,21 @@ const FormLogin = () => {
   return (
     <Grid
       container
-      direction="column"
       justifyContent="center"
       alignItems="center"
-      spacing={2}
-      sx={{ minHeight: "100vh" }}
     >
-      <Card sx={{ p: 5, boxShadow: 3 }}>
-        <Grid item>
+      <CustomNavbar ></CustomNavbar>
+      <Grid item marginTop={5}>
+        <Card sx={{ p: 5, boxShadow: 3 }}>
           <Typography component="h1" variant="h5" align="center">
             Iniciar sesión
           </Typography>
-        </Grid>
-
-        <Grid item>
+          <Grid />
           <Box
             component="form"
             onSubmit={handleSubmit}
             sx={{
               width: 300,
-              m: 2,
             }}
           >
             <TextField
@@ -104,22 +100,23 @@ const FormLogin = () => {
             <Button type="submit" fullWidth variant="contained">
               Iniciar sesión
             </Button>
+            <Link to="/FormRegistration" style={{ textDecoration: "none", }}>
+              <Typography mt={2} ml={5}>¿No tienes una cuenta? Regístrate</Typography>
+            </Link>
           </Box>
-        </Grid>
-        <Grid item sx={{ mt: 2 }}>
-          <Link to="/FormRegistration" style={{ textDecoration: "none" }}>
-            <Typography>¿No tienes una cuenta? Regístrate</Typography>
-          </Link>
-        </Grid>
-      </Card>
-      <Dialog open={openModal} onClose={handleCloseModal}>
-        <DialogContent>
-          <Typography>{modalMessage}</Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseModal}>Cerrar</Button>
-        </DialogActions>
-      </Dialog>
+          <Grid item>
+
+          </Grid>
+        </Card>
+        <Dialog open={openModal} onClose={handleCloseModal}>
+          <DialogContent>
+            <Typography>{modalMessage}</Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseModal}>Cerrar</Button>
+          </DialogActions>
+        </Dialog>
+      </Grid>
     </Grid>
   );
 };
