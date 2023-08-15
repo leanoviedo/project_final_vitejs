@@ -12,6 +12,7 @@ import {
   OutlinedInput,
   TextField,
   Card,
+  TextareaAutosize,
 } from "@mui/material";
 import { Send as SendIcon } from "@mui/icons-material";
 import AirportServices from "../services/AirportServices";
@@ -19,12 +20,13 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { Dayjs } from "dayjs";
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import { selectUserLogin } from "../redux/slices/UserLogin";
-import { setlostObject } from "../redux/slices/lostObjectSlice";
+import LostObject, { setLostObjectData } from "../redux/slices/lostObjectSlice"
 import CustomNavbar from "./CustomNavbar";
 interface LostObject {
   country: string;
   city: string;
   airport: string;
+  description: string,
   date: Dayjs | null;
   photo?: string;
 
@@ -34,6 +36,7 @@ const LandingPage = () => {
     country: "",
     city: "",
     airport: "",
+    description: "",
     date: null,
     photo: "",
 
@@ -50,9 +53,7 @@ const LandingPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // console.log("Fetching data...");
         const countries = await AirportServices.fetchCountries();
-        // console.log("Fetched countries:", countries);
         setCountryData(countries);
       } catch (error) {
         console.error(error);
@@ -71,7 +72,6 @@ const LandingPage = () => {
 
   const handleAirportChange = (event: SelectChangeEvent<string>) => {
     const { value } = event.target;
-    // console.log("Airport selected:", value);
 
     setLostObject((prev) => ({
       ...prev,
@@ -90,7 +90,6 @@ const LandingPage = () => {
 
     AirportServices.fetchAirportsByCities(value)
       .then((response) => {
-        // console.log(response.data.response);
         const airportsByCities = response.data.response;
         setAirportData(airportsByCities);
       })
@@ -133,10 +132,22 @@ const LandingPage = () => {
     event.preventDefault();
     console.log("Submitting form with data:", lostObject);
     setSubmitted(true);
-    dispatch(setlostObject(lostObject));
+
+    const selectedCountry = countryData.find((country: any) => country.code === lostObject.country);
+    const selectedCity = cityData.find((city: any) => city.city_code === lostObject.city);
+    const selectedAirport = airportData.find((airport: any) => airport.name === lostObject.airport);
+
+    const selectData = {
+      country: selectedCountry,
+      city: selectedCity,
+      airport: selectedAirport || null,
+      photo: lostObject.photo,
+      date: lostObject.date,
+      description: lostObject.description
+    }
+
+    dispatch(setLostObjectData(selectData));
   };
-
-
   return (
     <Grid container alignContent="center"
       justifyContent="center"
@@ -211,9 +222,24 @@ const LandingPage = () => {
                 </FormControl>
               </Grid>
               <Grid item marginTop={2}>
-                <DatePicker label="fecha de la perdida " value={lostObject.date} onChange={handleDateChange}
+                <DatePicker label="fecha de la perdida" value={lostObject.date} onChange={handleDateChange}
                   sx={{ width: '100%' }} />
               </Grid>
+              <Grid item marginTop={2}>
+                <FormControl fullWidth required>
+                  <InputLabel id="demo-multiple-name-label">
+                    description
+                  </InputLabel>
+                  <TextareaAutosize
+                    id="description"
+
+                    value={lostObject.description}
+                    onChange={(e) => setLostObject({ ...lostObject, description: e.target.value })}
+                    minRows={3}
+                  />
+                </FormControl>
+              </Grid>
+
               <Grid item marginTop={2}>
                 <FormControl fullWidth>
                   <TextField

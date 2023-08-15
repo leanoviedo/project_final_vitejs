@@ -16,7 +16,6 @@ import {
   Typography,
 } from "@mui/material";
 import { ArrowCircleRight as ArrowCircleRightIcon, ArrowBack as ArrowBackIcon } from "@mui/icons-material";
-import CustomNavbar from "./CustomNavbar";
 
 const FormRegistration = () => {
   const { usersAvailable } = useAppSelector((state) => state.usersList);
@@ -115,8 +114,6 @@ const FormRegistration = () => {
 
   return (
     <Grid container justifyContent="center" alignItems="center">
-      <CustomNavbar></CustomNavbar>
-
       <Card sx={{ p: 3, mt: 2, boxShadow: 3 }}>
         <Typography variant="h5" align="center" sx={{ mb: 3 }}>
           Regístrate
