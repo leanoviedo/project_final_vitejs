@@ -1,20 +1,22 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../Store";
+import { Dayjs } from "dayjs";
 
 interface LostObjectData {
     country: string;
     city: string;
     airport: string;
+    date: Dayjs | null;
     description: string;
     photo?: string;
 }
 
 interface LostObjectState {
-    lostObject: LostObjectData | null; // Use null instead of String
+    lostObject: LostObjectData | null;
 }
 
 const initialState: LostObjectState = {
-    lostObject: null, // Use null initially
+    lostObject: null,
 };
 
 export const lostObjectSlice = createSlice({
@@ -29,6 +31,6 @@ export const lostObjectSlice = createSlice({
 
 export const { setLostObjectData } = lostObjectSlice.actions;
 
-export const selectLostObject = (state: RootState) => state.lostObject.lostObject; // Access the lostObject field
+export const selectLostObject = (state: RootState) => state.lostObject.lostObject;
 
 export default lostObjectSlice.reducer;

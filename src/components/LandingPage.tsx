@@ -22,6 +22,7 @@ import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import { selectUserLogin } from "../redux/slices/UserLogin";
 import LostObject, { setLostObjectData } from "../redux/slices/lostObjectSlice"
 import CustomNavbar from "./CustomNavbar";
+
 interface LostObject {
   country: string;
   city: string;
@@ -144,9 +145,9 @@ const LandingPage = () => {
       photo: lostObject.photo,
       date: lostObject.date,
       description: lostObject.description
-    }
+    };
 
-    dispatch(setLostObjectData(selectData));
+    dispatch(setLostObjectData(selectData))
   };
   return (
     <Grid container alignContent="center"

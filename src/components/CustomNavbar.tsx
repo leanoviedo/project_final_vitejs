@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import AirplanemodeActiveOutlinedIcon from '@mui/icons-material/AirplanemodeActiveOutlined';
-import { Link } from 'react-router-dom'; // Assuming you're using React Router for navigation
+import { Link } from 'react-router-dom';
 
 const CustomNavbar = () => {
     return (
@@ -17,7 +17,7 @@ const CustomNavbar = () => {
                     color="inherit"
                     aria-label="menu"
                     sx={{ mr: 2 }}
-                    href='/'
+                    href="/"
                 >
                     <AirplanemodeActiveOutlinedIcon sx={{ fontSize: 40 }} />
                 </IconButton>
@@ -25,23 +25,12 @@ const CustomNavbar = () => {
                     Airport Missing Things (MYT)
                 </Typography>
                 <Box>
-                    <Button
-                        color="inherit"
-                        component={Link}
-                        to="/"
-                    >
+                    <Button color="inherit" component={Link} to="/">
                         Inicio
-                    </Button>
-                    <Button
-                        color="inherit"
-                        component={Link}
-                        to="/LostObjectsList"
-                    >
-                        Objetos Perdidos
                     </Button>
                 </Box>
             </Toolbar>
         </AppBar>
     );
-}
-export default CustomNavbar
+};
+export default CustomNavbar;
