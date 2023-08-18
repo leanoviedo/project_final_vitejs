@@ -16,7 +16,7 @@ const CustomNavbar = () => {
                     edge="start"
                     color="inherit"
                     aria-label="menu"
-                    sx={{ mr: 2 }}
+                    sx={{ mr: 1 }}
                     href="/"
                 >
                     <AirplanemodeActiveOutlinedIcon sx={{ fontSize: 40 }} />
@@ -27,6 +27,9 @@ const CustomNavbar = () => {
                 <Box>
                     <Button color="inherit" component={Link} to="/">
                         Inicio
+                    </Button>
+                    <Button color="inherit" component={Link} to="/LostObjectsDetails">
+                        lista de objetos perdidos
                     </Button>
                 </Box>
             </Toolbar>

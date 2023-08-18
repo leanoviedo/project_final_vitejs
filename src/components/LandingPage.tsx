@@ -18,8 +18,7 @@ import { Send as SendIcon } from "@mui/icons-material";
 import AirportServices from "../services/AirportServices";
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { Dayjs } from "dayjs";
-import { useAppSelector, useAppDispatch } from "../redux/hooks";
-import { selectUserLogin } from "../redux/slices/UserLogin";
+import { useAppDispatch } from "../redux/hooks";
 import LostObject, { setLostObjectData } from "../redux/slices/lostObjectSlice"
 import CustomNavbar from "./CustomNavbar";
 
@@ -48,7 +47,6 @@ const LandingPage = () => {
   const [airportData, setAirportData] = useState<any[]>([]);
   const [cityData, setCityData] = useState<any[]>([]);
   const [countryData, setCountryData] = useState<any[]>([]);
-  const userLogin = useAppSelector(selectUserLogin);
   const dispatch = useAppDispatch()
 
   useEffect(() => {
@@ -63,13 +61,6 @@ const LandingPage = () => {
 
     fetchData();
   }, []);
-
-  useEffect(() => {
-    setLostObject((prev) => ({
-      ...prev, ...userLogin, ...userLogin
-    }));
-  }, []);
-
 
   const handleAirportChange = (event: SelectChangeEvent<string>) => {
     const { value } = event.target;
