@@ -12,7 +12,7 @@ const RoutesForm = () => {
       <Route path="/FormRegistration" element={<FormRegistration />} />
       <Route path="/ladingPage" element={<LandingPage />} />
       <Route path="/LostObjectsDetails" element={<LostObjectDetails />} />
-    </Routes>
+    </Routes> 
   );
 };
 
