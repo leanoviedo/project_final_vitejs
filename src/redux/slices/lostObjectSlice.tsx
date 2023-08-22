@@ -1,41 +1,48 @@
+
+
+
+
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Dayjs } from "dayjs";
+import { RootState } from "../Store";
 
 interface Location {
     name: string;
     code: string;
-    // Otras propiedades según sea necesario
 }
 
 interface LostObjectData {
     country: Location;
     city: Location;
     airport: Location;
-    date: Dayjs | null;
+    date: string | null;
     description: string;
     photo?: string;
 }
 
 interface LostObjectState {
-    lostObject: LostObjectData | null;
+    lostObjects: LostObjectData[];
 }
 
 const initialState: LostObjectState = {
-    lostObject: null,
+    lostObjects: [],
 };
-
 
 export const lostObjectSlice = createSlice({
     name: "lostObject",
     initialState,
     reducers: {
         setLostObjectData: (state, action: PayloadAction<LostObjectData>) => {
-            state.lostObject = action.payload;
+            state.lostObjects = [...state.lostObjects, action.payload];
+        },
+        clearLostObjects: (state) => {
+            state.lostObjects = [];
         },
     },
 });
 
-export const { setLostObjectData } = lostObjectSlice.actions;
+export const { setLostObjectData, clearLostObjects } = lostObjectSlice.actions;
 
+export const selectLostObjects = (state: RootState) =>
+    state.lostObject.lostObjects;
 
 export default lostObjectSlice.reducer;

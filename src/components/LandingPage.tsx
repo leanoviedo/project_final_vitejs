@@ -17,7 +17,7 @@ import {
 import { Send as SendIcon } from "@mui/icons-material";
 import AirportServices from "../services/AirportServices";
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { Dayjs } from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { useAppDispatch } from "../redux/hooks";
 import LostObject, { setLostObjectData } from "../redux/slices/lostObjectSlice"
 import CustomNavbar from "./CustomNavbar";
@@ -47,6 +47,9 @@ const LandingPage = () => {
   const [airportData, setAirportData] = useState<any[]>([]);
   const [cityData, setCityData] = useState<any[]>([]);
   const [countryData, setCountryData] = useState<any[]>([]);
+  const [startDate] = useState(dayjs('2023-01-01'));
+  const [endDate] = useState(dayjs());
+
   const dispatch = useAppDispatch()
 
   useEffect(() => {
@@ -108,6 +111,13 @@ const LandingPage = () => {
         console.log(error);
       });
   };
+  const handleDescriptionChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newValue = event.target.value;
+    setLostObject((prev) => ({
+      ...prev,
+      description: newValue,
+    }));
+  };
 
   const handleDateChange = (date: Dayjs | null) => {
     setLostObject((prev) => ({
@@ -122,6 +132,10 @@ const LandingPage = () => {
   };
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
+    if (!lostObject.date) {
+      return;
+    }
+
     console.log("Submitting form with data:", lostObject);
     setSubmitted(true);
 
@@ -134,12 +148,14 @@ const LandingPage = () => {
       city: selectedCity,
       airport: selectedAirport || null,
       photo: lostObject.photo,
-      date: lostObject.date,
+      date: lostObject.date ? lostObject.date.format("YYYY-MM-DD") : null,
       description: lostObject.description
     };
 
-    dispatch(setLostObjectData(selectData))
+
+    dispatch(setLostObjectData(selectData));
   };
+
   return (
     <Grid container alignContent="center"
       justifyContent="center"
@@ -163,6 +179,7 @@ const LandingPage = () => {
                     label="country"
                     onChange={handleCountryChange}
                     input={<OutlinedInput label="Pain" />}
+                    required
                   >
                     {countryData.map((country: any, index: number) => (
                       <MenuItem key={index} value={country.code}>
@@ -183,6 +200,7 @@ const LandingPage = () => {
                     label="city"
                     onChange={handleCityChange}
                     input={<OutlinedInput label="Ciudad" />}
+                    required
                   >
                     {cityData.map((city: any, index: number) => (
                       <MenuItem key={index} value={city.city_code}>
@@ -204,6 +222,7 @@ const LandingPage = () => {
                     value={lostObject.airport}
                     onChange={handleAirportChange}
                     input={<OutlinedInput label="Aeropuerto" />}
+                    required
                   >
                     {airportData.map((airport: any, index: number) => (
                       <MenuItem key={index} value={airport.name}>
@@ -214,34 +233,42 @@ const LandingPage = () => {
                 </FormControl>
               </Grid>
               <Grid item marginTop={2}>
-                <DatePicker label="fecha de la perdida" value={lostObject.date} onChange={handleDateChange}
-                  sx={{ width: '100%' }} />
+                <DatePicker
+                  label="Fecha de la perdida"
+                  value={lostObject.date}
+                  onChange={handleDateChange}
+                  minDate={startDate}
+                  maxDate={endDate}
+                  views={['day', 'month', 'year',]}
+                  format="DD-MM-YYYY"
+                  sx={{ width: '100%' }}
+                />
               </Grid>
               <Grid item marginTop={2}>
                 <FormControl fullWidth required>
-                  <InputLabel id="demo-multiple-name-label">
-                    description
-                  </InputLabel>
                   <TextareaAutosize
                     id="description"
-
+                    name="description"
                     value={lostObject.description}
-                    onChange={(e) => setLostObject({ ...lostObject, description: e.target.value })}
+                    onChange={handleDescriptionChange}
                     minRows={3}
+                    aria-label="Demo input"
+                    placeholder="Escriba la Descripción"
+                    required
                   />
                 </FormControl>
               </Grid>
-
               <Grid item marginTop={2}>
                 <FormControl fullWidth>
                   <TextField
                     required
                     fullWidth
                     id="photo"
-                    label="foto"
+                    label="Foto"
                     name="photo"
                     value={lostObject.photo}
                     onChange={handlePhotoChange}
+                    aria-required
                   />
                 </FormControl>
               </Grid>
