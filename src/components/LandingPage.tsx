@@ -13,6 +13,10 @@ import {
   TextField,
   Card,
   TextareaAutosize,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  FormHelperText,
 } from "@mui/material";
 import { Send as SendIcon } from "@mui/icons-material";
 import AirportServices from "../services/AirportServices";
@@ -31,6 +35,11 @@ interface LostObject {
   photo?: string;
 
 }
+
+const errorStyles = {
+  color: "red",
+};
+
 const LandingPage = () => {
   const [lostObject, setLostObject] = useState<LostObject>({
     country: "",
@@ -43,12 +52,18 @@ const LandingPage = () => {
   });
 
 
-  const [submitted, setSubmitted] = useState(false);
+
   const [airportData, setAirportData] = useState<any[]>([]);
   const [cityData, setCityData] = useState<any[]>([]);
   const [countryData, setCountryData] = useState<any[]>([]);
   const [startDate] = useState(dayjs('2023-01-01'));
   const [endDate] = useState(dayjs());
+  const [countryError, setCountryError] = useState("");
+  const [cityError, setCityError] = useState("");
+  const [airportError, setAirportError] = useState("");
+  const [dateError, setDateError] = useState("");
+  const [descriptionError, setDescriptionError] = useState("");
+  const [photoError, setPhotoError] = useState("");
 
   const dispatch = useAppDispatch()
 
@@ -64,6 +79,13 @@ const LandingPage = () => {
 
     fetchData();
   }, []);
+  const [openModal, setOpenModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    setModalMessage("");
+  };
 
   const handleAirportChange = (event: SelectChangeEvent<string>) => {
     const { value } = event.target;
@@ -130,15 +152,67 @@ const LandingPage = () => {
     setLostObject({ ...lostObject, [event.target.name]: event.target.value });
     console.log(event.target.value)
   };
+  const resetFormFields = () => {
+    setLostObject({
+      country: "",
+      city: "",
+      airport: "",
+      description: "",
+      date: null,
+      photo: "",
+    });
+    setCountryError("");
+    setCityError("");
+    setAirportError("");
+    setDateError("");
+    setDescriptionError("");
+    setPhotoError("");
+  };
+
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
+    setCountryError("");
+    setCityError("");
+    setAirportError("");
+    setDateError("");
+    setDescriptionError("");
+    setPhotoError("");
+
+    let hasErrors = false;
+
+    if (!lostObject.country) {
+      setCountryError("Campo obligatorio");
+      hasErrors = true;
+    }
+
+    if (!lostObject.city) {
+      setCityError("Campo obligatorio");
+      hasErrors = true;
+    }
+    if (!lostObject.airport) {
+      setAirportError("Campo obligatorio");
+      hasErrors = true;
+    }
     if (!lostObject.date) {
+      setDateError("campo obligatorio")
+      hasErrors = true
+    }
+    if (!lostObject.description) {
+      setDescriptionError("Campo obligatorio");
+      hasErrors = true;
+    } if (!lostObject.photo) {
+      setPhotoError("Campo obligatorio");
+      hasErrors = true;
+    }
+    if (hasErrors) {
       return;
     }
 
-    console.log("Submitting form with data:", lostObject);
-    setSubmitted(true);
 
+    setOpenModal(true);
+    setModalMessage(" ¡Gracias por reportar tu objeto perdido...! Tu reporte ha sido enviado con éxito");
+
+    resetFormFields();
     const selectedCountry = countryData.find((country: any) => country.code === lostObject.country);
     const selectedCity = cityData.find((city: any) => city.city_code === lostObject.city);
     const selectedAirport = airportData.find((airport: any) => airport.name === lostObject.airport);
@@ -154,6 +228,8 @@ const LandingPage = () => {
 
 
     dispatch(setLostObjectData(selectData));
+
+
   };
 
   return (
@@ -162,137 +238,144 @@ const LandingPage = () => {
       alignItems="center"
     >
       <CustomNavbar></CustomNavbar>
-      {!submitted ? (
-        <Grid item mt={5} >
-          <Card sx={{ p: 3, boxShadow: 3 }}>
-            <Typography variant="h4" align="center" marginBottom={4}>
-              ¡Reporta tu objeto perdido!
-            </Typography>
-            <Box component="form" onSubmit={handleSubmit} sx={{ borderColor: 'primary.main' }}>
-              <Grid item marginTop={2}>
-                <FormControl fullWidth required>
-                  <InputLabel id="country-label">Pais</InputLabel>
-                  <Select
-                    labelId="country-select-label"
-                    id="country-simple-select"
-                    value={lostObject.country}
-                    label="country"
-                    onChange={handleCountryChange}
-                    input={<OutlinedInput label="Pain" />}
-                    required
-                  >
-                    {countryData.map((country: any, index: number) => (
-                      <MenuItem key={index} value={country.code}>
-                        {country.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-
-              <Grid item marginTop={2}>
-                <FormControl fullWidth required>
-                  <InputLabel id="city-label">Ciudad</InputLabel>
-                  <Select
-                    labelId="city-select-label"
-                    id="city-simple-select"
-                    value={lostObject.city}
-                    label="city"
-                    onChange={handleCityChange}
-                    input={<OutlinedInput label="Ciudad" />}
-                    required
-                  >
-                    {cityData.map((city: any, index: number) => (
-                      <MenuItem key={index} value={city.city_code}>
-                        {city.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-
-              <Grid item marginTop={2}>
-                <FormControl fullWidth required>
-                  <InputLabel id="demo-multiple-name-label">
-                    Aeropuerto
-                  </InputLabel>
-                  <Select
-                    labelId="airport-select-label"
-                    id="airport-simple-select"
-                    value={lostObject.airport}
-                    onChange={handleAirportChange}
-                    input={<OutlinedInput label="Aeropuerto" />}
-                    required
-                  >
-                    {airportData.map((airport: any, index: number) => (
-                      <MenuItem key={index} value={airport.name}>
-                        {airport.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid item marginTop={2}>
-                <DatePicker
-                  label="Fecha de la perdida"
-                  value={lostObject.date}
-                  onChange={handleDateChange}
-                  minDate={startDate}
-                  maxDate={endDate}
-                  views={['day', 'month', 'year',]}
-                  format="DD-MM-YYYY"
-                  sx={{ width: '100%' }}
-                />
-              </Grid>
-              <Grid item marginTop={2}>
-                <FormControl fullWidth required>
-                  <TextareaAutosize
-                    id="description"
-                    name="description"
-                    value={lostObject.description}
-                    onChange={handleDescriptionChange}
-                    minRows={3}
-                    aria-label="Demo input"
-                    placeholder="Escriba la Descripción"
-                    required
-                  />
-                </FormControl>
-              </Grid>
-              <Grid item marginTop={2}>
-                <FormControl fullWidth>
-                  <TextField
-                    required
-                    fullWidth
-                    id="photo"
-                    label="Foto"
-                    name="photo"
-                    value={lostObject.photo}
-                    onChange={handlePhotoChange}
-                    aria-required
-                  />
-                </FormControl>
-              </Grid>
-              <Grid item >
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  startIcon={<SendIcon />}
-                  sx={{ mt: 2, ml: 15 }}
+      <Grid item mt={5} >
+        <Card sx={{ p: 3, boxShadow: 3 }}>
+          <Typography variant="h4" align="center" marginBottom={4}>
+            ¡Reporta tu objeto perdido!
+          </Typography>
+          <Box component="form" onSubmit={handleSubmit} sx={{ borderColor: 'primary.main' }}>
+            <Grid item marginTop={2}>
+              <FormControl fullWidth >
+                <InputLabel id="country-label">Pais</InputLabel>
+                <Select
+                  labelId="country-select-label"
+                  id="country-simple-select"
+                  value={lostObject.country}
+                  label="country"
+                  onChange={handleCountryChange}
+                  input={<OutlinedInput label="Pain" />}
                 >
-                  Enviar reporte
-                </Button>
-              </Grid>
-            </Box>
-          </Card>
-        </Grid>
-      ) : (
-        <Typography variant="h5" align="center" sx={{ marginTop: 5 }}>
-          ¡Gracias por reportar tu objeto perdido! Tu reporte ha sido enviado
-          con éxito.
-        </Typography>
-      )}
-    </Grid>
+                  {countryData.map((country: any, index: number) => (
+                    <MenuItem key={index} value={country.code}>
+                      {country.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+                <FormHelperText sx={errorStyles}>{countryError}</FormHelperText>
+              </FormControl>
+            </Grid>
+
+            <Grid item marginTop={2}>
+              <FormControl fullWidth >
+                <InputLabel id="city-label">Ciudad</InputLabel>
+                <Select
+                  labelId="city-select-label"
+                  id="city-simple-select"
+                  value={lostObject.city}
+                  label="city"
+                  onChange={handleCityChange}
+                  input={<OutlinedInput label="Ciudad" />}
+                >
+                  {cityData.map((city: any, index: number) => (
+                    <MenuItem key={index} value={city.city_code}>
+                      {city.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+                <FormHelperText sx={errorStyles}> {cityError}</FormHelperText>
+              </FormControl>
+            </Grid>
+
+            <Grid item marginTop={2}>
+              <FormControl fullWidth >
+                <InputLabel id="demo-multiple-name-label">
+                  Aeropuerto
+                </InputLabel>
+                <Select
+                  labelId="airport-select-label"
+                  id="airport-simple-select"
+                  value={lostObject.airport}
+                  onChange={handleAirportChange}
+                  input={<OutlinedInput label="Aeropuerto" />}
+
+                >
+                  {airportData.map((airport: any, index: number) => (
+                    <MenuItem key={index} value={airport.name}>
+                      {airport.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+                <FormHelperText sx={errorStyles}>{airportError}</FormHelperText>
+              </FormControl>
+            </Grid>
+            <Grid item marginTop={2}>
+              <DatePicker
+                label="Fecha de la perdida"
+                value={lostObject.date}
+                onChange={handleDateChange}
+                minDate={startDate}
+                maxDate={endDate}
+                views={['day', 'month', 'year',]}
+                format="DD-MM-YYYY"
+                sx={{ width: '100%' }}
+              />
+              <FormHelperText sx={errorStyles}>{dateError}</FormHelperText>
+            </Grid>
+            <Grid item marginTop={2}>
+              <FormControl fullWidth >
+                <TextareaAutosize
+                  id="description"
+                  name="description"
+                  value={lostObject.description}
+                  onChange={handleDescriptionChange}
+                  minRows={3}
+                  aria-label="Demo input"
+                  placeholder="Escriba la Descripción"
+
+                />
+                <FormHelperText sx={errorStyles}>{descriptionError}</FormHelperText>
+              </FormControl>
+            </Grid>
+            <Grid item marginTop={2}>
+              <FormControl fullWidth>
+                <TextField
+
+                  fullWidth
+                  id="photo"
+                  label="Foto"
+                  name="photo"
+                  value={lostObject.photo}
+                  onChange={handlePhotoChange}
+
+                />
+                <FormHelperText sx={errorStyles}>{photoError}</FormHelperText>
+              </FormControl>
+            </Grid>
+            <Grid item >
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                startIcon={<SendIcon />}
+                sx={{ mt: 2, ml: 15 }}
+              >
+                Enviar reporte
+              </Button>
+            </Grid>
+          </Box>
+        </Card>
+      </Grid>
+      <Dialog open={openModal} onClose={handleCloseModal}>
+        <DialogContent>
+          <Typography variant="h5" align="center" sx={{ marginTop: 5 }}>
+            {modalMessage}
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseModal}>Cerrar</Button>
+        </DialogActions>
+      </Dialog>
+    </Grid >
   );
 };
 

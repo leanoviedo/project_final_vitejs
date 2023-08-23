@@ -121,7 +121,6 @@ const FormLogin = () => {
               </Typography>
             </Link>
           </Box>
-          <Grid item></Grid>
         </Card>
         <Dialog open={openModal} onClose={handleCloseModal}>
           <DialogContent>

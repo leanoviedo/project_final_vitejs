@@ -20,7 +20,7 @@ const LostObjectDetails: React.FC = () => {
         <div style={{ backgroundColor: "#f5f5f5", minHeight: "100vh" }}>
             <CustomNavbar />
             <AppBar position="static">
-                <Typography variant="h6" component="div" sx={{  textAlign:"center" }}>
+                <Typography variant="h6" component="div" sx={{ textAlign: "center" }}>
                     Lista de Objetos Perdidos...!!!
                 </Typography>
             </AppBar>
@@ -34,7 +34,7 @@ const LostObjectDetails: React.FC = () => {
                                 <Box display="flex" justifyContent="center" alignItems="center" style={{ height: "200px", marginBottom: "16px" }}>
                                     <img src={lostObject.photo} alt="Lost Object" style={{ width: "60%", borderRadius: "4px" }} />
                                 </Box>
-                                <Box m={1}p={1}>
+                                <Box m={1} p={1}>
                                     <Typography variant="body2" color="text.secondary">
                                         <strong>Descripción:</strong> {lostObject.description}
                                     </Typography>
