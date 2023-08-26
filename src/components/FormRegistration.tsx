@@ -15,8 +15,10 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { ArrowCircleRight as ArrowCircleRightIcon, ArrowBack as ArrowBackIcon } from "@mui/icons-material";
-import CustomNavbar from "./CustomNavbar";
+import {
+  ArrowCircleRight as ArrowCircleRightIcon,
+  ArrowBack as ArrowBackIcon,
+} from "@mui/icons-material";
 
 const FormRegistration = () => {
   const { usersAvailable } = useAppSelector((state) => state.usersList);
@@ -91,7 +93,6 @@ const FormRegistration = () => {
     );
 
     if (existingUser) {
-
       const updatedUser = {
         ...existingUser,
         login: {
@@ -115,8 +116,6 @@ const FormRegistration = () => {
 
   return (
     <Grid container justifyContent="center" alignItems="center">
-      <CustomNavbar></CustomNavbar>
-
       <Card sx={{ p: 3, mt: 2, boxShadow: 3 }}>
         <Typography variant="h5" align="center" sx={{ mb: 3 }}>
           Regístrate
@@ -194,9 +193,14 @@ const FormRegistration = () => {
               sx={{ mb: 2 }}
               required
             />
-            <Button type="submit" fullWidth variant="contained" color="primary"
-              startIcon={< ArrowCircleRightIcon />}
-              sx={{ mt: 2 }}>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              startIcon={<ArrowCircleRightIcon />}
+              sx={{ mt: 2 }}
+            >
               Regístrate
             </Button>
           </Box>
@@ -210,7 +214,6 @@ const FormRegistration = () => {
           </Dialog>
         </Grid>
       </Card>
-      {/* Move the button to the bottom left */}
       <Button
         href="/"
         variant="contained"
@@ -225,3 +228,4 @@ const FormRegistration = () => {
 };
 
 export default FormRegistration;
+

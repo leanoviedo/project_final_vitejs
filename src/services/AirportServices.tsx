@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const apiUrl = "https://airlabs.co/api/v9";
-const apiKey = "525de54c-9bcf-4721-9d32-0b098230c67a";
+const apiKey = "e6ae5d42-d11c-4cf8-b47d-618fd3588264";
 
 const AirportServices = {
   fetchAirports: async () => {

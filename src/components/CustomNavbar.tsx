@@ -1,18 +1,36 @@
-import { AppBar, Toolbar, IconButton, Typography } from "@mui/material";
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
 import AirplanemodeActiveOutlinedIcon from '@mui/icons-material/AirplanemodeActiveOutlined';
+import { Link } from 'react-router-dom';
+
 const CustomNavbar = () => {
     return (
         <AppBar position="static">
             <Toolbar>
-                <Typography variant="h6" component="div" sx={{ mt: 1 }}>
-                    Airport Missing Things (MYT)
-                </Typography>
-                <IconButton edge="end" color="inherit" aria-label="menu">
+                <IconButton
+                    size="large"
+                    edge="start"
+                    color="inherit"
+                    aria-label="menu"
+                    sx={{ mr: 2 }}
+                    href="/"
+                >
                     <AirplanemodeActiveOutlinedIcon sx={{ fontSize: 40 }} />
                 </IconButton>
-
+                <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                    Airport Missing Things (MYT)
+                </Typography>
+                <Box>
+                    <Button color="inherit" component={Link} to="/">
+                        Inicio
+                    </Button>
+                </Box>
             </Toolbar>
         </AppBar>
     );
 };
-export default CustomNavbar
+export default CustomNavbar;

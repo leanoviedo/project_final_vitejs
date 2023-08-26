@@ -9,12 +9,15 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
+  AppBar,
+  IconButton,
+  Toolbar,
 } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { selectRegistrationData } from "../redux/slices/RegistrationSlices";
 import { setUserLogin } from "../redux/slices/UserLogin";
-import CustomNavbar from "./CustomNavbar";
+import AirplanemodeActiveOutlinedIcon from "@mui/icons-material/AirplanemodeActiveOutlined";
 
 const FormLogin = () => {
   const registrationData = useAppSelector(selectRegistrationData);
@@ -46,7 +49,7 @@ const FormLogin = () => {
     );
     if (existingLogin) {
       dispatch(setUserLogin(existingLogin));
-      navigate("/LoadingPages");
+      navigate("/ladingPage");
     } else {
       setModalMessage("usuario no registratrado");
       setOpenModal(true);
@@ -54,12 +57,24 @@ const FormLogin = () => {
   };
 
   return (
-    <Grid
-      container
-      justifyContent="center"
-      alignItems="center"
-    >
-      <CustomNavbar ></CustomNavbar>
+    <Grid container justifyContent="center" alignItems="center">
+      <AppBar position="static">
+        <Toolbar>
+          <IconButton
+            size="large"
+            edge="start"
+            color="inherit"
+            aria-label="menu"
+            sx={{ mr: 2 }}
+            href="/"
+          >
+            <AirplanemodeActiveOutlinedIcon sx={{ fontSize: 40 }} />
+          </IconButton>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            Airport Missing Things (MYT)
+          </Typography>
+        </Toolbar>
+      </AppBar>
       <Grid item marginTop={5}>
         <Card sx={{ p: 5, boxShadow: 3 }}>
           <Typography component="h1" variant="h5" align="center">
@@ -100,13 +115,13 @@ const FormLogin = () => {
             <Button type="submit" fullWidth variant="contained">
               Iniciar sesión
             </Button>
-            <Link to="/FormRegistration" style={{ textDecoration: "none", }}>
-              <Typography mt={2} ml={5}>¿No tienes una cuenta? Regístrate</Typography>
+            <Link to="/FormRegistration" style={{ textDecoration: "none" }}>
+              <Typography mt={2} ml={5}>
+                ¿No tienes una cuenta? Regístrate
+              </Typography>
             </Link>
           </Box>
-          <Grid item>
-
-          </Grid>
+          <Grid item></Grid>
         </Card>
         <Dialog open={openModal} onClose={handleCloseModal}>
           <DialogContent>
