@@ -22,9 +22,10 @@ import { Send as SendIcon } from "@mui/icons-material";
 import AirportServices from "../services/AirportServices";
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs, { Dayjs } from "dayjs";
-import { useAppDispatch } from "../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import LostObject, { setLostObjectData } from "../redux/slices/lostObjectSlice"
 import CustomNavbar from "./CustomNavbar";
+import { selectRegistrationData } from "../redux/slices/RegistrationSlices";
 
 interface LostObject {
   country: string;
@@ -63,6 +64,7 @@ const LandingPage = () => {
   const [photoError, setPhotoError] = useState("");
 
   const dispatch = useAppDispatch()
+  const registeredUsers = useAppSelector(selectRegistrationData);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -211,15 +213,16 @@ const LandingPage = () => {
     const selectedCountry = countryData.find((country: any) => country.code === lostObject.country);
     const selectedCity = cityData.find((city: any) => city.city_code === lostObject.city);
     const selectedAirport = airportData.find((airport: any) => airport.name === lostObject.airport);
-
     const selectData = {
       country: selectedCountry,
       city: selectedCity,
       airport: selectedAirport || null,
       photo: lostObject.photo,
       date: lostObject.date ? lostObject.date.format("YYYY-MM-DD") : null,
-      description: lostObject.description
+      description: lostObject.description,
+      user: registeredUsers[0],
     };
+
 
     dispatch(setLostObjectData(selectData));
   };
