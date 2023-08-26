@@ -7,7 +7,7 @@ interface UserData {
   last: string;
   phone: string;
   password: string;
-  login:any
+  login: any
 }
 
 interface RegistrationState {

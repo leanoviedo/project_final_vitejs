@@ -50,9 +50,6 @@ const LandingPage = () => {
     photo: "",
 
   });
-
-
-
   const [airportData, setAirportData] = useState<any[]>([]);
   const [cityData, setCityData] = useState<any[]>([]);
   const [countryData, setCountryData] = useState<any[]>([]);
@@ -207,8 +204,6 @@ const LandingPage = () => {
     if (hasErrors) {
       return;
     }
-
-
     setOpenModal(true);
     setModalMessage(" ¡Gracias por reportar tu objeto perdido...! Tu reporte ha sido enviado con éxito");
 
@@ -226,10 +221,7 @@ const LandingPage = () => {
       description: lostObject.description
     };
 
-
     dispatch(setLostObjectData(selectData));
-
-
   };
 
   return (
