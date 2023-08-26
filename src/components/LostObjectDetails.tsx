@@ -17,7 +17,7 @@ const LostObjectDetails: React.FC = () => {
             <CustomNavbar />
             <AppBar position="static">
                 <Typography variant="h6" component="div" sx={{ textAlign: "center" }}>
-                    Lista de Objetos Perdidos...!!!
+                     Objetos Perdidos
                 </Typography>
             </AppBar>
             <Grid container justifyContent="center" spacing={2} mt={1}>
@@ -27,7 +27,7 @@ const LostObjectDetails: React.FC = () => {
                         <Grid key={index} item xs={12} md={6}>
                             <Card style={{ display: "flex", flexDirection: "column", width: "100%" }}>
                                 <Box display="flex" justifyContent="center" alignItems="center" style={{ height: "200px" }}>
-                                    <img src={lostObject.photo} alt="Lost Object" style={{ width:"200px", borderRadius: "4px" }} />
+                                    <img src={lostObject.photo} alt="Lost Object" style={{ width: "200px", borderRadius: "4px" }} />
                                 </Box>
                                 <Box m={1} p={1}>
                                     <Typography variant="body2" color="text.secondary">

@@ -29,7 +29,7 @@ const CustomNavbar = () => {
                         Inicio
                     </Button>
                     <Button color="inherit" component={Link} to="/LostObjectsDetails">
-                        lista de objetos perdidos
+                         objetos perdidos
                     </Button>
                 </Box>
             </Toolbar>
