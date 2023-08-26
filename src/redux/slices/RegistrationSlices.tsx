@@ -7,7 +7,7 @@ interface UserData {
   last: string;
   phone: string;
   password: string;
-  login:any
+  login: any
 }
 
 interface RegistrationState {
@@ -31,6 +31,6 @@ export const RegistrationSlice = createSlice({
 export const { addUser } = RegistrationSlice.actions;
 
 export const selectRegistrationData = (state: RootState) =>
-  state.registrationlist.registeredUser;
+  state.registration.registeredUser;
 
 export default RegistrationSlice.reducer;

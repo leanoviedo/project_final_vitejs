@@ -7,11 +7,11 @@ interface UserLoginData {
 }
 
 interface UserLoginState {
-  userLogin: UserLoginData | null;
+  userLogin: UserLoginData | {}
 }
 
 const initialState: UserLoginState = {
-  userLogin: null,
+  userLogin: {}
 };
 
 export const userLoginSlice = createSlice({
