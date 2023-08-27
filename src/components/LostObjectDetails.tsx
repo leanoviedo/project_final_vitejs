@@ -34,7 +34,7 @@ const LostObjectDetails: React.FC = () => {
                             <Grid key={index} item xs={12} md={6}>
                                 <Card style={{ display: "flex", flexDirection: "column", width: "100%" }}>
                                     <Box display="flex" justifyContent="center" alignItems="center" style={{ height: "200px" }}>
-                                        <img src={lostObject.photo} alt="Lost Object" style={{ width: "200px", borderRadius: "4px" }} />
+                                        <img src={lostObject.photo} alt="objeto perdido" style={{ width: "200px", borderRadius: "4px" }} />
                                     </Box>
                                     <Box m={1} p={1}>
                                         <Typography variant="body2" color="text.secondary">
@@ -56,6 +56,7 @@ const LostObjectDetails: React.FC = () => {
                                         <Typography variant="body2" color="text.secondary">
                                             <strong>Información de Contacto:</strong>
                                         </Typography>
+                                        <Typography variant="body2" color="text.secondary"><strong>nombre:</strong> {registeredUsers[0].name.first} {registeredUsers[0].name.last} </Typography>
                                         <Typography variant="body2" color="text.secondary"><strong>Email:</strong> {contactInfo.email}</Typography>
                                         <Typography variant="body2" color="text.secondary"><strong>Teléfono:</strong> {contactInfo.phone}</Typography>
                                     </Box>
