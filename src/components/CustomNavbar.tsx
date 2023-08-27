@@ -28,8 +28,11 @@ const CustomNavbar = () => {
                     <Button color="inherit" component={Link} to="/">
                         Inicio
                     </Button>
+                    <Button color="inherit" component={Link} to="/LandingPage">
+                        reportar objeto perdido
+                    </Button>
                     <Button color="inherit" component={Link} to="/LostObjectsDetails">
-                         objetos perdidos
+                        objetos perdidos
                     </Button>
                 </Box>
             </Toolbar>

@@ -220,7 +220,7 @@ const LandingPage = () => {
       photo: lostObject.photo,
       date: lostObject.date ? lostObject.date.format("YYYY-MM-DD") : null,
       description: lostObject.description,
-      user: registeredUsers[0],
+      user: registeredUsers[0] || null,
     };
 
 

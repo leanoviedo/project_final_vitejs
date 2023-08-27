@@ -49,7 +49,7 @@ const FormLogin = () => {
     );
     if (existingLogin) {
       dispatch(setUserLogin(existingLogin));
-      navigate("/ladingPage");
+      navigate("/LandingPage");
     } else {
       setModalMessage("usuario no registratrado");
       setOpenModal(true);
