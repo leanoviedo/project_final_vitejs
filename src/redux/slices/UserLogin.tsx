@@ -2,16 +2,22 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../Store";
 
 interface UserLoginData {
+  name: any;
   email: string;
+  first: string;
+  last: string;
+  phone: string;
   password: string;
+  login: any;
+  picture: any;
 }
 
 interface UserLoginState {
-  userLogin: UserLoginData | {}
+  loggedInUser: UserLoginData | null;
 }
 
 const initialState: UserLoginState = {
-  userLogin: {}
+  loggedInUser: null,
 };
 
 export const userLoginSlice = createSlice({
@@ -19,13 +25,16 @@ export const userLoginSlice = createSlice({
   initialState,
   reducers: {
     setUserLogin: (state, action: PayloadAction<UserLoginData>) => {
-      state.userLogin = action.payload;
+      state.loggedInUser = action.payload;
+    },
+    clearUserLogin: (state) => {
+      state.loggedInUser = null;
     },
   },
 });
 
-export const { setUserLogin } = userLoginSlice.actions;
+export const { setUserLogin, clearUserLogin } = userLoginSlice.actions;
 
-export const selectUserLogin = (state: RootState) => state.userLogin;
+export const selectUserLogin = (state: RootState) => state.userLogin.loggedInUser;
 
 export default userLoginSlice.reducer;

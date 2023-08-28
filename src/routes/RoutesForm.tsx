@@ -10,7 +10,7 @@ const RoutesForm = () => {
       <Route path="/" element={<FormLogin />} />
       <Route path="/FormLogin" element={<FormLogin />} />
       <Route path="/FormRegistration" element={<FormRegistration />} />
-      <Route path="/ladingPage" element={<LandingPage />} />
+      <Route path="/LandingPage" element={<LandingPage />} />
       <Route path="/LostObjectsDetails" element={<LostObjectDetails />} />
     </Routes>
   );
