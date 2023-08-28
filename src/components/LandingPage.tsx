@@ -13,10 +13,9 @@ import {
   TextField,
   Card,
   TextareaAutosize,
-  Dialog,
-  DialogActions,
-  DialogContent,
   FormHelperText,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { Send as SendIcon } from "@mui/icons-material";
 import AirportServices from "../services/AirportServices";
@@ -79,12 +78,6 @@ const LandingPage = () => {
     fetchData();
   }, []);
   const [openModal, setOpenModal] = useState(false);
-  const [modalMessage, setModalMessage] = useState("");
-
-  const handleCloseModal = () => {
-    setOpenModal(false);
-    setModalMessage("");
-  };
 
   const handleAirportChange = (event: SelectChangeEvent<string>) => {
     const { value } = event.target;
@@ -207,7 +200,6 @@ const LandingPage = () => {
       return;
     }
     setOpenModal(true);
-    setModalMessage(" ¡Gracias por reportar tu objeto perdido...! Tu reporte ha sido enviado con éxito");
 
     resetFormFields();
     const selectedCountry = countryData.find((country: any) => country.code === lostObject.country);
@@ -360,16 +352,20 @@ const LandingPage = () => {
           </Box>
         </Card>
       </Grid>
-      <Dialog open={openModal} onClose={handleCloseModal}>
-        <DialogContent>
-          <Typography variant="h5" align="center" sx={{ marginTop: 5 }}>
-            {modalMessage}
-          </Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseModal}>Cerrar</Button>
-        </DialogActions>
-      </Dialog>
+      <Snackbar
+        open={openModal}
+        autoHideDuration={6000}
+        onClose={() => setOpenModal(false)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <Alert
+          onClose={() => setOpenModal(false)}
+          severity="success"
+          sx={{ width: "100%" }}
+        >
+          ¡Gracias por reportar tu objeto perdido...! Tu reporte ha sido enviado con éxito
+        </Alert>
+      </Snackbar>
     </Grid >
   );
 };

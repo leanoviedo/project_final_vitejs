@@ -54,7 +54,7 @@ const CustomNavbar = () => {
                         <Button color="inherit" component={Link} to="/">
                             Inicio
                         </Button>
-                        <Button color="inherit" component={Link} to="/LostObjectsDetails">
+                        <Button color="inherit" component={Link} to="/LandingPage">
                             reportar objeto
                         </Button>
                         <Button color="inherit" component={Link} to="/LostObjectsDetails">

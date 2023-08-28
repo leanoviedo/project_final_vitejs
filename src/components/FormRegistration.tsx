@@ -4,14 +4,13 @@ import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { addUser } from "../redux/slices/RegistrationSlices";
 import UserServices from "../services/UserServices";
 import {
+  Alert,
   Avatar,
   Box,
   Button,
   Card,
-  Dialog,
-  DialogActions,
-  DialogContent,
   Grid,
+  Snackbar,
   TextField,
   Typography,
 } from "@mui/material";
@@ -34,16 +33,14 @@ const FormRegistration = () => {
   });
 
   const [avatarSrc, setAvatarSrc] = useState("");
-  const [openModal, setOpenModal] = useState(false);
-  const [modalMessage, setModalMessage] = useState("");
+  const [successSnackbarOpen, setSuccessSnackbarOpen] = useState(false);
+  const [errorSnackbarOpen, setErrorSnackbarOpen] = useState(false);
+
 
   useEffect(() => {
     dispatch(UserServices());
   }, [dispatch]);
 
-  const handleCloseModal = () => {
-    setOpenModal(false);
-  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -103,15 +100,16 @@ const FormRegistration = () => {
 
       dispatch(addUser(updatedUser));
 
-      setModalMessage("Registro exitoso");
       setTimeout(function () {
         navigate("/FormLogin");
       }, 4000);
+      setSuccessSnackbarOpen(true);
+
     } else {
-      setModalMessage("No es un cliente previo");
+      setErrorSnackbarOpen(true);
+
     }
 
-    setOpenModal(true);
   };
 
   return (
@@ -204,14 +202,36 @@ const FormRegistration = () => {
               Regístrate
             </Button>
           </Box>
-          <Dialog open={openModal} onClose={handleCloseModal}>
-            <DialogContent>
-              <Typography>{modalMessage}</Typography>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleCloseModal}>Cerrar</Button>
-            </DialogActions>
-          </Dialog>
+          <Snackbar
+            open={successSnackbarOpen}
+            autoHideDuration={6000}
+            onClose={() => setSuccessSnackbarOpen(false)}
+            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+          >
+            <Alert
+              onClose={() => setSuccessSnackbarOpen(false)}
+              severity="success"
+              sx={{ width: "100%" }}
+            >
+              ¡Usuario registrado con exito..!
+            </Alert>
+
+          </Snackbar>
+          <Snackbar
+            open={errorSnackbarOpen}
+            autoHideDuration={6000}
+            onClose={() => setErrorSnackbarOpen(false)}
+            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+          >
+            <Alert
+              onClose={() => setErrorSnackbarOpen(false)}
+              severity="error"
+              sx={{ width: "100%" }}
+            >
+              Error sus datos no figuran en ningun Aeropuerto...!
+            </Alert>
+
+          </Snackbar>
         </Grid>
       </Card>
       <Button
@@ -219,7 +239,7 @@ const FormRegistration = () => {
         variant="contained"
         color="primary"
         startIcon={<ArrowBackIcon fontSize="large" />}
-        sx={{ position: "absolute", bottom: "16px", left: "16px" }} // Adjust positioning
+        sx={{ position: "absolute", bottom: "16px", left: "16px" }}
       >
         Atrás
       </Button>
