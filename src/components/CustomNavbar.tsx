@@ -42,7 +42,7 @@ const CustomNavbar = () => {
                         color="inherit"
                         aria-label="menu"
                         sx={{ mr: 1 }}
-                        href="/"
+                        
                     >
                         <AirplanemodeActiveOutlinedIcon sx={{ fontSize: 40 }} />
                     </IconButton>
@@ -51,9 +51,6 @@ const CustomNavbar = () => {
                     </Typography>
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
 
-                        <Button color="inherit" component={Link} to="/">
-                            Inicio
-                        </Button>
                         <Button color="inherit" component={Link} to="/LandingPage">
                             reportar objeto
                         </Button>
