@@ -42,7 +42,7 @@ const CustomNavbar = () => {
                         color="inherit"
                         aria-label="menu"
                         sx={{ mr: 1 }}
-                        
+
                     >
                         <AirplanemodeActiveOutlinedIcon sx={{ fontSize: 40 }} />
                     </IconButton>
