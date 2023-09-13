@@ -19,6 +19,7 @@ const LostObjectDetails: React.FC = () => {
     }));
     const [searchText, setSearchText] = useState<string>("");
     const [filteredObjects, setFilteredObjects] = useState(lostObjects);
+    
 
     const handleSearch = () => {
         const filtered = lostObjects.filter((lostObject) => {
@@ -46,22 +47,20 @@ const LostObjectDetails: React.FC = () => {
                     onChange={(e) => setSearchText(e.target.value)}
                     sx={{ marginBottom: 2 }}
                 />
-                <Grid justifyContent={"center"}>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={handleSearch}
-                        sx={{ marginBottom: 2 }}
-                    >
-                        Buscar
-                    </Button>
+                <Grid>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleSearch}
+                    sx={{ marginBottom: 2 }}
+                >
+                    Buscar
+                </Button>
                 </Grid>
                 {filteredObjects.length === 0 ? (
-
                     <Typography variant="h6" color="text.primary" sx={{ mt: 4 }}>
                         Elemento no encontrado.
                     </Typography>
-
                 ) : (
                     filteredObjects.map((filteredLostObject, index) => {
                         const contactInfo = userContactInfo[index];
