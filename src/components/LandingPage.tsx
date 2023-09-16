@@ -12,10 +12,10 @@ import {
   OutlinedInput,
   TextField,
   Card,
-  TextareaAutosize,
   FormHelperText,
   Snackbar,
   Alert,
+  TextareaAutosize,
 } from "@mui/material";
 import { Send as SendIcon } from "@mui/icons-material";
 import AirportServices from "../services/AirportServices";
@@ -25,7 +25,34 @@ import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import LostObject, { setLostObjectData } from "../redux/slices/lostObjectSlice"
 import CustomNavbar from "./CustomNavbar";
 import { selectRegistrationData } from "../redux/slices/RegistrationSlices";
+import { styled } from '@mui/system';
+import { blue } from "@mui/material/colors";
 
+const StyledTextarea = styled(TextareaAutosize)(
+  ({ theme }) => `
+    width: 700px;
+    font-family: IBM Plex Sans, sans-serif;
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1.5;
+    padding: 12px;
+  
+  
+
+    &:hover {
+      border-color: ${blue[900]};
+    }
+
+    &:focus {border-color: ${blue[800]};
+      box-shadow: 0 0 0 1px ${theme.palette.mode === 'dark' ? blue[500] : blue[200]};
+    
+
+    // firefox
+    &:focus-visible {
+      outline: 0;
+    }
+  `,
+);
 interface LostObject {
   country: string;
   city: string;
@@ -219,6 +246,7 @@ const LandingPage = () => {
     dispatch(setLostObjectData(selectData));
   };
 
+
   return (
     <Grid container alignContent="center"
       justifyContent="center"
@@ -309,34 +337,29 @@ const LandingPage = () => {
               <FormHelperText sx={errorStyles}>{dateError}</FormHelperText>
             </Grid>
             <Grid item marginTop={2}>
-              <FormControl fullWidth >
-                <TextareaAutosize
-                  id="description"
-                  name="description"
-                  value={lostObject.description}
-                  onChange={handleDescriptionChange}
-                  minRows={3}
-                  aria-label="Demo input"
-                  placeholder="Escriba la Descripción"
 
-                />
-                <FormHelperText sx={errorStyles}>{descriptionError}</FormHelperText>
-              </FormControl>
+              <StyledTextarea
+
+                aria-label="minimum height"
+
+                id="description"
+                name="description"
+                value={lostObject.description}
+                onChange={handleDescriptionChange}
+                placeholder="Escriba la Descripción"
+              />
+              <FormHelperText sx={errorStyles}>{descriptionError}</FormHelperText>
             </Grid>
             <Grid item marginTop={2}>
-              <FormControl fullWidth>
-                <TextField
-
-                  fullWidth
-                  id="photo"
-                  label="Foto"
-                  name="photo"
-                  value={lostObject.photo}
-                  onChange={handlePhotoChange}
-
-                />
-                <FormHelperText sx={errorStyles}>{photoError}</FormHelperText>
-              </FormControl>
+              <TextField
+                fullWidth
+                id="photo"
+                label="Foto"
+                name="photo"
+                value={lostObject.photo}
+                onChange={handlePhotoChange}
+              />
+              <FormHelperText sx={errorStyles}>{photoError}</FormHelperText>
             </Grid>
             <Grid item >
               <Button
@@ -344,7 +367,7 @@ const LandingPage = () => {
                 variant="contained"
                 color="primary"
                 startIcon={<SendIcon />}
-                sx={{ mt: 2, ml: 15 }}
+                sx={{ mt: 2, ml: 30 }}
               >
                 Enviar reporte
               </Button>
