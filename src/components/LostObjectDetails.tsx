@@ -12,8 +12,7 @@ import { selectRegistrationData } from "../redux/slices/RegistrationSlices";
 
 const LostObjectDetails: React.FC = () => {
     const lostObjects = useAppSelector(selectLostObjects);
-    // const registeredUsers = useAppSelector(selectRegistrationData);
-    const registeredUsers = useAppSelector(selectRegistrationData) || [];
+    const registeredUsers = useAppSelector(selectRegistrationData);
     const userContactInfo = registeredUsers.map((user) => ({
         email: user.email,
         phone: user.phone,
@@ -30,26 +29,23 @@ const LostObjectDetails: React.FC = () => {
     };
 
     const handleSearch = () => {
-        const filtered = lostObjects.filter((lostObject) => {
-            const descriptionMatch = searchText ? lostObject.description.toLowerCase().includes(searchText.toLowerCase()) : true;
-            const countryMatch = selectedCountry ? lostObject.country.name === selectedCountry : true;
-            return descriptionMatch && countryMatch;
-        });
+        if (selectedCountry || searchText.length >= 3) {
+            const filtered = lostObjects.filter((lostObject) => {
+                const descriptionMatch = searchText ? lostObject.description.toLowerCase().includes(searchText.toLowerCase()) : true;
+                const countryMatch = selectedCountry ? lostObject.country.name === selectedCountry : true;
+                return descriptionMatch && countryMatch;
+            });
 
-        setFilteredObjects(filtered);
-        setSearchText("");
-        setSelectedCountry(null);
+            setFilteredObjects(filtered);
+            setSearchText("");
 
-        if (filtered.length === 0) {
-            if (searchText && !selectedCountry) {
-                setErrorMessage(validationMessages.noCountryMatch);
-            } else if (!selectedCountry) {
+            if (filtered.length === 0) {
                 setErrorMessage(validationMessages.noCountryMatch);
             } else {
-                setErrorMessage("No se encontraron resultados.");
+                setErrorMessage(null);
             }
         } else {
-            setErrorMessage(null);
+            setErrorMessage("Por favor, ingrese al menos 3 caracteres para buscar un país.");
         }
     };
 
@@ -57,10 +53,21 @@ const LostObjectDetails: React.FC = () => {
         if (newInputValue.length >= 3) {
             try {
                 const countriesData = await AirportServices.fetchCountries();
-                setCountries(countriesData.map((country: any) => country.name));
+                const filteredCountries = countriesData
+                    .map((country: any) => country.name)
+                    .filter((countryName: string) =>
+                        countryName.toLowerCase().includes(newInputValue.toLowerCase())
+                    );
+
+                setCountries(filteredCountries);
             } catch (error) {
                 console.error(error);
             }
+        } else if (newInputValue.length === 0) {
+
+        } else {
+            setCountries([]);
+            setSelectedCountry(null);
         }
     };
 
