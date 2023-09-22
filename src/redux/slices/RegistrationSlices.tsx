@@ -1,20 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../Store";
-
-interface UserData {
-  name: any;
-  email: string;
-  first: string;
-  last: string;
-  phone: string;
-  password: string;
-  login: any
-  picture: any
-}
-
-interface RegistrationState {
-  registeredUser: UserData[];
-}
+import { UserData, RegistrationState } from "../../model/interface";
 
 const initialState: RegistrationState = {
   registeredUser: [],

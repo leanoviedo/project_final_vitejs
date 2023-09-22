@@ -65,7 +65,7 @@ const FormRegistration = () => {
     setAvatarSrc("");
 
     if (value) {
-      const existingUser = usersAvailable.find((user) => user.email === value);
+      const existingUser = usersAvailable.find((user: { email: string; }) => user.email === value);
 
       if (existingUser) {
         setUserData((prevUserData) => ({
@@ -86,7 +86,7 @@ const FormRegistration = () => {
     e.preventDefault();
 
     const existingUser = usersAvailable.find(
-      (user) => user.email === userData.email
+      (user: { email: string; }) => user.email === userData.email
     );
 
     if (existingUser) {
@@ -102,7 +102,7 @@ const FormRegistration = () => {
 
       setTimeout(function () {
         navigate("/FormLogin");
-      }, 4000);
+      }, 1000);
       setSuccessSnackbarOpen(true);
 
     } else {

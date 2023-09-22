@@ -1,23 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../Store";
-
-interface Location {
-    name: string;
-    code: string;
-}
-
-interface LostObjectData {
-    country: Location;
-    city: Location;
-    airport: Location;
-    date: string | null;
-    description: string;
-    photo?: string;
-}
-
-interface LostObjectState {
-    lostObjects: LostObjectData[];
-}
+import { LostObjectData, LostObjectState } from "../../model/interface";
 
 const initialState: LostObjectState = {
     lostObjects: [],
@@ -30,13 +13,11 @@ export const lostObjectSlice = createSlice({
         setLostObjectData: (state, action: PayloadAction<LostObjectData>) => {
             state.lostObjects = [...state.lostObjects, action.payload];
         },
-        clearLostObjects: (state) => {
-            state.lostObjects = [];
-        },
+
     },
 });
 
-export const { setLostObjectData, clearLostObjects } = lostObjectSlice.actions;
+export const { setLostObjectData } = lostObjectSlice.actions;
 
 export const selectLostObjects = (state: RootState) =>
     state.lostObject.lostObjects;
