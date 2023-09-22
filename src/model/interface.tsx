@@ -30,7 +30,7 @@ interface LostObjectData {
     country: Location;
     city: Location;
     airport: Location;
-    date: Dayjs | null;
+    date: string | null; 
     description: string;
     photo?: string;
     user: {

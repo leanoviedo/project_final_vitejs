@@ -230,13 +230,13 @@ const LandingPage = () => {
       city: selectedCity,
       airport: selectedAirport || null,
       photo: lostObject.photo || "",
-      date: lostObject.date,
+      date: lostObject.date ? lostObject.date.format() : null, 
       description: lostObject.description,
       user: loggedInUser
         ? {
           name: {
-            first: loggedInUser.first,
-            last: loggedInUser.last,
+            first: loggedInUser.name.first,
+            last: loggedInUser.name.last,
           },
           picture: loggedInUser.picture,
           email: loggedInUser.email,
@@ -246,6 +246,7 @@ const LandingPage = () => {
         }
         : null!,
     };
+    console.log(selectData)
 
     dispatch(setLostObjectData(selectData));
   };
