@@ -8,16 +8,9 @@ import CustomNavbar from "./CustomNavbar";
 import dayjs from "dayjs";
 import { useAppSelector } from "../redux/hooks";
 import { selectLostObjects } from "../redux/slices/lostObjectSlice";
-import { selectRegistrationData } from "../redux/slices/RegistrationSlices";
 
 const LostObjectDetails: React.FC = () => {
     const lostObjects = useAppSelector(selectLostObjects);
-    const registeredUsers = useAppSelector(selectRegistrationData);
-    const userContactInfo = registeredUsers.map((user) => ({
-        email: user.email,
-        phone: user.phone,
-    }));
-
     const [searchText, setSearchText] = useState<string>("");
     const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
     const [countries, setCountries] = useState<string[]>([]);
@@ -121,15 +114,15 @@ const LostObjectDetails: React.FC = () => {
                             </Typography>
                         )}
                     </Box>
-                    {filteredObjects.length === 0 && !errorMessage ? (
+
+                    {filteredObjects.length === 0 ? (
                         <Typography variant="h6" color="text.primary" sx={{ mt: 4 }}>
                             No se encontraron reportes
                         </Typography>
                     ) : (
-                        filteredObjects.map((filteredLostObject, index) => {
-                            const contactInfo = userContactInfo[index];
-                            return (
-                                <Box key={index} mt={2}>
+                        <div>
+                            {filteredObjects?.map((lostObject, index) => (
+                                < Box key={index} mt={2} >
                                     <Card
                                         style={{
                                             display: "flex",
@@ -144,7 +137,7 @@ const LostObjectDetails: React.FC = () => {
                                             style={{ height: "200px" }}
                                         >
                                             <img
-                                                src={filteredLostObject.photo}
+                                                src={lostObject.photo}
                                                 alt="objeto perdido"
                                                 style={{
                                                     width: "200px",
@@ -155,49 +148,55 @@ const LostObjectDetails: React.FC = () => {
                                         <Box m={1} p={1}>
                                             <Typography variant="body2" color="text.secondary">
                                                 <strong>Descripción:</strong>{" "}
-                                                {filteredLostObject.description}
+                                                {lostObject.description}
                                             </Typography>
                                             <Typography variant="body2" color="text.secondary">
                                                 <strong>Aeropuerto:</strong>{" "}
-                                                {filteredLostObject.airport.name}
+                                                {lostObject.airport.name}
                                             </Typography>
                                             <Typography variant="body2" color="text.secondary">
                                                 <strong>País:</strong>{" "}
-                                                {filteredLostObject.country.name}
+                                                {lostObject.country.name}
                                             </Typography>
                                             <Typography variant="body2" color="text.secondary">
                                                 <strong>Ciudad:</strong>{" "}
-                                                {filteredLostObject.city.name}
+                                                {lostObject.city.name}
                                             </Typography>
                                             <Typography variant="body2" color="text.secondary">
                                                 <strong>Fecha:</strong>{" "}
-                                                {filteredLostObject.date
-                                                    ? dayjs(filteredLostObject.date).format("DD-MM-YYYY")
+                                                {lostObject.date
+                                                    ? dayjs(lostObject.date).format("DD-MM-YYYY")
                                                     : "N/A"}
                                             </Typography>
+
                                             <Typography variant="body2" color="text.secondary">
                                                 <strong>Información de Contacto:</strong>
                                             </Typography>
                                             <Typography variant="body2" color="text.secondary">
                                                 <strong>Nombre:</strong>{" "}
-                                                {registeredUsers[index].name.first}{" "}
-                                                {registeredUsers[index].name.last}
+                                                {lostObject.user.name.first} {lostObject.user.name.last}
                                             </Typography>
                                             <Typography variant="body2" color="text.secondary">
-                                                <strong>Email:</strong> {contactInfo.email}
+                                                <strong>Email:</strong> {lostObject.user.email}
                                             </Typography>
                                             <Typography variant="body2" color="text.secondary">
-                                                <strong>Teléfono:</strong> {contactInfo.phone}
+                                                <strong>Teléfono:</strong> {lostObject.user.phone}
                                             </Typography>
                                         </Box>
                                     </Card>
                                 </Box>
-                            );
-                        })
+
+                            ))}
+
+                        </div>
                     )}
+
+
+
+
                 </Grid>
             </Grid>
-        </div>
+        </div >
     );
 };
 
