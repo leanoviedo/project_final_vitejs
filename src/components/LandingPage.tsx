@@ -22,11 +22,12 @@ import AirportServices from "../services/AirportServices";
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs, { Dayjs } from "dayjs";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import LostObject, { setLostObjectData } from "../redux/slices/lostObjectSlice"
 import CustomNavbar from "./CustomNavbar";
-import { selectRegistrationData } from "../redux/slices/RegistrationSlices";
 import { styled } from '@mui/system';
 import { blue } from "@mui/material/colors";
+import { LostObject } from "../model/interface"
+import { setLostObjectData } from "../redux/slices/lostObjectSlice";
+import { selectUserLogin } from "../redux/slices/UserLogin";
 
 const StyledTextarea = styled(TextareaAutosize)(
   ({ theme }) => `
@@ -53,15 +54,7 @@ const StyledTextarea = styled(TextareaAutosize)(
     }
   `,
 );
-interface LostObject {
-  country: string;
-  city: string;
-  airport: string;
-  description: string,
-  date: Dayjs | null;
-  photo?: string;
 
-}
 
 const errorStyles = {
   color: "red",
@@ -90,7 +83,8 @@ const LandingPage = () => {
   const [photoError, setPhotoError] = useState("");
 
   const dispatch = useAppDispatch()
-  const registeredUsers = useAppSelector(selectRegistrationData);
+  const loggedInUser = useAppSelector(selectUserLogin);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -159,13 +153,13 @@ const LandingPage = () => {
       description: newValue,
     }));
   };
-
   const handleDateChange = (date: Dayjs | null) => {
     setLostObject((prev) => ({
       ...prev,
-      date: date,
+      date: date || null,
     }));
   };
+
 
   const handlePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setLostObject({ ...lostObject, [event.target.name]: event.target.value });
@@ -187,7 +181,6 @@ const LandingPage = () => {
     setDescriptionError("");
     setPhotoError("");
   };
-
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     setCountryError("");
@@ -236,15 +229,27 @@ const LandingPage = () => {
       country: selectedCountry,
       city: selectedCity,
       airport: selectedAirport || null,
-      photo: lostObject.photo,
-      date: lostObject.date ? lostObject.date.format("YYYY-MM-DD") : null,
+      photo: lostObject.photo || "",
+      date: lostObject.date,
       description: lostObject.description,
-      user: registeredUsers[0] || null,
+      user: loggedInUser
+        ? {
+          name: {
+            first: loggedInUser.first,
+            last: loggedInUser.last,
+          },
+          picture: loggedInUser.picture,
+          email: loggedInUser.email,
+          phone: loggedInUser.phone,
+          password: loggedInUser.password,
+          login: loggedInUser.login,
+        }
+        : null!,
     };
-
 
     dispatch(setLostObjectData(selectData));
   };
+
 
 
   return (
@@ -330,7 +335,7 @@ const LandingPage = () => {
                 onChange={handleDateChange}
                 minDate={startDate}
                 maxDate={endDate}
-                views={['day', 'month', 'year',]}
+                views={['year', 'month', 'day']}
                 format="DD-MM-YYYY"
                 sx={{ width: '100%' }}
               />
