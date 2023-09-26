@@ -1,20 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../Store";
-
-interface UserLoginData {
-  name: any;
-  email: string;
-  first: string;
-  last: string;
-  phone: string;
-  password: string;
-  login: any;
-  picture: any;
-}
-
-interface UserLoginState {
-  loggedInUser: UserLoginData | null;
-}
+import { UserData, UserLoginState } from "../../model/interface";
 
 const initialState: UserLoginState = {
   loggedInUser: null,
@@ -24,7 +10,7 @@ export const userLoginSlice = createSlice({
   name: "userLogin",
   initialState,
   reducers: {
-    setUserLogin: (state, action: PayloadAction<UserLoginData>) => {
+    setUserLogin: (state, action: PayloadAction<UserData>) => {
       state.loggedInUser = action.payload;
     },
     clearUserLogin: (state) => {

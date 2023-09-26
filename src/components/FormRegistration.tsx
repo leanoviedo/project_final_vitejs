@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { addUser } from "../redux/slices/RegistrationSlices";
 import UserServices from "../services/UserServices";
@@ -65,7 +65,7 @@ const FormRegistration = () => {
     setAvatarSrc("");
 
     if (value) {
-      const existingUser = usersAvailable.find((user) => user.email === value);
+      const existingUser = usersAvailable.find((user: { email: string; }) => user.email === value);
 
       if (existingUser) {
         setUserData((prevUserData) => ({
@@ -86,7 +86,7 @@ const FormRegistration = () => {
     e.preventDefault();
 
     const existingUser = usersAvailable.find(
-      (user) => user.email === userData.email
+      (user: { email: string; }) => user.email === userData.email
     );
 
     if (existingUser) {
@@ -102,7 +102,7 @@ const FormRegistration = () => {
 
       setTimeout(function () {
         navigate("/FormLogin");
-      }, 4000);
+      }, 1000);
       setSuccessSnackbarOpen(true);
 
     } else {
@@ -235,13 +235,13 @@ const FormRegistration = () => {
         </Grid>
       </Card>
       <Button
-        href="/"
         variant="contained"
-        color="primary"
         startIcon={<ArrowBackIcon fontSize="large" />}
         sx={{ position: "absolute", bottom: "16px", left: "16px" }}
       >
-        Atrás
+        <Link to="/" style={{ textDecoration: "none", color: "white" }}>
+          Atrás
+        </Link>
       </Button>
     </Grid>
   );

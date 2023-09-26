@@ -12,29 +12,49 @@ import {
   OutlinedInput,
   TextField,
   Card,
-  TextareaAutosize,
   FormHelperText,
   Snackbar,
   Alert,
+  TextareaAutosize,
 } from "@mui/material";
 import { Send as SendIcon } from "@mui/icons-material";
 import AirportServices from "../services/AirportServices";
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs, { Dayjs } from "dayjs";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import LostObject, { setLostObjectData } from "../redux/slices/lostObjectSlice"
 import CustomNavbar from "./CustomNavbar";
-import { selectRegistrationData } from "../redux/slices/RegistrationSlices";
+import { styled } from '@mui/system';
+import { blue } from "@mui/material/colors";
+import { LostObject } from "../model/interface"
+import { setLostObjectData } from "../redux/slices/lostObjectSlice";
+import { selectUserLogin } from "../redux/slices/UserLogin";
 
-interface LostObject {
-  country: string;
-  city: string;
-  airport: string;
-  description: string,
-  date: Dayjs | null;
-  photo?: string;
+const StyledTextarea = styled(TextareaAutosize)(
+  ({ theme }) => `
+    width: 700px;
+    font-family: IBM Plex Sans, sans-serif;
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1.5;
+    padding: 12px;
+  
+  
 
-}
+    &:hover {
+      border-color: ${blue[900]};
+    }
+
+    &:focus {border-color: ${blue[800]};
+      box-shadow: 0 0 0 1px ${theme.palette.mode === 'dark' ? blue[500] : blue[200]};
+    
+
+    // firefox
+    &:focus-visible {
+      outline: 0;
+    }
+  `,
+);
+
 
 const errorStyles = {
   color: "red",
@@ -63,7 +83,8 @@ const LandingPage = () => {
   const [photoError, setPhotoError] = useState("");
 
   const dispatch = useAppDispatch()
-  const registeredUsers = useAppSelector(selectRegistrationData);
+  const loggedInUser = useAppSelector(selectUserLogin);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -132,13 +153,13 @@ const LandingPage = () => {
       description: newValue,
     }));
   };
-
   const handleDateChange = (date: Dayjs | null) => {
     setLostObject((prev) => ({
       ...prev,
-      date: date,
+      date: date || null,
     }));
   };
+
 
   const handlePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setLostObject({ ...lostObject, [event.target.name]: event.target.value });
@@ -160,7 +181,6 @@ const LandingPage = () => {
     setDescriptionError("");
     setPhotoError("");
   };
-
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     setCountryError("");
@@ -209,15 +229,29 @@ const LandingPage = () => {
       country: selectedCountry,
       city: selectedCity,
       airport: selectedAirport || null,
-      photo: lostObject.photo,
-      date: lostObject.date ? lostObject.date.format("YYYY-MM-DD") : null,
+      photo: lostObject.photo || "",
+      date: lostObject.date ? lostObject.date.format() : null, 
       description: lostObject.description,
-      user: registeredUsers[0] || null,
+      user: loggedInUser
+        ? {
+          name: {
+            first: loggedInUser.name.first,
+            last: loggedInUser.name.last,
+          },
+          picture: loggedInUser.picture,
+          email: loggedInUser.email,
+          phone: loggedInUser.phone,
+          password: loggedInUser.password,
+          login: loggedInUser.login,
+        }
+        : null!,
     };
-
+    console.log(selectData)
 
     dispatch(setLostObjectData(selectData));
   };
+
+
 
   return (
     <Grid container alignContent="center"
@@ -302,41 +336,36 @@ const LandingPage = () => {
                 onChange={handleDateChange}
                 minDate={startDate}
                 maxDate={endDate}
-                views={['day', 'month', 'year',]}
+                views={['year', 'month', 'day']}
                 format="DD-MM-YYYY"
                 sx={{ width: '100%' }}
               />
               <FormHelperText sx={errorStyles}>{dateError}</FormHelperText>
             </Grid>
             <Grid item marginTop={2}>
-              <FormControl fullWidth >
-                <TextareaAutosize
-                  id="description"
-                  name="description"
-                  value={lostObject.description}
-                  onChange={handleDescriptionChange}
-                  minRows={3}
-                  aria-label="Demo input"
-                  placeholder="Escriba la Descripción"
 
-                />
-                <FormHelperText sx={errorStyles}>{descriptionError}</FormHelperText>
-              </FormControl>
+              <StyledTextarea
+
+                aria-label="minimum height"
+
+                id="description"
+                name="description"
+                value={lostObject.description}
+                onChange={handleDescriptionChange}
+                placeholder="Escriba la Descripción"
+              />
+              <FormHelperText sx={errorStyles}>{descriptionError}</FormHelperText>
             </Grid>
             <Grid item marginTop={2}>
-              <FormControl fullWidth>
-                <TextField
-
-                  fullWidth
-                  id="photo"
-                  label="Foto"
-                  name="photo"
-                  value={lostObject.photo}
-                  onChange={handlePhotoChange}
-
-                />
-                <FormHelperText sx={errorStyles}>{photoError}</FormHelperText>
-              </FormControl>
+              <TextField
+                fullWidth
+                id="photo"
+                label="Foto"
+                name="photo"
+                value={lostObject.photo}
+                onChange={handlePhotoChange}
+              />
+              <FormHelperText sx={errorStyles}>{photoError}</FormHelperText>
             </Grid>
             <Grid item >
               <Button
@@ -344,7 +373,7 @@ const LandingPage = () => {
                 variant="contained"
                 color="primary"
                 startIcon={<SendIcon />}
-                sx={{ mt: 2, ml: 15 }}
+                sx={{ mt: 2, ml: 30 }}
               >
                 Enviar reporte
               </Button>

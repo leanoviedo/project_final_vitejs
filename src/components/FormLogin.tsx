@@ -115,7 +115,7 @@ const FormLogin = () => {
             <Button type="submit" fullWidth variant="contained">
               Iniciar sesión
             </Button>
-            <Link to="/FormRegistration" style={{ textDecoration: "none" }}>
+            <Link to="/FormRegistration" style={{ textDecoration: "none", color: "blue" }}>
               <Typography mt={2} ml={5}>
                 ¿No tienes una cuenta? Regístrate
               </Typography>
