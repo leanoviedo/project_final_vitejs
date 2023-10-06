@@ -230,7 +230,7 @@ const LandingPage = () => {
       city: selectedCity,
       airport: selectedAirport || null,
       photo: lostObject.photo || "",
-      date: lostObject.date ? lostObject.date.format() : null, 
+      date: lostObject.date ? lostObject.date.format() : null,
       description: lostObject.description,
       user: loggedInUser
         ? {
@@ -241,7 +241,18 @@ const LandingPage = () => {
           picture: loggedInUser.picture,
           email: loggedInUser.email,
           phone: loggedInUser.phone,
+          cell: loggedInUser.cell,
           password: loggedInUser.password,
+          location: {
+            city: loggedInUser.location.city,
+            country: loggedInUser.location.country,
+            state: loggedInUser.location.state,
+            postcode: loggedInUser.location.postcode,
+            coordinates: {
+              latitude: loggedInUser.location.coordinates.latitude,
+              longitude: loggedInUser.location.coordinates.longitude,
+            },
+          },
           login: loggedInUser.login,
         }
         : null!,

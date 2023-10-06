@@ -1,48 +1,62 @@
 import React, { useState } from "react";
-import Card from "@mui/material/Card";
-import Typography from "@mui/material/Typography";
-import TextField from "@mui/material/TextField";
-import { AppBar, Autocomplete, Box, Button, Grid } from "@mui/material";
+import {
+    AppBar,
+    Autocomplete,
+    Box,
+    Button,
+    Grid,
+    Card,
+    Typography,
+    TextField,
+    CardActionArea,
+} from "@mui/material";
 import AirportServices from "../services/AirportServices";
 import CustomNavbar from "./CustomNavbar";
 import dayjs from "dayjs";
 import { useAppSelector } from "../redux/hooks";
 import { selectLostObjects } from "../redux/slices/lostObjectSlice";
-
+import { Link } from "react-router-dom"
 const LostObjectDetails: React.FC = () => {
     const lostObjects = useAppSelector(selectLostObjects);
     const [searchText, setSearchText] = useState<string>("");
     const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
     const [countries, setCountries] = useState<string[]>([]);
     const [filteredObjects, setFilteredObjects] = useState(lostObjects);
-    const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
+    const [errorMessage, setErrorMessage] = useState<string | null>(null)
     const validationMessages = {
-        noCountryMatch: "No se encontraron resultados para el país o descripción seleccionado.",
-    };
-
+        noCountryMatch:
+            "No se encontraron resultados para el país o descripción seleccionado.",
+    }
     const handleSearch = () => {
         if (selectedCountry || searchText.length >= 3) {
             const filtered = lostObjects.filter((lostObject) => {
-                const descriptionMatch = searchText ? lostObject.description.toLowerCase().includes(searchText.toLowerCase()) : true;
-                const countryMatch = selectedCountry ? lostObject.country.name === selectedCountry : true;
+                const descriptionMatch = searchText
+                    ? lostObject.description
+                        .toLowerCase()
+                        .includes(searchText.toLowerCase())
+                    : true;
+                const countryMatch = selectedCountry
+                    ? lostObject.country.name === selectedCountry
+                    : true;
                 return descriptionMatch && countryMatch;
-            });
-
+            })
             setFilteredObjects(filtered);
-            setSearchText("");
-
+            setSearchText("")
             if (filtered.length === 0) {
                 setErrorMessage(validationMessages.noCountryMatch);
             } else {
                 setErrorMessage(null);
             }
         } else {
-            setErrorMessage("Por favor, ingrese al menos 3 caracteres para buscar un país.");
+            setErrorMessage(
+                "Por favor, ingrese al menos 3 caracteres para buscar un país."
+            );
         }
-    };
-
-    const handleCountryInputChange = async (_event: any, newInputValue: string) => {
+    }
+    const handleCountryInputChange = async (
+        _event: any,
+        newInputValue: string
+    ) => {
         if (newInputValue.length >= 3) {
             try {
                 const countriesData = await AirportServices.fetchCountries();
@@ -50,20 +64,17 @@ const LostObjectDetails: React.FC = () => {
                     .map((country: any) => country.name)
                     .filter((countryName: string) =>
                         countryName.toLowerCase().includes(newInputValue.toLowerCase())
-                    );
-
+                    )
                 setCountries(filteredCountries);
             } catch (error) {
                 console.error(error);
             }
         } else if (newInputValue.length === 0) {
-
         } else {
             setCountries([]);
             setSelectedCountry(null);
         }
-    };
-
+    }
     return (
         <div>
             <CustomNavbar />
@@ -102,8 +113,7 @@ const LostObjectDetails: React.FC = () => {
                             onClick={handleSearch}
                             sx={{
                                 marginBottom: 2,
-                                marginTop: 1,
-                                marginLeft: 30,
+                                marginTop: 1, marginLeft: 30,
                             }}
                         >
                             Buscar
@@ -114,7 +124,6 @@ const LostObjectDetails: React.FC = () => {
                             </Typography>
                         )}
                     </Box>
-
                     {filteredObjects.length === 0 ? (
                         <Typography variant="h6" color="text.primary" sx={{ mt: 4 }}>
                             No se encontraron reportes
@@ -122,7 +131,7 @@ const LostObjectDetails: React.FC = () => {
                     ) : (
                         <div>
                             {filteredObjects?.map((lostObject, index) => (
-                                < Box key={index} mt={2} >
+                                <Box key={index} mt={2}>
                                     <Card
                                         style={{
                                             display: "flex",
@@ -130,74 +139,71 @@ const LostObjectDetails: React.FC = () => {
                                             width: "100%",
                                         }}
                                     >
-                                        <Box
-                                            display="flex"
-                                            justifyContent="center"
-                                            alignItems="center"
-                                            style={{ height: "200px" }}
-                                        >
-                                            <img
-                                                src={lostObject.photo}
-                                                alt="objeto perdido"
-                                                style={{
-                                                    width: "200px",
-                                                    borderRadius: "4px",
-                                                }}
-                                            />
-                                        </Box>
-                                        <Box m={1} p={1}>
-                                            <Typography variant="body2" color="text.secondary">
-                                                <strong>Descripción:</strong>{" "}
-                                                {lostObject.description}
-                                            </Typography>
-                                            <Typography variant="body2" color="text.secondary">
-                                                <strong>Aeropuerto:</strong>{" "}
-                                                {lostObject.airport.name}
-                                            </Typography>
-                                            <Typography variant="body2" color="text.secondary">
-                                                <strong>País:</strong>{" "}
-                                                {lostObject.country.name}
-                                            </Typography>
-                                            <Typography variant="body2" color="text.secondary">
-                                                <strong>Ciudad:</strong>{" "}
-                                                {lostObject.city.name}
-                                            </Typography>
-                                            <Typography variant="body2" color="text.secondary">
-                                                <strong>Fecha:</strong>{" "}
-                                                {lostObject.date
-                                                    ? dayjs(lostObject.date).format("DD-MM-YYYY")
-                                                    : "N/A"}
-                                            </Typography>
+                                        <CardActionArea>
+                                            <Link to="/DetailsReports" state={{ LostObjectData: lostObject }}>
 
-                                            <Typography variant="body2" color="text.secondary">
-                                                <strong>Información de Contacto:</strong>
-                                            </Typography>
-                                            <Typography variant="body2" color="text.secondary">
-                                                <strong>Nombre:</strong>{" "}
-                                                {lostObject.user.name.first} {lostObject.user.name.last}
-                                            </Typography>
-                                            <Typography variant="body2" color="text.secondary">
-                                                <strong>Email:</strong> {lostObject.user.email}
-                                            </Typography>
-                                            <Typography variant="body2" color="text.secondary">
-                                                <strong>Teléfono:</strong> {lostObject.user.phone}
-                                            </Typography>
-                                        </Box>
+
+                                                <Box
+                                                    display="flex"
+                                                    justifyContent="center"
+                                                    alignItems="center"
+                                                    style={{ height: "200px" }}
+                                                >
+                                                    <img
+                                                        src={lostObject.photo}
+                                                        alt="objeto perdido"
+                                                        style={{
+                                                            width: "200px",
+                                                            borderRadius: "4px",
+                                                        }}
+                                                    />
+                                                </Box>
+                                                <Box m={1} p={1}>
+                                                    <Typography variant="body2" color="text.secondary">
+                                                        <strong>Descripción:</strong>{" "}
+                                                        {lostObject.description}
+                                                    </Typography>
+                                                    <Typography variant="body2" color="text.secondary">
+                                                        <strong>Aeropuerto:</strong>{" "}
+                                                        {lostObject.airport.name}
+                                                    </Typography>
+                                                    <Typography variant="body2" color="text.secondary">
+                                                        <strong>País:</strong> {lostObject.country.name}
+                                                    </Typography>
+                                                    <Typography variant="body2" color="text.secondary">
+                                                        <strong>Ciudad:</strong> {lostObject.city.name}
+                                                    </Typography>
+                                                    <Typography variant="body2" color="text.secondary">
+                                                        <strong>Fecha:</strong>{" "}
+                                                        {lostObject.date
+                                                            ? dayjs(lostObject.date).format("DD-MM-YYYY")
+                                                            : "N/A"}
+                                                    </Typography>
+                                                    <Typography variant="body2" color="text.secondary">
+                                                        <strong>Información de Contacto:</strong>
+                                                    </Typography>
+                                                    <Typography variant="body2" color="text.secondary">
+                                                        <strong>Nombre:</strong>{" "}
+                                                        {lostObject.user.name.first}{" "}
+                                                        {lostObject.user.name.last}
+                                                    </Typography>
+                                                    <Typography variant="body2" color="text.secondary">
+                                                        <strong>Email:</strong> {lostObject.user.email}
+                                                    </Typography>
+                                                    <Typography variant="body2" color="text.secondary">
+                                                        <strong>Teléfono:</strong> {lostObject.user.phone}
+                                                    </Typography>
+                                                </Box>
+                                            </Link>
+                                        </CardActionArea>
                                     </Card>
                                 </Box>
-
                             ))}
-
                         </div>
                     )}
-
-
-
-
                 </Grid>
             </Grid>
-        </div >
+        </div>
     );
-};
-
-export default LostObjectDetails;
+}
+export default LostObjectDetails 

@@ -2,13 +2,28 @@ import { Dayjs } from "dayjs";
 
 interface UserData {
     picture: any;
-    name: any;
+    name: {
+        first: string;
+        last: string;
+    }
+    location: {
+        city: string;
+        country: string;
+        state: string;
+        postcode: number
+        coordinates: {
+            latitude: any;
+            longitude: any;
+        };
+    };
     email: string;
     first: string;
     last: string;
     phone: string;
+    cell: number;
     password: string;
     login: any;
+
 }
 interface UsersState {
     usersAvailable: UserData[];
@@ -30,7 +45,7 @@ interface LostObjectData {
     country: Location;
     city: Location;
     airport: Location;
-    date: string | null; 
+    date: string | null;
     description: string;
     photo?: string;
     user: {
@@ -38,10 +53,20 @@ interface LostObjectData {
             first: string;
             last: string;
         }
-        picture: any;
-        email: string;
-        phone: string;
-        password: string;
+        picture: any,
+        email: string,
+        phone: string,
+        cell: number,
+        location: {
+            city: string;
+            country: string;
+            state: string;
+            postcode: number
+            coordinates: {
+                latitude: any;
+                longitude: any;
+            };
+        };
         login: any;
     }
 }
