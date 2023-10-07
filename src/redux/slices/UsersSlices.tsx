@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../Store";
-import { UserData, UsersState } from "../../model/interface";
+import { UserData, UsersState } from "../../model/Interface";
 
 const initialState: UsersState = {
   usersAvailable: [],

@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../Store";
-import { LostObjectData, LostObjectState } from "../../model/interface";
+import { LostObjectData, LostObjectState } from "../../model/Interface";
 
 const initialState: LostObjectState = {
     lostObjects: [],
