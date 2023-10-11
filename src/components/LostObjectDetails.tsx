@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
-    AppBar,
     Autocomplete,
     Box,
     Button,
@@ -15,44 +14,47 @@ import CustomNavbar from "./CustomNavbar";
 import dayjs from "dayjs";
 import { useAppSelector } from "../redux/hooks";
 import { selectLostObjects } from "../redux/slices/lostObjectSlice";
-import { Link } from "react-router-dom"
-const LostObjectDetails: React.FC = () => {
+import { Link } from "react-router-dom";
+
+const LostObjectDetails = () => {
     const lostObjects = useAppSelector(selectLostObjects);
     const [searchText, setSearchText] = useState<string>("");
     const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
     const [countries, setCountries] = useState<string[]>([]);
     const [filteredObjects, setFilteredObjects] = useState(lostObjects);
-    const [errorMessage, setErrorMessage] = useState<string | null>(null)
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [resultsFound, setResultsFound] = useState(true);
     const validationMessages = {
         noCountryMatch:
-            "No se encontraron resultados para el país o descripción seleccionado.",
-    }
+            "No se encontraron resultados para el país o descripción seleccionada.",
+        inputMinimumLength:
+            "Por favor, ingrese al menos 3 caracteres para buscar un país.",
+    };
     const handleSearch = () => {
         if (selectedCountry || searchText.length >= 3) {
             const filtered = lostObjects.filter((lostObject) => {
                 const descriptionMatch = searchText
-                    ? lostObject.description
-                        .toLowerCase()
-                        .includes(searchText.toLowerCase())
+                    ? lostObject.description.toLowerCase().includes(searchText.toLowerCase())
                     : true;
-                const countryMatch = selectedCountry
-                    ? lostObject.country.name === selectedCountry
-                    : true;
+                const countryMatch = selectedCountry ? lostObject.country.name === selectedCountry : true;
                 return descriptionMatch && countryMatch;
-            })
-            setFilteredObjects(filtered);
-            setSearchText("")
+            });
+
             if (filtered.length === 0) {
+                setFilteredObjects([]);
                 setErrorMessage(validationMessages.noCountryMatch);
+                setResultsFound(false);
             } else {
+                setFilteredObjects(filtered)
                 setErrorMessage(null);
+                setResultsFound(true);
             }
         } else {
-            setErrorMessage(
-                "Por favor, ingrese al menos 3 caracteres para buscar un país."
-            );
+            setFilteredObjects(lostObjects);
+            setErrorMessage(validationMessages.inputMinimumLength);
+            setResultsFound(true);
         }
-    }
+    };
     const handleCountryInputChange = async (
         _event: any,
         newInputValue: string
@@ -64,7 +66,7 @@ const LostObjectDetails: React.FC = () => {
                     .map((country: any) => country.name)
                     .filter((countryName: string) =>
                         countryName.toLowerCase().includes(newInputValue.toLowerCase())
-                    )
+                    );
                 setCountries(filteredCountries);
             } catch (error) {
                 console.error(error);
@@ -74,18 +76,18 @@ const LostObjectDetails: React.FC = () => {
             setCountries([]);
             setSelectedCountry(null);
         }
-    }
+    };
+
     return (
         <div>
             <CustomNavbar />
-            <AppBar position="static">
-                <Typography variant="h6" component="div" sx={{ textAlign: "center" }}>
-                    Objetos Perdidos
-                </Typography>
-            </AppBar>
-            <Grid container justifyContent="center">
-                <Grid item xs={12} md={6}>
-                    <Box mt={3}>
+            <Typography variant="h5" component="h1" sx={{ textAlign: "center" }}>
+                buscar Perdidos
+            </Typography>
+
+            <Grid container justifyContent="center" spacing={3}>
+                <Grid item xs={12} sm={6} md={4}>
+                        <Grid item xs={12}>
                         <Autocomplete
                             options={countries}
                             value={selectedCountry}
@@ -96,39 +98,46 @@ const LostObjectDetails: React.FC = () => {
                                     label="Buscar por país"
                                     {...params}
                                     variant="outlined"
-                                    style={{ width: 600 }}
+
                                 />
                             )}
                         />
+                        </Grid>
+                    <Grid item xs={12}>
                         <TextField
                             label="Buscar por descripción"
                             variant="outlined"
                             value={searchText}
                             onChange={(e) => setSearchText(e.target.value)}
-                            style={{ width: 600, marginTop: 10 }}
+                            fullWidth
+                            
                         />
+                        </Grid>
+                        <Grid item>
                         <Button
                             variant="contained"
                             color="primary"
                             onClick={handleSearch}
                             sx={{
-                                marginBottom: 2,
-                                marginTop: 1, marginLeft: 30,
+                                marginTop: 1,
+                                marginLeft: 30,
                             }}
                         >
                             Buscar
                         </Button>
+                    </Grid>
                         {errorMessage && (
                             <Typography variant="body2" color="error" sx={{ mt: 1 }}>
                                 {errorMessage}
                             </Typography>
                         )}
-                    </Box>
-                    {filteredObjects.length === 0 ? (
-                        <Typography variant="h6" color="text.primary" sx={{ mt: 4 }}>
-                            No se encontraron reportes
+                    <Grid/>
+                    {filteredObjects.length === 0 && resultsFound === true ? (
+                        <Typography variant="body2" sx={{ mt: 1 }}>
+                            Objeto no encontrado.
                         </Typography>
                     ) : (
+
                         <div>
                             {filteredObjects?.map((lostObject, index) => (
                                 <Box key={index} mt={2}>
@@ -140,9 +149,17 @@ const LostObjectDetails: React.FC = () => {
                                         }}
                                     >
                                         <CardActionArea>
-                                            <Link to="/DetailsReports" state={{ LostObjectData: lostObject }}>
-
-
+                                            <Link
+                                                to="/DetailsReports"
+                                                state={{
+                                                    data: {
+                                                        newdate: dayjs(lostObject.date).format(
+                                                            "DD-MM-YYYY"
+                                                        ),
+                                                        lostObject: lostObject,
+                                                    },
+                                                }}
+                                            >
                                                 <Box
                                                     display="flex"
                                                     justifyContent="center"
@@ -184,14 +201,14 @@ const LostObjectDetails: React.FC = () => {
                                                     </Typography>
                                                     <Typography variant="body2" color="text.secondary">
                                                         <strong>Nombre:</strong>{" "}
-                                                        {lostObject.user.name.first}{" "}
-                                                        {lostObject.user.name.last}
+                                                        {lostObject.user?.name.first}{" "}
+                                                        {lostObject.user?.name.last}
                                                     </Typography>
                                                     <Typography variant="body2" color="text.secondary">
-                                                        <strong>Email:</strong> {lostObject.user.email}
+                                                        <strong>Email:</strong> {lostObject.user?.email}
                                                     </Typography>
                                                     <Typography variant="body2" color="text.secondary">
-                                                        <strong>Teléfono:</strong> {lostObject.user.phone}
+                                                        <strong>Teléfono:</strong> {lostObject.user?.phone}
                                                     </Typography>
                                                 </Box>
                                             </Link>
@@ -203,7 +220,7 @@ const LostObjectDetails: React.FC = () => {
                     )}
                 </Grid>
             </Grid>
-        </div>
+        </div >
     );
-}
-export default LostObjectDetails 
+};
+export default LostObjectDetails;

@@ -113,7 +113,7 @@ const FormRegistration = () => {
   };
 
   return (
-    <Grid container justifyContent="center" alignItems="center">
+    <Grid container justifyContent="center" alignItems="center" spacing={2}>
       <Card sx={{ p: 3, mt: 2, boxShadow: 3 }}>
         <Typography variant="h5" align="center" sx={{ mb: 3 }}>
           Regístrate
@@ -123,7 +123,7 @@ const FormRegistration = () => {
           src={avatarSrc}
           sx={{ width: "100px", height: "100px", ml: 16 }}
         />
-        <Grid item>
+        <Grid item xs={12} md={8}>
           <Box
             component="form"
             onSubmit={handleSubmit}
