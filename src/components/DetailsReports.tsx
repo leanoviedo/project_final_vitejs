@@ -6,7 +6,6 @@ import {
     Grid,
     Paper,
     Divider,
-
 } from "@mui/material";
 import { useLocation } from "react-router-dom";
 import CustomNavbar from "./CustomNavbar";
@@ -44,27 +43,24 @@ const DetailsReports: React.FC = () => {
         });
 
         infoWindowRef.current = new maps.InfoWindow({
-            content: `
-            
-                    <h3>${lostObject.airport.name}</h3>`,
+            content: `<h3>${lostObject.airport.name}</h3>`,
         });
 
         markerRef.current.addListener("click", () => {
             infoWindowRef.current.open(map, markerRef.current);
         });
-
     }
 
     return (
-        <div>
+        <>
             <CustomNavbar />
             <Typography variant="h5" component="h1" sx={{ textAlign: "center" }}>
                 Detalle del reporte
             </Typography>
             {lostObject && (
-                <Paper elevation={3} sx={{ padding: 2, marginTop: 2, marginBottom: 2 }}>
-                    <Grid container spacing={3} alignItems="center">
-                        <Grid item xs={12} sm={6} md={4}>
+                <Paper elevation={3} sx={{ padding: 2 }}>
+                    <Grid container spacing={3}>
+                        <Grid item xs={12} sm={6} md={4} p={2}>
                             <Box>
                                 <Typography variant="body2">
                                     <strong>Descripción:</strong> {lostObject.description}
@@ -89,14 +85,16 @@ const DetailsReports: React.FC = () => {
                                     src={lostObject.photo}
                                     alt="objeto perdido"
                                     style={{
-                                        width: 200, height: 200,
+                                        width: "100%",
+                                        maxWidth: "200px",
+                                        height: "auto",
                                     }}
                                 />
                             </Box>
                         </Grid>
                     </Grid>
                     <Divider sx={{ marginTop: 2, marginBottom: 2 }} />
-                    <Grid container spacing={2} alignItems="center">
+                    <Grid container spacing={3}>
                         <Grid item xs={12} sm={6} md={4}>
                             <Box>
                                 <Typography variant="body2">
@@ -119,32 +117,35 @@ const DetailsReports: React.FC = () => {
                                 </Typography>
                             </Box>
                         </Grid>
-                        <Grid xs={12} sm={6} md={4}>
+                        <Grid item xs={12} sm={6} md={4}>
                             <Box>
                                 <Avatar
                                     src={lostObject.user?.picture.large}
                                     alt="fotografía de la persona del reporte"
-                                    sx={{ width: 200, height: 200 }}
+                                    sx={{ width: "100%", maxWidth: "200px", height: "auto" }}
                                 />
                             </Box>
                         </Grid>
                     </Grid>
+                    <Divider sx={{ marginTop: 2, marginBottom: 2 }} />
                 </Paper>
             )}
-            <Grid item xs={12} sm={6} md={4}>
-                <div style={{ height: "400px", width: "100%" }}>
-                    <GoogleMapReact
-                        bootstrapURLKeys={{ key: "AIzaSyDMVoFJqQljWVR7J2d4_ElY4oTe2wa5ygQ" }}
-                        center={airportCoordinate}
-                        defaultZoom={15}
-                        yesIWantToUseGoogleMapApiInternals={true}
-                        onGoogleApiLoaded={({ map, maps }) => maprender(map, maps)}
-                    >
-
-                    </GoogleMapReact>
-                </div>
+            <Grid container spacing={3}>
+                <Grid item xs={12} sm={12} md={12}>
+                    <div style={{ height: "60vh", width: "100%" }}>
+                        <GoogleMapReact
+                            bootstrapURLKeys={{
+                                key: "Your Google Maps API Key",
+                            }}
+                            center={airportCoordinate}
+                            defaultZoom={15}
+                            yesIWantToUseGoogleMapApiInternals={true}
+                            onGoogleApiLoaded={({ map, maps }) => maprender(map, maps)}
+                        />
+                    </div>
+                </Grid>
             </Grid>
-        </div>
+        </>
     );
 };
 
