@@ -66,16 +66,6 @@ const CustomNavbar = () => {
                                         src={loggedInUser.picture?.large}
                                         sx={{ width: 56, height: 56, marginRight: 1 }}
                                     />
-                                    {/* <Box display="flex" alignItems="center">
-                                        <Typography variant="body1" color="text.primary">
-                                            {loggedInUser?.name.first} {loggedInUser?.name.last}
-                                        </Typography>
-                                    </Box>
-                                    <Box display="flex" alignItems="center">
-                                        <Typography variant="body1" color="text.primary">
-                                            {loggedInUser?.email}
-                                        </Typography>
-                                    </Box> */}
                                     <IconButton
                                         aria-label="account of current user"
                                         aria-controls="menu-appbar"

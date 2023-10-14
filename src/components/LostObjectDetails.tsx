@@ -79,148 +79,145 @@ const LostObjectDetails = () => {
     };
 
     return (
-        <div>
+
+        <Grid container justifyContent="center" spacing={3}>
             <CustomNavbar />
-            <Typography variant="h5" component="h1" sx={{ textAlign: "center" }}>
-                buscar Perdidos
-            </Typography>
+            <Grid item justifyContent="center" xs={12} sm={6} md={4}>
+                <Typography variant="h5" component="h1" sx={{ textAlign: "center", justifyContent: "center" }}>
+                    buscar Perdidos
+                </Typography>
+                <Grid item xs={12} >
+                    <Autocomplete
+                        options={countries}
+                        value={selectedCountry}
+                        onChange={(_, newValue) => setSelectedCountry(newValue)}
+                        onInputChange={handleCountryInputChange}
+                        renderInput={(params) => (
+                            <TextField
+                                label="Buscar por país"
+                                {...params}
+                                variant="outlined"
 
-            <Grid container justifyContent="center" spacing={3}>
-                <Grid item xs={12} sm={6} md={4}>
-                        <Grid item xs={12}>
-                        <Autocomplete
-                            options={countries}
-                            value={selectedCountry}
-                            onChange={(_, newValue) => setSelectedCountry(newValue)}
-                            onInputChange={handleCountryInputChange}
-                            renderInput={(params) => (
-                                <TextField
-                                    label="Buscar por país"
-                                    {...params}
-                                    variant="outlined"
-
-                                />
-                            )}
-                        />
-                        </Grid>
-                    <Grid item xs={12}>
-                        <TextField
-                            label="Buscar por descripción"
-                            variant="outlined"
-                            value={searchText}
-                            onChange={(e) => setSearchText(e.target.value)}
-                            fullWidth
-                            
-                        />
-                        </Grid>
-                        <Grid item>
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            onClick={handleSearch}
-                            sx={{
-                                marginTop: 1,
-                                marginLeft: 30,
-                            }}
-                        >
-                            Buscar
-                        </Button>
-                    </Grid>
-                        {errorMessage && (
-                            <Typography variant="body2" color="error" sx={{ mt: 1 }}>
-                                {errorMessage}
-                            </Typography>
+                            />
                         )}
-                    <Grid/>
-                    {filteredObjects.length === 0 && resultsFound === true ? (
-                        <Typography variant="body2" sx={{ mt: 1 }}>
-                            Objeto no encontrado.
-                        </Typography>
-                    ) : (
+                    />
 
-                        <div>
-                            {filteredObjects?.map((lostObject, index) => (
-                                <Box key={index} mt={2}>
-                                    <Card
-                                        style={{
-                                            display: "flex",
-                                            flexDirection: "column",
-                                            width: "100%",
-                                        }}
-                                    >
-                                        <CardActionArea>
-                                            <Link
-                                                to="/DetailsReports"
-                                                state={{
-                                                    data: {
-                                                        newdate: dayjs(lostObject.date).format(
-                                                            "DD-MM-YYYY"
-                                                        ),
-                                                        lostObject: lostObject,
-                                                    },
-                                                }}
-                                            >
-                                                <Box
-                                                    display="flex"
-                                                    justifyContent="center"
-                                                    alignItems="center"
-                                                    style={{ height: "200px" }}
-                                                >
-                                                    <img
-                                                        src={lostObject.photo}
-                                                        alt="objeto perdido"
-                                                        style={{
-                                                            width: "200px",
-                                                            borderRadius: "4px",
-                                                        }}
-                                                    />
-                                                </Box>
-                                                <Box m={1} p={1}>
-                                                    <Typography variant="body2" color="text.secondary">
-                                                        <strong>Descripción:</strong>{" "}
-                                                        {lostObject.description}
-                                                    </Typography>
-                                                    <Typography variant="body2" color="text.secondary">
-                                                        <strong>Aeropuerto:</strong>{" "}
-                                                        {lostObject.airport.name}
-                                                    </Typography>
-                                                    <Typography variant="body2" color="text.secondary">
-                                                        <strong>País:</strong> {lostObject.country.name}
-                                                    </Typography>
-                                                    <Typography variant="body2" color="text.secondary">
-                                                        <strong>Ciudad:</strong> {lostObject.city.name}
-                                                    </Typography>
-                                                    <Typography variant="body2" color="text.secondary">
-                                                        <strong>Fecha:</strong>{" "}
-                                                        {lostObject.date
-                                                            ? dayjs(lostObject.date).format("DD-MM-YYYY")
-                                                            : "N/A"}
-                                                    </Typography>
-                                                    <Typography variant="body2" color="text.secondary">
-                                                        <strong>Información de Contacto:</strong>
-                                                    </Typography>
-                                                    <Typography variant="body2" color="text.secondary">
-                                                        <strong>Nombre:</strong>{" "}
-                                                        {lostObject.user?.name.first}{" "}
-                                                        {lostObject.user?.name.last}
-                                                    </Typography>
-                                                    <Typography variant="body2" color="text.secondary">
-                                                        <strong>Email:</strong> {lostObject.user?.email}
-                                                    </Typography>
-                                                    <Typography variant="body2" color="text.secondary">
-                                                        <strong>Teléfono:</strong> {lostObject.user?.phone}
-                                                    </Typography>
-                                                </Box>
-                                            </Link>
-                                        </CardActionArea>
-                                    </Card>
-                                </Box>
-                            ))}
-                        </div>
-                    )}
+                    <TextField
+                        label="Buscar por descripción"
+                        variant="outlined"
+                        value={searchText}
+                        onChange={(e) => setSearchText(e.target.value)}
+                        fullWidth
+
+                    />
                 </Grid>
+                <Grid item>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handleSearch}
+                        sx={{
+                            marginTop: 1,
+                            marginLeft: 30,
+                        }}
+                    >
+                        Buscar
+                    </Button>
+                </Grid>
+                {errorMessage && (
+                    <Typography variant="body2" color="error" sx={{ mt: 1 }}>
+                        {errorMessage}
+                    </Typography>
+                )}
+                <Grid />
+                {filteredObjects.length === 0 && resultsFound === true ? (
+                    <Typography variant="body2" sx={{ mt: 1 }}>
+                        Objeto no encontrado.
+                    </Typography>
+                ) : (
+
+                    <div>
+                        {filteredObjects?.map((lostObject, index) => (
+                            <Box key={index} mt={2}>
+                                <Card
+                                    style={{
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        width: "100%",
+                                    }}
+                                >
+                                    <CardActionArea>
+                                        <Link
+                                            to="/DetailsReports"
+                                            state={{
+                                                data: {
+                                                    newdate: dayjs(lostObject.date).format(
+                                                        "DD-MM-YYYY"
+                                                    ),
+                                                    lostObject: lostObject,
+                                                },
+                                            }}
+                                        >
+                                            <Box
+                                                display="flex"
+                                                justifyContent="center"
+                                                alignItems="center"
+                                                style={{ height: "200px" }}
+                                            >
+                                                <img
+                                                    src={lostObject.photo}
+                                                    alt="objeto perdido"
+                                                    style={{
+                                                        width: "200px",
+                                                        borderRadius: "4px",
+                                                    }}
+                                                />
+                                            </Box>
+                                            <Box m={1} p={1}>
+                                                <Typography variant="body2" color="text.secondary">
+                                                    <strong>Descripción:</strong>{" "}
+                                                    {lostObject.description}
+                                                </Typography>
+                                                <Typography variant="body2" color="text.secondary">
+                                                    <strong>Aeropuerto:</strong>{" "}
+                                                    {lostObject.airport.name}
+                                                </Typography>
+                                                <Typography variant="body2" color="text.secondary">
+                                                    <strong>País:</strong> {lostObject.country.name}
+                                                </Typography>
+                                                <Typography variant="body2" color="text.secondary">
+                                                    <strong>Ciudad:</strong> {lostObject.city.name}
+                                                </Typography>
+                                                <Typography variant="body2" color="text.secondary">
+                                                    <strong>Fecha:</strong>{" "}
+                                                    {lostObject.date
+                                                        ? dayjs(lostObject.date).format("DD-MM-YYYY")
+                                                        : "N/A"}
+                                                </Typography>
+                                                <Typography variant="body2" color="text.secondary">
+                                                    <strong>Información de Contacto:</strong>
+                                                </Typography>
+                                                <Typography variant="body2" color="text.secondary">
+                                                    <strong>Nombre:</strong>{" "}
+                                                    {lostObject.user?.name.first}{" "}
+                                                    {lostObject.user?.name.last}
+                                                </Typography>
+                                                <Typography variant="body2" color="text.secondary">
+                                                    <strong>Email:</strong> {lostObject.user?.email}
+                                                </Typography>
+                                                <Typography variant="body2" color="text.secondary">
+                                                    <strong>Teléfono:</strong> {lostObject.user?.phone}
+                                                </Typography>
+                                            </Box>
+                                        </Link>
+                                    </CardActionArea>
+                                </Card>
+                            </Box>
+                        ))}
+                    </div>
+                )}
             </Grid>
-        </div >
+        </Grid>
     );
 };
 export default LostObjectDetails;
