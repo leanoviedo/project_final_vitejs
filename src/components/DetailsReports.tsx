@@ -6,10 +6,18 @@ import {
     Grid,
     Paper,
     Divider,
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
 } from "@mui/material";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import CustomNavbar from "./CustomNavbar";
 import GoogleMapReact from "google-map-react";
+import { selectUserLogin } from "../redux/slices/UserLogin";
+import { useSelector } from "react-redux";
 
 const DetailsReports: React.FC = () => {
     const ubicacion = useLocation();
@@ -31,6 +39,11 @@ const DetailsReports: React.FC = () => {
         setAirportCoordinate({ lat, lng });
     }
 
+    const userLogin = useSelector(selectUserLogin);
+    const isCurrentUserOwner = userLogin && userLogin.email === lostObject.user.email;
+
+    const [isDialogOpen, setDialogOpen] = useState(false);
+
     useEffect(() => {
         handleAddressDataReceived();
     }, []);
@@ -51,14 +64,41 @@ const DetailsReports: React.FC = () => {
         });
     }
 
+    const navigate = useNavigate();
+
+    const handleOpenDialog = () => {
+        setDialogOpen(true);
+    };
+
+    const handleCloseDialog = () => {
+        setDialogOpen(false);
+    };
+
+    const handleConfirmReclamar = () => {
+        navigate("/FoundObjects");
+        handleCloseDialog();
+    };
+
     return (
         <>
             <CustomNavbar />
-            <Typography variant="h5" component="h1" sx={{ textAlign: "center" }}>
+            <Typography variant="h4" component="h1" sx={{ textAlign: "center" }}>
                 Detalle del reporte
             </Typography>
+            <Divider sx={{ marginTop: 2, marginBottom: 2 }} />
             {lostObject && (
-                <Paper elevation={3} sx={{ padding: 2 }}>
+                <Paper elevation={1} sx={{ padding: 2 }}>
+                    <Grid style={{ display: "flex", justifyContent: "space-between" }}>
+                        <Button
+                            color="success"
+                            variant="contained"
+                            disabled={isCurrentUserOwner === true}
+                            style={{ marginLeft: "auto", }}
+                            onClick={handleOpenDialog}
+                        >
+                            Reclamar
+                        </Button>
+                    </Grid>
                     <Grid container spacing={3}>
                         <Grid item xs={12} sm={6} md={4} p={2}>
                             <Box>
@@ -127,15 +167,34 @@ const DetailsReports: React.FC = () => {
                             </Box>
                         </Grid>
                     </Grid>
-                    <Divider sx={{ marginTop: 2, marginBottom: 2 }} />
                 </Paper>
             )}
+            <Dialog open={isDialogOpen} onClose={handleCloseDialog}>
+                <DialogTitle>Confirmar reclamo</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        ¿Estás seguro de que quieres reclamar este objeto?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseDialog} variant="outlined" color="error" >
+                        Cancelar
+                    </Button>
+                    <Button onClick={handleConfirmReclamar} variant="outlined" color="success" >
+                        Confirmar
+                    </Button>
+                </DialogActions>
+            </Dialog>
             <Grid container spacing={3}>
                 <Grid item xs={12} sm={12} md={12}>
+                    <Typography variant="h6" component="h2" sx={{ textAlign: "center" }}>
+                        ubicacion del Aeropuerto
+                    </Typography>
+                    <Divider sx={{ marginTop: 2, marginBottom: 2 }} />
                     <div style={{ height: "60vh", width: "100%" }}>
                         <GoogleMapReact
                             bootstrapURLKeys={{
-                                key: "Your Google Maps API Key",
+                                key: "AIzaSyDMVoFJqQljWVR7J2d4_ElY4oTe2wa5ygQ",
                             }}
                             center={airportCoordinate}
                             defaultZoom={15}

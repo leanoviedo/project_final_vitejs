@@ -1,6 +1,7 @@
 import { Dayjs } from "dayjs";
 
 interface UserData {
+    [x: string]: any;
     gender?: string;
     name: {
         title?: string;
@@ -99,6 +100,14 @@ interface UserLoginState {
 interface LostObjectState {
     lostObjects: LostObjectData[];
 }
+interface Message {
+    user: UserData;
+    message: string;
+    timestamp: number;
+    image?: string;
+    likes: number;
+    likedBy: string[]
+}
 
 export type {
     UserData,
@@ -110,4 +119,5 @@ export type {
     Country,
     City,
     Airport,
+    Message
 };
