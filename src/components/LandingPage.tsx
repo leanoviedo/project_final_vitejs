@@ -15,7 +15,6 @@ import {
   FormHelperText,
   Snackbar,
   Alert,
-  TextareaAutosize,
 } from "@mui/material";
 import { Send as SendIcon } from "@mui/icons-material";
 import AirportServices from "../services/AirportServices";
@@ -23,33 +22,10 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs, { Dayjs } from "dayjs";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import CustomNavbar from "./CustomNavbar";
-import { styled } from "@mui/system";
-import { blue } from "@mui/material/colors";
 import { LostObjectData, Country, City, Airport } from "../model/interface"
 import { setLostObjectData } from "../redux/slices/lostObjectSlice";
 import { selectUserLogin } from "../redux/slices/UserLogin";
 
-const StyledTextarea = styled(TextareaAutosize)(
-  ({ theme }) => `
-  width:550px;  
-     height: auto;
-    font-family: IBM Plex Sans, sans-serif;
-    font-size: 0.875rem;
-    font-weight: 400;
-    line-height: 1.5;
-    padding: 12px;
-    &:hover {
-      border-color: ${blue[900]};
-    }
-    &:focus {border-color: ${blue[800]};
-      box-shadow: 0 0 0 1px ${theme.palette.mode === "dark" ? blue[500] : blue[200]
-    };
-    // firefox
-    &:focus-visible {
-      outline: 0;
-    }
-  `
-);
 
 const errorStyles = {
   color: "red",
@@ -234,34 +210,40 @@ const LandingPage = () => {
 
     let hasErrors = false;
 
-    if (!lostObject.country) {
+    if (!lostObject.country || !lostObject.country.name) {
       setCountryError("Campo obligatorio");
       hasErrors = true;
     }
 
-    if (!lostObject.city) {
+    if (!lostObject.city || !lostObject.city.name) {
       setCityError("Campo obligatorio");
       hasErrors = true;
     }
-    if (!lostObject.airport) {
+
+    if (!lostObject.airport || !lostObject.airport.name) {
       setAirportError("Campo obligatorio");
       hasErrors = true;
     }
+
     if (!lostObject.date) {
-      setDateError("campo obligatorio");
+      setDateError("Campo obligatorio");
       hasErrors = true;
     }
+
     if (!lostObject.description) {
       setDescriptionError("Campo obligatorio");
       hasErrors = true;
     }
+
     if (!lostObject.photo) {
       setPhotoError("Campo obligatorio");
       hasErrors = true;
     }
+
     if (hasErrors) {
       return;
     }
+
     setOpenModal(true);
 
     resetFormFields();
@@ -397,19 +379,6 @@ const LandingPage = () => {
               />
               <FormHelperText sx={errorStyles}>{dateError}</FormHelperText>
             </Grid>
-            <Grid item marginTop={2} xs={12} >
-              <StyledTextarea
-                aria-label="minimum height"
-                id="description"
-                name="description"
-                value={lostObject.description}
-                onChange={handleDescriptionChange}
-                placeholder="Escriba la Descripción"
-              />
-              <FormHelperText sx={errorStyles}>
-                {descriptionError}
-              </FormHelperText>
-            </Grid>
             <Grid item marginTop={2} xs={12}  >
               <TextField
                 fullWidth
@@ -420,6 +389,23 @@ const LandingPage = () => {
                 onChange={handlePhotoChange}
               />
               <FormHelperText sx={errorStyles}>{photoError}</FormHelperText>
+            </Grid>
+            <Grid item marginTop={2} xs={12} >
+              <TextField
+                aria-label="minimum height"
+                id="description"
+                name="description"
+                fullWidth
+                multiline
+                minRows={3}
+                variant="outlined"
+                value={lostObject.description}
+                onChange={handleDescriptionChange}
+                placeholder="Escriba la Descripción"
+              />
+              <FormHelperText sx={errorStyles}>
+                {descriptionError}
+              </FormHelperText>
             </Grid>
             <Grid item sx={{ textAlign: 'center', mt: 2 }}>
               <Button
