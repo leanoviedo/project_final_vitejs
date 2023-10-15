@@ -58,6 +58,11 @@ const CustomNavbar = () => {
                                 Objetos perdidos
                             </Button>
                         </Grid>
+                        <Grid item>
+                            <Button color="inherit" component={Link} to="/LostAndFoundList">
+                                Lista de reportes
+                            </Button>
+                        </Grid>
                         {loggedInUser && (
                             <Grid item>
                                 <Box display="flex" alignItems="center">
@@ -134,6 +139,15 @@ const CustomNavbar = () => {
                                         <MenuItem
                                             component={Link}
                                             to="/LostObjectsDetails"
+                                            sx={{ color: "primary.main" }}
+                                        >
+                                            Lista de reportes
+                                        </MenuItem>
+                                    )}
+                                    {loggedInUser && (
+                                        <MenuItem
+                                            component={Link}
+                                            to="/LostAndFoundList"
                                             sx={{ color: "primary.main" }}
                                         >
                                             Objetos perdidos
