@@ -15,6 +15,10 @@ import {
   FormHelperText,
   Snackbar,
   Alert,
+  FormControlLabel,
+  FormLabel,
+  Radio,
+  RadioGroup,
 } from "@mui/material";
 import { Send as SendIcon } from "@mui/icons-material";
 import AirportServices from "../services/AirportServices";
@@ -57,6 +61,7 @@ const LandingPage = () => {
     date: null,
     photo: "",
     description: "",
+    status: ""
   });
 
   const [airportData, setAirportData] = useState<any[]>([]);
@@ -74,6 +79,8 @@ const LandingPage = () => {
   const [selectedCountry, setSelectedCountry] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
   const [selectedAirport, setSelectedCAirport] = useState("");
+  const [lostStatus, setLostStatus] = useState("");
+
 
   const dispatch = useAppDispatch();
   const loggedInUser = useAppSelector(selectUserLogin);
@@ -160,7 +167,9 @@ const LandingPage = () => {
       date: date || null,
     }));
   };
-
+  const handleLostStatusChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setLostStatus(event.target.value);
+  };
   const handlePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setLostObject({ ...lostObject, [event.target.name]: event.target.value });
     console.log(event.target.value);
@@ -191,6 +200,7 @@ const LandingPage = () => {
       description: "",
       date: null,
       photo: "",
+      status: "",
     });
     setCountryError("");
     setCityError("");
@@ -198,6 +208,7 @@ const LandingPage = () => {
     setDateError("");
     setDescriptionError("");
     setPhotoError("");
+    setLostStatus("")
   };
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -240,6 +251,12 @@ const LandingPage = () => {
       hasErrors = true;
     }
 
+    if (!lostStatus) {
+      setLostStatus("Campo obligatorio");
+      hasErrors = true;
+    }
+
+
     if (hasErrors) {
       return;
     }
@@ -255,6 +272,8 @@ const LandingPage = () => {
       date: lostObject.date ? lostObject.date : null,
       photo: lostObject.photo || "",
       description: lostObject.description,
+      status: lostStatus,
+
       user: loggedInUser
         ? {
           name: {
@@ -277,8 +296,10 @@ const LandingPage = () => {
           cell: loggedInUser.cell,
           picture: loggedInUser.picture,
           password: loggedInUser.login.password,
+
         }
         : null,
+
     };
     console.log(selectData);
 
@@ -407,6 +428,30 @@ const LandingPage = () => {
                 {descriptionError}
               </FormHelperText>
             </Grid>
+            <Grid>
+              <FormControl component="fieldset">
+                <FormLabel component="legend">Estado</FormLabel>
+                <RadioGroup
+                  aria-label="lostStatus"
+                  name="lostStatus"
+                  value={lostStatus}
+                  onChange={handleLostStatusChange}
+                >
+                  <FormControlLabel
+                    value="encontrado"
+                    control={<Radio color="primary" />}
+                    label="Encontrado"
+                  />
+                  <FormControlLabel
+                    value="perdido"
+                    control={<Radio color="primary" />}
+                    label="Perdido"
+                  />
+                </RadioGroup>
+              </FormControl>
+            </Grid>
+
+
             <Grid item sx={{ textAlign: 'center', mt: 2 }}>
               <Button
                 type="submit"

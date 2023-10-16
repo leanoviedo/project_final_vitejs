@@ -16,12 +16,15 @@ import {
 import { useLocation, useNavigate } from "react-router-dom";
 import CustomNavbar from "./CustomNavbar";
 import GoogleMapReact from "google-map-react";
+import { useAppSelector } from "../redux/hooks";
 import { selectUserLogin } from "../redux/slices/UserLogin";
-import { useSelector } from "react-redux";
 
 const DetailsReports: React.FC = () => {
     const ubicacion = useLocation();
     const { lostObject, newdate } = ubicacion.state.data || {};
+    const userLogin = useAppSelector(selectUserLogin);
+    const isCurrentUserOwner = userLogin && userLogin.email === lostObject.user.email;
+
 
     const [airportCoordinate, setAirportCoordinate] = useState<{ lat: number; lng: number }>(
         { lat: 0, lng: 0 }
@@ -38,10 +41,6 @@ const DetailsReports: React.FC = () => {
         console.log("Longitude:", lng);
         setAirportCoordinate({ lat, lng });
     }
-
-    const userLogin = useSelector(selectUserLogin);
-    const isCurrentUserOwner = userLogin && userLogin.email === lostObject.user.email;
-
     const [isDialogOpen, setDialogOpen] = useState(false);
 
     useEffect(() => {
@@ -93,15 +92,19 @@ const DetailsReports: React.FC = () => {
                             color="success"
                             variant="contained"
                             disabled={isCurrentUserOwner === true}
-                            style={{ marginLeft: "auto", }}
+                            style={{ marginLeft: "auto" }}
                             onClick={handleOpenDialog}
                         >
                             Reclamar
                         </Button>
+
                     </Grid>
                     <Grid container spacing={3}>
                         <Grid item xs={12} sm={6} md={4} p={2}>
                             <Box>
+                                <Typography variant="body2">
+                                    <strong>objeto:</strong> {lostObject.status}
+                                </Typography>
                                 <Typography variant="body2">
                                     <strong>Descripción:</strong> {lostObject.description}
                                 </Typography>

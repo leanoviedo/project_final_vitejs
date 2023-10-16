@@ -61,6 +61,7 @@ interface LostObjectData {
     date: Dayjs | null;
     photo: string;
     description: string;
+    status: string;
     user?: UserData | null;
 }
 
