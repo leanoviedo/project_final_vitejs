@@ -175,7 +175,7 @@ const LostObjectDetails = () => {
                                             </Box>
                                             <Box m={1} p={1}>
                                                 <Typography variant="body2" color="text.secondary">
-                                                    <strong>Objecto:</strong>{" "}
+                                                    <strong>Objeto:</strong>{" "}
                                                     {lostObject.status}
                                                 </Typography>
                                                 <Typography variant="body2" color="text.secondary">

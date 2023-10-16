@@ -12,26 +12,29 @@ import { useAppSelector } from "../redux/hooks";
 import { selectLostObjects } from "../redux/slices/lostObjectSlice";
 import CustomNavbar from "./CustomNavbar";
 import { Link } from "react-router-dom";
+import { selectUserLogin } from "../redux/slices/UserLogin";
 
 const LostAndFoundList = () => {
   const lostObjects = useAppSelector(selectLostObjects);
+  const loggedInUser = useAppSelector(selectUserLogin);
+  const userReports = lostObjects.filter((report) => report.user?.email === loggedInUser?.email);
   return (
     <Grid container spacing={3}>
       <CustomNavbar></CustomNavbar>
       <Grid item xs={12}>
-        <Typography variant="h6" gutterBottom align="center">
+        <Typography variant="h5" component="h1" gutterBottom align="center">
           Lista de reportes
         </Typography>
       </Grid>
       <Grid item xs={12}>
-        {lostObjects.length === 0 ? (
+        {userReports.length === 0 ? (
           <Grid container alignItems="center" justifyContent="center">
-            <Typography variant="body2">No hay datos disponibles.</Typography>
+            <Typography variant="h6">No hay datos disponibles.</Typography>
           </Grid>
         ) : (
           <Paper elevation={2}>
             <Grid container spacing={2}>
-              {lostObjects.map((item, index) => (
+              {userReports.map((item, index) => (
                 <Grid item xs={6} key={index}>
                   <Link to={`/FoundObjects/`} style={{ textDecoration: "none" }}>
                     <ListItem alignItems="flex-start">

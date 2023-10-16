@@ -16,10 +16,15 @@ import {
 import { useLocation, useNavigate } from "react-router-dom";
 import CustomNavbar from "./CustomNavbar";
 import GoogleMapReact from "google-map-react";
+import { useAppSelector } from "../redux/hooks";
+import { selectUserLogin } from "../redux/slices/UserLogin";
 
 const DetailsReports: React.FC = () => {
     const ubicacion = useLocation();
     const { lostObject, newdate } = ubicacion.state.data || {};
+    const userLogin = useAppSelector(selectUserLogin);
+    const isCurrentUserOwner = userLogin && userLogin.email === lostObject.user.email;
+
 
     const [airportCoordinate, setAirportCoordinate] = useState<{ lat: number; lng: number }>(
         { lat: 0, lng: 0 }
@@ -86,12 +91,13 @@ const DetailsReports: React.FC = () => {
                         <Button
                             color="success"
                             variant="contained"
-                            disabled={lostObject.status === "perdido"}
-                            style={{ marginLeft: "auto", }}
+                            disabled={isCurrentUserOwner === true}
+                            style={{ marginLeft: "auto" }}
                             onClick={handleOpenDialog}
                         >
                             Reclamar
                         </Button>
+
                     </Grid>
                     <Grid container spacing={3}>
                         <Grid item xs={12} sm={6} md={4} p={2}>

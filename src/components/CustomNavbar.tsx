@@ -141,7 +141,7 @@ const CustomNavbar = () => {
                                             to="/LostObjectsDetails"
                                             sx={{ color: "primary.main" }}
                                         >
-                                            Lista de reportes
+                                            objetos perdidos
                                         </MenuItem>
                                     )}
                                     {loggedInUser && (
@@ -150,7 +150,7 @@ const CustomNavbar = () => {
                                             to="/LostAndFoundList"
                                             sx={{ color: "primary.main" }}
                                         >
-                                            Objetos perdidos
+                                            Lista de reportes
                                         </MenuItem>
                                     )}
                                     <MenuItem
