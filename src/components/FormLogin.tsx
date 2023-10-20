@@ -6,12 +6,11 @@ import {
   Button,
   Card,
   Box,
-  Dialog,
-  DialogActions,
-  DialogContent,
   AppBar,
   IconButton,
   Toolbar,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
@@ -28,13 +27,10 @@ const FormLogin = () => {
     password: "",
   });
 
-  const [openModal, setOpenModal] = useState(false);
-  const [modalMessage, setModalMessage] = useState("");
 
-  const handleCloseModal = () => {
-    setOpenModal(false);
-    setModalMessage("");
-  };
+  const [errorSnackbarOpen, setErrorSnackbarOpen] = useState(false);
+  const [errorSnackbarMessage, setErrorSnackbarMessage] = useState("");
+
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUsersLogin({ ...userLogin, [e.target.name]: e.target.value });
@@ -51,11 +47,17 @@ const FormLogin = () => {
       dispatch(setUserLogin(existingLogin));
       navigate("/LandingPage");
     } else {
-      setModalMessage("usuario no registratrado");
-      setOpenModal(true);
+      if (!registrationData.some((registration) => registration.email === userLogin.email)) {
+        setErrorSnackbarMessage("Email incorrecto. Por favor, verifica tu email.");
+      }
+      if (!registrationData.some((registration)=>registration.login.password===userLogin.password)) {
+        setErrorSnackbarMessage("El correo electrónico es incorrecto.");
+
+      }
+      setErrorSnackbarOpen(true);
     }
   };
-
+  
   return (
     <Grid container justifyContent="center" alignItems="center">
       <AppBar position="static">
@@ -122,14 +124,20 @@ const FormLogin = () => {
             </Link>
           </Box>
         </Card>
-        <Dialog open={openModal} onClose={handleCloseModal}>
-          <DialogContent>
-            <Typography>{modalMessage}</Typography>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleCloseModal}>Cerrar</Button>
-          </DialogActions>
-        </Dialog>
+        <Snackbar
+          open={errorSnackbarOpen}
+          autoHideDuration={6000}
+          onClose={() => setErrorSnackbarOpen(false)}
+          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        >
+          <Alert
+            onClose={() => setErrorSnackbarOpen(false)}
+            severity="error"
+            sx={{ width: "100%" }}
+          >
+            {errorSnackbarMessage}
+          </Alert>
+        </Snackbar>
       </Grid>
     </Grid>
   );

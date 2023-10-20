@@ -1,7 +1,6 @@
 import { Dayjs } from "dayjs";
 
 interface UserData {
-    [x: string]: any;
     gender?: string;
     name: {
         title?: string;
@@ -55,12 +54,14 @@ interface UserData {
 }
 
 interface LostObjectData {
+    id: string;
     country: Country;
     city: City;
     airport: Airport;
     date: Dayjs | null;
     photo: string;
     description: string;
+    type: string;
     status: string;
     user?: UserData | null;
 }
@@ -102,6 +103,7 @@ interface LostObjectState {
     lostObjects: LostObjectData[];
 }
 interface Message {
+    id: string;
     user: UserData;
     message: string;
     timestamp: number;

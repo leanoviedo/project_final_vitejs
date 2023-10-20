@@ -90,7 +90,7 @@ const usersDataExaple: UserData[] = [
     login: {
       uuid: "23e708f3-736c-42f1-8f3b-de55010badb3",
       username: "brownmeercat338",
-      password: "124038",
+      password: "asd",
       salt: "pDUJUtzF",
       md5: "d0dc58986d422b83ad840b687d23ba92",
       sha1: "1000985f86caacc1dcf19a8e928a044d0ac93eaa",
@@ -147,7 +147,7 @@ const usersDataExaple: UserData[] = [
     login: {
       uuid: "e29f384f-2d32-4aed-96f0-2dba2b37d0fa",
       username: "ticklishleopard926",
-      password: "1125",
+      password: "asd",
       salt: "mMcTUZe1",
       md5: "330f73ad40fc884cf035e40e40e99f67",
       sha1: "e410dc2a9e6509440a21557dc325154c316a591e",

@@ -29,6 +29,8 @@ import CustomNavbar from "./CustomNavbar";
 import { LostObjectData, Country, City, Airport } from "../model/interface"
 import { setLostObjectData } from "../redux/slices/lostObjectSlice";
 import { selectUserLogin } from "../redux/slices/UserLogin";
+import { v4 as uuidv4 } from 'uuid';
+
 
 
 const errorStyles = {
@@ -61,7 +63,9 @@ const LandingPage = () => {
     date: null,
     photo: "",
     description: "",
-    status: ""
+    type: "",
+    status: "creado",
+    id: uuidv4(),
   });
 
   const [airportData, setAirportData] = useState<any[]>([]);
@@ -79,7 +83,7 @@ const LandingPage = () => {
   const [selectedCountry, setSelectedCountry] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
   const [selectedAirport, setSelectedCAirport] = useState("");
-  const [lostStatus, setLostStatus] = useState("");
+  const [lostType, setLostType] = useState("");
 
 
   const dispatch = useAppDispatch();
@@ -167,8 +171,8 @@ const LandingPage = () => {
       date: date || null,
     }));
   };
-  const handleLostStatusChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setLostStatus(event.target.value);
+  const handleLostTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setLostType(event.target.value);
   };
   const handlePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setLostObject({ ...lostObject, [event.target.name]: event.target.value });
@@ -200,7 +204,9 @@ const LandingPage = () => {
       description: "",
       date: null,
       photo: "",
+      type: "",
       status: "",
+      id:"",
     });
     setCountryError("");
     setCityError("");
@@ -208,7 +214,7 @@ const LandingPage = () => {
     setDateError("");
     setDescriptionError("");
     setPhotoError("");
-    setLostStatus("")
+    setLostType("")
   };
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -251,8 +257,8 @@ const LandingPage = () => {
       hasErrors = true;
     }
 
-    if (!lostStatus) {
-      setLostStatus("Campo obligatorio");
+    if (!lostType) {
+      setLostType("Campo obligatorio");
       hasErrors = true;
     }
 
@@ -272,8 +278,9 @@ const LandingPage = () => {
       date: lostObject.date ? lostObject.date : null,
       photo: lostObject.photo || "",
       description: lostObject.description,
-      status: lostStatus,
-
+      type: lostType,
+      status: lostObject.status,
+      id: uuidv4(),
       user: loggedInUser
         ? {
           name: {
@@ -434,8 +441,8 @@ const LandingPage = () => {
                 <RadioGroup
                   aria-label="lostStatus"
                   name="lostStatus"
-                  value={lostStatus}
-                  onChange={handleLostStatusChange}
+                  value={lostType}
+                  onChange={handleLostTypeChange}
                 >
                   <FormControlLabel
                     value="encontrado"

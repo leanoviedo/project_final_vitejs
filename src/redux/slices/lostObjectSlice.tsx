@@ -1,3 +1,4 @@
+
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../Store";
 import { LostObjectData, LostObjectState } from "../../model/interface";
@@ -13,11 +14,18 @@ export const lostObjectSlice = createSlice({
         setLostObjectData: (state, action: PayloadAction<LostObjectData>) => {
             state.lostObjects = [...state.lostObjects, action.payload];
         },
-
+        markLostObjectAsClaimed: (state, action: PayloadAction<string>) => {
+            const lostObjectId = action.payload;
+            const lostObject = state.lostObjects.find(obj => obj.id === lostObjectId);
+            if (lostObject) {
+                lostObject.status = "reclamado";
+            }
+        },
     },
+
 });
 
-export const { setLostObjectData } = lostObjectSlice.actions;
+export const { setLostObjectData, markLostObjectAsClaimed } = lostObjectSlice.actions;
 
 export const selectLostObjects = (state: RootState) =>
     state.lostObject.lostObjects;

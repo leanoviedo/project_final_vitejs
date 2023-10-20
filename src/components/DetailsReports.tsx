@@ -16,13 +16,17 @@ import {
 import { useLocation, useNavigate } from "react-router-dom";
 import CustomNavbar from "./CustomNavbar";
 import GoogleMapReact from "google-map-react";
-import { useAppSelector } from "../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { selectUserLogin } from "../redux/slices/UserLogin";
+import { setLostObjectData } from "../redux/slices/lostObjectSlice";
+import { v4 as uuidv4 } from 'uuid';
+
 
 const DetailsReports: React.FC = () => {
     const ubicacion = useLocation();
     const { lostObject, newdate } = ubicacion.state.data || {};
     const userLogin = useAppSelector(selectUserLogin);
+    const dispatch = useAppDispatch();
     const isCurrentUserOwner = userLogin && userLogin.email === lostObject.user.email;
 
 
@@ -74,10 +78,17 @@ const DetailsReports: React.FC = () => {
     };
 
     const handleConfirmReclamar = () => {
-        navigate("/FoundObjects");
+
+
+        const newLostObject = { ...lostObject, id: uuidv4() };
+
+        dispatch(setLostObjectData(newLostObject));
+
+        navigate
+        navigate('/FoundObjects');
+
         handleCloseDialog();
     };
-
     return (
         <>
             <CustomNavbar />

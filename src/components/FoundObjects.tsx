@@ -17,6 +17,8 @@ import SendIcon from '@mui/icons-material/Send';
 import { addLike, addMessage, removeLike } from "../redux/slices/chatSlices";
 import { ThumbUp, ThumbUpOutlined } from "@mui/icons-material";
 import CustomNavbar from "./CustomNavbar";
+import { v4 as uuidv4 } from 'uuid';
+
 
 function FoundObjects() {
     const selectedUser = useSelector(
@@ -39,6 +41,7 @@ function FoundObjects() {
     const handleCommentSubmit = () => {
         if (inputMessage.trim() !== "") {
             const newMessage = {
+                id: uuidv4(),
                 user: selectedUser!,
                 message: inputMessage,
                 timestamp: Date.now(),
