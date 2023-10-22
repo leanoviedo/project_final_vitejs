@@ -26,12 +26,10 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs, { Dayjs } from "dayjs";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import CustomNavbar from "./CustomNavbar";
-import { LostObjectData, Country, City, Airport } from "../model/interface"
+import { LostObjectData, Country, City, Airport } from "../model/interface";
 import { setLostObjectData } from "../redux/slices/lostObjectSlice";
 import { selectUserLogin } from "../redux/slices/UserLogin";
-import { v4 as uuidv4 } from 'uuid';
-
-
+import { v4 as uuidv4 } from "uuid";
 
 const errorStyles = {
   color: "red",
@@ -84,7 +82,6 @@ const LandingPage = () => {
   const [selectedCity, setSelectedCity] = useState("");
   const [selectedAirport, setSelectedCAirport] = useState("");
   const [lostType, setLostType] = useState("");
-
 
   const dispatch = useAppDispatch();
   const loggedInUser = useAppSelector(selectUserLogin);
@@ -206,7 +203,7 @@ const LandingPage = () => {
       photo: "",
       type: "",
       status: "",
-      id:"",
+      id: "",
     });
     setCountryError("");
     setCityError("");
@@ -214,7 +211,7 @@ const LandingPage = () => {
     setDateError("");
     setDescriptionError("");
     setPhotoError("");
-    setLostType("")
+    setLostType("");
   };
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -262,7 +259,6 @@ const LandingPage = () => {
       hasErrors = true;
     }
 
-
     if (hasErrors) {
       return;
     }
@@ -281,34 +277,31 @@ const LandingPage = () => {
       type: lostType,
       status: lostObject.status,
       id: uuidv4(),
-      user: loggedInUser
+      userReport: loggedInUser
         ? {
-          name: {
-            first: loggedInUser.name.first,
-            last: loggedInUser.name.last,
-          },
-          location: {
-            city: loggedInUser.location.city,
-            state: loggedInUser.location.state,
-            country: loggedInUser.location.country,
-            postcode: loggedInUser.location.postcode,
-            coordinates: {
-              latitude: loggedInUser.location.coordinates.latitude,
-              longitude: loggedInUser.location.coordinates.longitude,
+            name: {
+              first: loggedInUser.name.first,
+              last: loggedInUser.name.last,
             },
-          },
-          email: loggedInUser.email,
-          login: loggedInUser.login,
-          phone: loggedInUser.phone,
-          cell: loggedInUser.cell,
-          picture: loggedInUser.picture,
-          password: loggedInUser.login.password,
-
-        }
+            location: {
+              city: loggedInUser.location.city,
+              state: loggedInUser.location.state,
+              country: loggedInUser.location.country,
+              postcode: loggedInUser.location.postcode,
+              coordinates: {
+                latitude: loggedInUser.location.coordinates.latitude,
+                longitude: loggedInUser.location.coordinates.longitude,
+              },
+            },
+            email: loggedInUser.email,
+            login: loggedInUser.login,
+            phone: loggedInUser.phone,
+            cell: loggedInUser.cell,
+            picture: loggedInUser.picture,
+            password: loggedInUser.login.password,
+          }
         : null,
-
     };
-    console.log(selectData);
 
     dispatch(setLostObjectData(selectData));
   };
@@ -322,7 +315,7 @@ const LandingPage = () => {
       spacing={3}
     >
       <CustomNavbar />
-      <Grid item mt={5} xs={12} sm={6} md={4} >
+      <Grid item mt={5} xs={12} sm={6} md={4}>
         <Card sx={{ p: 3, boxShadow: 3 }}>
           <Typography variant="h4" align="center" marginBottom={4}>
             ¡Reporta tu objeto perdido!
@@ -332,7 +325,7 @@ const LandingPage = () => {
             onSubmit={handleSubmit}
             sx={{ borderColor: "primary.main" }}
           >
-            <Grid item xs={12}  >
+            <Grid item xs={12}>
               <FormControl fullWidth>
                 <InputLabel id="country-label">Pais</InputLabel>
                 <Select
@@ -353,7 +346,7 @@ const LandingPage = () => {
               </FormControl>
             </Grid>
 
-            <Grid item marginTop={2} xs={12}  >
+            <Grid item marginTop={2} xs={12}>
               <FormControl fullWidth>
                 <InputLabel id="city-label">Ciudad</InputLabel>
                 <Select
@@ -374,7 +367,7 @@ const LandingPage = () => {
               </FormControl>
             </Grid>
 
-            <Grid item marginTop={2} xs={12}  >
+            <Grid item marginTop={2} xs={12}>
               <FormControl fullWidth>
                 <InputLabel id="demo-multiple-name-label">
                   Aeropuerto
@@ -395,7 +388,7 @@ const LandingPage = () => {
                 <FormHelperText sx={errorStyles}>{airportError}</FormHelperText>
               </FormControl>
             </Grid>
-            <Grid item marginTop={2} xs={12} >
+            <Grid item marginTop={2} xs={12}>
               <DatePicker
                 label="Fecha de la perdida"
                 value={lostObject.date}
@@ -407,7 +400,7 @@ const LandingPage = () => {
               />
               <FormHelperText sx={errorStyles}>{dateError}</FormHelperText>
             </Grid>
-            <Grid item marginTop={2} xs={12}  >
+            <Grid item marginTop={2} xs={12}>
               <TextField
                 fullWidth
                 id="photo"
@@ -418,7 +411,7 @@ const LandingPage = () => {
               />
               <FormHelperText sx={errorStyles}>{photoError}</FormHelperText>
             </Grid>
-            <Grid item marginTop={2} xs={12} >
+            <Grid item marginTop={2} xs={12}>
               <TextField
                 aria-label="minimum height"
                 id="description"
@@ -458,8 +451,7 @@ const LandingPage = () => {
               </FormControl>
             </Grid>
 
-
-            <Grid item sx={{ textAlign: 'center', mt: 2 }}>
+            <Grid item sx={{ textAlign: "center", mt: 2 }}>
               <Button
                 type="submit"
                 variant="contained"

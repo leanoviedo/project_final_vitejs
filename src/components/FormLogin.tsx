@@ -27,10 +27,8 @@ const FormLogin = () => {
     password: "",
   });
 
-
   const [errorSnackbarOpen, setErrorSnackbarOpen] = useState(false);
   const [errorSnackbarMessage, setErrorSnackbarMessage] = useState("");
-
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUsersLogin({ ...userLogin, [e.target.name]: e.target.value });
@@ -47,17 +45,26 @@ const FormLogin = () => {
       dispatch(setUserLogin(existingLogin));
       navigate("/LandingPage");
     } else {
-      if (!registrationData.some((registration) => registration.email === userLogin.email)) {
-        setErrorSnackbarMessage("Email incorrecto. Por favor, verifica tu email.");
+      if (
+        !registrationData.some(
+          (registration) => registration.email === userLogin.email
+        )
+      ) {
+        setErrorSnackbarMessage(
+          "Email incorrecto. Por favor, verifica tu email."
+        );
       }
-      if (!registrationData.some((registration)=>registration.login.password===userLogin.password)) {
+      if (
+        !registrationData.some(
+          (registration) => registration.login.password === userLogin.password
+        )
+      ) {
         setErrorSnackbarMessage("El correo electrónico es incorrecto.");
-
       }
       setErrorSnackbarOpen(true);
     }
   };
-  
+
   return (
     <Grid container justifyContent="center" alignItems="center">
       <AppBar position="static">
@@ -117,7 +124,10 @@ const FormLogin = () => {
             <Button type="submit" fullWidth variant="contained">
               Iniciar sesión
             </Button>
-            <Link to="/FormRegistration" style={{ textDecoration: "none", color: "blue" }}>
+            <Link
+              to="/FormRegistration"
+              style={{ textDecoration: "none", color: "blue" }}
+            >
               <Typography mt={2} ml={5}>
                 ¿No tienes una cuenta? Regístrate
               </Typography>
@@ -128,7 +138,7 @@ const FormLogin = () => {
           open={errorSnackbarOpen}
           autoHideDuration={6000}
           onClose={() => setErrorSnackbarOpen(false)}
-          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+          anchorOrigin={{ vertical: "top", horizontal: "right" }}
         >
           <Alert
             onClose={() => setErrorSnackbarOpen(false)}
