@@ -13,10 +13,11 @@ import {
     Paper,
     Grid,
 } from "@mui/material";
-import SendIcon from '@mui/icons-material/Send';
+import SendIcon from "@mui/icons-material/Send";
 import { addLike, addMessage, removeLike } from "../redux/slices/chatSlices";
 import { ThumbUp, ThumbUpOutlined } from "@mui/icons-material";
 import CustomNavbar from "./CustomNavbar";
+import { v4 as uuidv4 } from "uuid";
 
 function FoundObjects() {
     const selectedUser = useSelector(
@@ -39,6 +40,7 @@ function FoundObjects() {
     const handleCommentSubmit = () => {
         if (inputMessage.trim() !== "") {
             const newMessage = {
+                id: uuidv4(),
                 user: selectedUser!,
                 message: inputMessage,
                 timestamp: Date.now(),
@@ -71,8 +73,10 @@ function FoundObjects() {
         <div>
             <CustomNavbar />
             <Grid textAlign="center">
-                <Typography variant="h4" component="h2">  chat Messenger...!!! </Typography>
-
+                <Typography variant="h4" component="h2">
+                    {" "}
+                    chat Messenger...!!!{" "}
+                </Typography>
             </Grid>
             <Card sx={{ width: "100%", mx: "auto" }}>
                 <Typography variant="h5" gutterBottom margin={2}>
@@ -81,17 +85,35 @@ function FoundObjects() {
 
                 <Box display="flex" flexDirection="column" alignItems="center">
                     {messages.map((msg, index) => (
-                        <Card key={index} elevation={3} sx={{ width: "100%", maxWidth: 800, mb: 2 }}>
+                        <Card
+                            key={index}
+                            elevation={3}
+                            sx={{ width: "100%", maxWidth: 800, mb: 2 }}
+                        >
                             <CardContent>
                                 <Box display="flex" alignItems="center" mb={2}>
-                                    <Avatar src={msg.user.picture.thumbnail} alt="Avatar" sx={{ mr: 2 }} />
-                                    <Typography variant="h6">{msg.user.login.username}:</Typography>
+                                    <Avatar
+                                        src={msg.user.picture.thumbnail}
+                                        alt="Avatar"
+                                        sx={{ mr: 2 }}
+                                    />
+                                    <Typography variant="h6">
+                                        {msg.user.login.username}:
+                                    </Typography>
                                 </Box>
                                 <Typography>{msg.message}</Typography>
                                 {msg.image && (
-                                    <img src={msg.image} alt="Mensaje con imagen" style={{ maxWidth: "100%" }} />
+                                    <img
+                                        src={msg.image}
+                                        alt="Mensaje con imagen"
+                                        style={{ maxWidth: "100%" }}
+                                    />
                                 )}
-                                <Typography variant="caption" color="textSecondary" sx={{ mt: 1 }}>
+                                <Typography
+                                    variant="caption"
+                                    color="textSecondary"
+                                    sx={{ mt: 1 }}
+                                >
                                     Enviado: {new Date(msg.timestamp).toLocaleTimeString()}
                                 </Typography>
                                 <Box display="flex" alignItems="center" mt={1}>
@@ -143,9 +165,8 @@ function FoundObjects() {
                     </Button>
                 </Box>
             </Card>
-
         </div>
     );
 }
 
-export default FoundObjects
+export default FoundObjects;

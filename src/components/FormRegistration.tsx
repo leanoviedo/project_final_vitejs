@@ -36,11 +36,9 @@ const FormRegistration = () => {
   const [successSnackbarOpen, setSuccessSnackbarOpen] = useState(false);
   const [errorSnackbarOpen, setErrorSnackbarOpen] = useState(false);
 
-
   useEffect(() => {
     dispatch(UserServices());
   }, [dispatch]);
-
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -65,7 +63,9 @@ const FormRegistration = () => {
     setAvatarSrc("");
 
     if (value) {
-      const existingUser = usersAvailable.find((user: { email: string; }) => user.email === value);
+      const existingUser = usersAvailable.find(
+        (user: { email: string }) => user.email === value
+      );
 
       if (existingUser) {
         setUserData((prevUserData) => ({
@@ -86,7 +86,7 @@ const FormRegistration = () => {
     e.preventDefault();
 
     const existingUser = usersAvailable.find(
-      (user: { email: string; }) => user.email === userData.email
+      (user: { email: string }) => user.email === userData.email
     );
 
     if (existingUser) {
@@ -104,12 +104,9 @@ const FormRegistration = () => {
         navigate("/FormLogin");
       }, 1000);
       setSuccessSnackbarOpen(true);
-
     } else {
       setErrorSnackbarOpen(true);
-
     }
-
   };
 
   return (
@@ -206,7 +203,7 @@ const FormRegistration = () => {
             open={successSnackbarOpen}
             autoHideDuration={6000}
             onClose={() => setSuccessSnackbarOpen(false)}
-            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+            anchorOrigin={{ vertical: "top", horizontal: "right" }}
           >
             <Alert
               onClose={() => setSuccessSnackbarOpen(false)}
@@ -215,13 +212,12 @@ const FormRegistration = () => {
             >
               ¡Usuario registrado con exito..!
             </Alert>
-
           </Snackbar>
           <Snackbar
             open={errorSnackbarOpen}
             autoHideDuration={6000}
             onClose={() => setErrorSnackbarOpen(false)}
-            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+            anchorOrigin={{ vertical: "top", horizontal: "right" }}
           >
             <Alert
               onClose={() => setErrorSnackbarOpen(false)}
@@ -230,7 +226,6 @@ const FormRegistration = () => {
             >
               Error sus datos no figuran en ningun Aeropuerto...!
             </Alert>
-
           </Snackbar>
         </Grid>
       </Card>
@@ -248,4 +243,3 @@ const FormRegistration = () => {
 };
 
 export default FormRegistration;
-

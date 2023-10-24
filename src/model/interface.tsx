@@ -1,7 +1,6 @@
 import { Dayjs } from "dayjs";
 
 interface UserData {
-    [x: string]: any;
     gender?: string;
     name: {
         title?: string;
@@ -55,14 +54,22 @@ interface UserData {
 }
 
 interface LostObjectData {
+    id: string;
     country: Country;
     city: City;
     airport: Airport;
     date: Dayjs | null;
     photo: string;
     description: string;
+    type: string;
     status: string;
-    user?: UserData | null;
+    userReport?: UserData | null;
+    userReclamed?: UserData | null;
+}
+
+interface DataToReclaim {
+    userReclamed: UserData;
+    idLostObject: string;
 }
 
 interface Country {
@@ -102,12 +109,13 @@ interface LostObjectState {
     lostObjects: LostObjectData[];
 }
 interface Message {
+    id: string;
     user: UserData;
     message: string;
     timestamp: number;
     image?: string;
     likes: number;
-    likedBy: string[]
+    likedBy: string[];
 }
 
 export type {
@@ -120,5 +128,6 @@ export type {
     Country,
     City,
     Airport,
-    Message
+    Message,
+    DataToReclaim,
 };

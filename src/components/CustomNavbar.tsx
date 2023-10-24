@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState, MouseEvent } from "react";
 import {
     AppBar,
     Box,
@@ -10,11 +10,12 @@ import {
     MenuItem,
     Avatar,
     Grid,
-    Hidden,
 } from "@mui/material";
 import AirplanemodeActiveOutlinedIcon from "@mui/icons-material/AirplanemodeActiveOutlined";
 import MenuIcon from "@mui/icons-material/Menu";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
+import SearchIcon from "@mui/icons-material/Search";
+import ListAltIcon from "@mui/icons-material/ListAlt";
+import ReportIcon from "@mui/icons-material/Report";
 import { Link } from "react-router-dom";
 import { clearUserLogin, selectUserLogin } from "../redux/slices/UserLogin";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
@@ -22,153 +23,164 @@ import { useAppDispatch, useAppSelector } from "../redux/hooks";
 const CustomNavbar = () => {
     const loggedInUser = useAppSelector(selectUserLogin);
     const dispatch = useAppDispatch();
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-    const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorEl(event.currentTarget);
+    const [mainMenuAnchor, setMainMenuAnchor] = useState<null | HTMLElement>(null);
+    const isMainMenuOpen = Boolean(mainMenuAnchor);
+
+    const handleMainMenuOpen = (event: MouseEvent<HTMLElement>) => {
+        setMainMenuAnchor(event.currentTarget);
     };
 
-    const handleClose = () => {
-        setAnchorEl(null);
+    const handleMainMenuClose = () => {
+        setMainMenuAnchor(null);
+    };
+    const [avatarMenuAnchor, setAvatarMenuAnchor] = useState<null | HTMLElement>(null);
+    const isAvatarMenuOpen = Boolean(avatarMenuAnchor);
+
+    const handleAvatarMenuOpen = (event: MouseEvent<HTMLElement>) => {
+        setAvatarMenuAnchor(event.currentTarget);
+    };
+
+    const handleAvatarMenuClose = () => {
+        setAvatarMenuAnchor(null);
     };
 
     return (
         <AppBar position="static" sx={{ margin: 1, padding: 1 }}>
             <Toolbar>
-                <IconButton edge="start" color="inherit">
-                    <AirplanemodeActiveOutlinedIcon sx={{ fontSize: 40 }} />
-                </IconButton>
+                <AirplanemodeActiveOutlinedIcon sx={{ fontSize: 40, mr: 2 }} />
                 <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                     Airport Missing Things (MYT)
                 </Typography>
-                <Hidden mdDown>
-                    <Grid
-                        container
-                        alignItems="center"
-                        justifyContent="flex-end"
-                        spacing={3}
+                <Box
+                    sx={{
+                        display: { xs: "none", md: "flex" },
+                        flexGrow: 1,
+                        justifyContent: "flex-end",
+                    }}
+                >
+                    <Button
+                        color="inherit"
+                        component={Link}
+                        to="/LandingPage"
+                        onClick={handleMainMenuOpen}
                     >
-                        <Grid item>
-                            <Button color="inherit" component={Link} to="/LandingPage">
-                                Reportar objeto
-                            </Button>
-                        </Grid>
-                        <Grid item>
-                            <Button color="inherit" component={Link} to="/LostObjectsDetails">
-                                Objetos perdidos
-                            </Button>
-                        </Grid>
-                        <Grid item>
-                            <Button color="inherit" component={Link} to="/LostAndFoundList">
-                                Lista de reportes
-                            </Button>
-                        </Grid>
+                        <ReportIcon />
+                        reportar objeto
+                    </Button>
+                    <Button
+                        color="inherit"
+                        component={Link}
+                        to="/LostObjectsDetails"
+                        onClick={handleMainMenuOpen}
+                    >
+                        <SearchIcon />
+                        buscador de objetos perdidos
+                    </Button>
+                    <Button
+                        color="inherit"
+                        component={Link}
+                        to="/LostAndFoundList"
+                        onClick={handleMainMenuOpen}
+                    >
+                        <ListAltIcon />
+                        lista de reportes
+                    </Button>
+                </Box>
+                <Grid>
+                    <IconButton
+                        aria-label="account of current user"
+                        aria-controls="avatar-menu-appbar"
+                        aria-haspopup="true"
+                        onClick={handleAvatarMenuOpen}
+                        color="inherit"
+                    >
                         {loggedInUser && (
-                            <Grid item>
-                                <Box display="flex" alignItems="center">
-                                    <Avatar
-                                        alt=""
-                                        src={loggedInUser.picture?.large}
-                                        sx={{ width: 56, height: 56, marginRight: 1 }}
-                                    />
-                                    <IconButton
-                                        aria-label="account of current user"
-                                        aria-controls="menu-appbar"
-                                        aria-haspopup="true"
-                                        onClick={handleMenu}
-                                        color="inherit"
-                                    >
-                                        <MoreVertIcon />
-                                    </IconButton>
-                                    <Menu
-                                        id="menu-appbar"
-                                        anchorEl={anchorEl}
-                                        open={Boolean(anchorEl)}
-                                        onClose={handleClose}
-                                    >
-                                        <MenuItem
-                                            onClick={() => {
-                                                handleClose();
-                                                dispatch(clearUserLogin());
-                                            }}
-                                            component={Link}
-                                            to="/"
-                                        >
-                                            Cerrar Sesión
-                                        </MenuItem>
-                                    </Menu>
-                                </Box>
-                            </Grid>
+                            <Avatar
+                                alt=""
+                                src={loggedInUser.picture?.large}
+                                sx={{ width: 56, height: 56 }}
+                            />
                         )}
-                    </Grid>
-                </Hidden>
-                <Hidden lgUp>
-                    {loggedInUser && (
-                        <Grid>
-                            <Box display="flex" alignItems="center">
-                                <Avatar
-                                    alt=""
-                                    src={loggedInUser.picture?.large}
-                                    sx={{ width: 56, height: 56, marginRight: 1 }}
-                                />
-                                <IconButton
-                                    aria-label="account of current user"
-                                    aria-controls="menu-appbar"
-                                    aria-haspopup="true"
-                                    onClick={handleMenu}
-                                    color="inherit"
-                                >
-                                    <MenuIcon />
-                                </IconButton>
-                                <Menu
-                                    id="menu-appbar"
-                                    anchorEl={anchorEl}
-                                    open={Boolean(anchorEl)}
-                                    onClose={handleClose}
-                                >
-                                    {loggedInUser && (
-                                        <MenuItem
-                                            component={Link}
-                                            to="/LandingPage"
-                                            sx={{ color: "primary.main" }}
-                                        >
-                                            Reportar objeto
-                                        </MenuItem>
-                                    )}
-                                    {loggedInUser && (
-                                        <MenuItem
-                                            component={Link}
-                                            to="/LostObjectsDetails"
-                                            sx={{ color: "primary.main" }}
-                                        >
-                                            objetos perdidos
-                                        </MenuItem>
-                                    )}
-                                    {loggedInUser && (
-                                        <MenuItem
-                                            component={Link}
-                                            to="/LostAndFoundList"
-                                            sx={{ color: "primary.main" }}
-                                        >
-                                            Lista de reportes
-                                        </MenuItem>
-                                    )}
-                                    <MenuItem
-                                        onClick={() => {
-                                            handleClose();
-                                            dispatch(clearUserLogin());
-                                        }}
-                                        component={Link}
-                                        to="/"
-                                        sx={{ color: "primary.main" }}
-                                    >
-                                        Cerrar Sesión
-                                    </MenuItem>
-                                </Menu>
-                            </Box>
-                        </Grid>
-                    )}
-                </Hidden>
+                    </IconButton>
+                </Grid>
+                <Menu
+                    id="avatar-menu-appbar"
+                    anchorEl={avatarMenuAnchor}
+                    open={isAvatarMenuOpen}
+                    onClose={handleAvatarMenuClose}
+                >
+                    <MenuItem
+                        onClick={() => {
+                            handleAvatarMenuClose();
+                            dispatch(clearUserLogin());
+                        }}
+                        component={Link}
+                        to="/"
+                    >
+                        cerrar sesión
+                    </MenuItem>
+                </Menu>
+                {loggedInUser && (
+                    <Box
+                        display="flex"
+                        alignItems="center"
+                        sx={{
+                            display: {
+                                xs: "block",
+                                md: "none",
+                            },
+                        }}
+                    >
+                        <IconButton
+                            aria-label="account of current user"
+                            aria-controls="main-menu-appbar"
+                            aria-haspopup="true"
+                            onClick={handleMainMenuOpen}
+                            color="inherit"
+                        >
+                            <MenuIcon />
+                        </IconButton>
+                        <Menu
+                            id="main-menu-appbar"
+                            anchorEl={mainMenuAnchor}
+                            open={isMainMenuOpen}
+                            onClose={handleMainMenuClose}
+                        >
+                            <MenuItem
+                                onClick={() => {
+                                    handleMainMenuClose();
+                                }}
+                                component={Link}
+                                to="/LandingPage"
+                            >
+                                <ReportIcon />
+                                reportar objeto
+                            </MenuItem>
+                            <MenuItem
+                                onClick={() => {
+                                    handleMainMenuClose();
+
+                                }}
+                                component={Link}
+                                to="/LostObjectsDetails"
+                            >
+                                <SearchIcon />
+                                buscador de objetos perdidos
+                            </MenuItem>
+                            <MenuItem
+                                onClick={() => {
+                                    handleMainMenuClose();
+                                }}
+                                component={Link}
+                                to="/LostAndFoundList"
+                            >
+                                <ListAltIcon />
+                                mis reportes
+                            </MenuItem>
+                        </Menu>
+                    </Box>
+                )}
             </Toolbar>
         </AppBar>
     );

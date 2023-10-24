@@ -34,9 +34,13 @@ const LostObjectDetails = () => {
         if (selectedCountry || searchText.length >= 3) {
             const filtered = lostObjects.filter((lostObject) => {
                 const descriptionMatch = searchText
-                    ? lostObject.description.toLowerCase().includes(searchText.toLowerCase())
+                    ? lostObject.description
+                        .toLowerCase()
+                        .includes(searchText.toLowerCase())
                     : true;
-                const countryMatch = selectedCountry ? lostObject.country.name === selectedCountry : true;
+                const countryMatch = selectedCountry
+                    ? lostObject.country.name === selectedCountry
+                    : true;
                 return descriptionMatch && countryMatch;
             });
 
@@ -45,7 +49,7 @@ const LostObjectDetails = () => {
                 setErrorMessage(validationMessages.noCountryMatch);
                 setResultsFound(false);
             } else {
-                setFilteredObjects(filtered)
+                setFilteredObjects(filtered);
                 setErrorMessage(null);
                 setResultsFound(true);
             }
@@ -79,14 +83,14 @@ const LostObjectDetails = () => {
     };
 
     return (
-
         <Grid container justifyContent="center" spacing={3}>
             <CustomNavbar />
             <Grid item justifyContent="center" xs={12} sm={6} md={4}>
-                <Typography variant="h5" component="h1" sx={{ textAlign: "center", justifyContent: "center" }}>
+                <Typography variant="h5" component="h1" sx={{ textAlign: "center", justifyContent: "center" }}
+                >
                     buscar Perdidos
                 </Typography>
-                <Grid item xs={12} >
+                <Grid item xs={12}>
                     <Autocomplete
                         options={countries}
                         value={selectedCountry}
@@ -97,7 +101,6 @@ const LostObjectDetails = () => {
                                 label="Buscar por país"
                                 {...params}
                                 variant="outlined"
-
                             />
                         )}
                     />
@@ -108,7 +111,6 @@ const LostObjectDetails = () => {
                         value={searchText}
                         onChange={(e) => setSearchText(e.target.value)}
                         fullWidth
-
                     />
                 </Grid>
                 <Grid item>
@@ -135,7 +137,6 @@ const LostObjectDetails = () => {
                         Objeto no encontrado.
                     </Typography>
                 ) : (
-
                     <div>
                         {filteredObjects?.map((lostObject, index) => (
                             <Box key={index} mt={2}>
@@ -151,9 +152,7 @@ const LostObjectDetails = () => {
                                             to="/DetailsReports"
                                             state={{
                                                 data: {
-                                                    newdate: dayjs(lostObject.date).format(
-                                                        "DD-MM-YYYY"
-                                                    ),
+                                                    newdate: dayjs(lostObject.date).format("DD-MM-YYYY"),
                                                     lostObject: lostObject,
                                                 },
                                             }}
@@ -175,16 +174,13 @@ const LostObjectDetails = () => {
                                             </Box>
                                             <Box m={1} p={1}>
                                                 <Typography variant="body2" color="text.secondary">
-                                                    <strong>Objeto:</strong>{" "}
-                                                    {lostObject.status}
+                                                    <strong>Objeto:</strong> {lostObject.status}
                                                 </Typography>
                                                 <Typography variant="body2" color="text.secondary">
-                                                    <strong>Descripción:</strong>{" "}
-                                                    {lostObject.description}
+                                                    <strong>Descripción:</strong> {lostObject.description}
                                                 </Typography>
                                                 <Typography variant="body2" color="text.secondary">
-                                                    <strong>Aeropuerto:</strong>{" "}
-                                                    {lostObject.airport.name}
+                                                    <strong>Aeropuerto:</strong> {lostObject.airport.name}
                                                 </Typography>
                                                 <Typography variant="body2" color="text.secondary">
                                                     <strong>País:</strong> {lostObject.country.name}
@@ -203,14 +199,15 @@ const LostObjectDetails = () => {
                                                 </Typography>
                                                 <Typography variant="body2" color="text.secondary">
                                                     <strong>Nombre:</strong>{" "}
-                                                    {lostObject.user?.name.first}{" "}
-                                                    {lostObject.user?.name.last}
+                                                    {lostObject.userReport?.name.first}{" "}
+                                                    {lostObject.userReport?.name.last}
                                                 </Typography>
                                                 <Typography variant="body2" color="text.secondary">
-                                                    <strong>Email:</strong> {lostObject.user?.email}
+                                                    <strong>Email:</strong> {lostObject.userReport?.email}
                                                 </Typography>
                                                 <Typography variant="body2" color="text.secondary">
-                                                    <strong>Teléfono:</strong> {lostObject.user?.phone}
+                                                    <strong>Teléfono:</strong>{" "}
+                                                    {lostObject.userReport?.phone}
                                                 </Typography>
                                             </Box>
                                         </Link>
