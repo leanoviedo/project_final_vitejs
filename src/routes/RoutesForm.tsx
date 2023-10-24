@@ -4,7 +4,7 @@ import FormLogin from "../components/FormLogin";
 import LandingPage from "../components/LandingPage";
 import LostObjectDetails from "../components/LostObjectDetails";
 import DetailsReports from "../components/DetailsReports";
-import FoundObjects from "../components/FoundObjects"
+import FoundObjects from "../components/FoundObjects";
 import LostAndFoundList from "../components/LostAndFoundList";
 
 const RoutesForm = () => {
@@ -22,4 +22,4 @@ const RoutesForm = () => {
   );
 };
 
-export default RoutesForm
+export default RoutesForm;

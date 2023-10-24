@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect } from "react";
 import {
     Typography,
     Avatar,
@@ -18,21 +18,20 @@ import CustomNavbar from "./CustomNavbar";
 import GoogleMapReact from "google-map-react";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { selectUserLogin } from "../redux/slices/UserLogin";
-import { setLostObjectData } from "../redux/slices/lostObjectSlice";
-import { v4 as uuidv4 } from 'uuid';
-
-
-const DetailsReports: React.FC = () => {
+import { markLostObjectAsClaimed } from "../redux/slices/lostObjectSlice";
+import { DataToReclaim } from "../model/interface";
+const DetailsReports = () => {
     const ubicacion = useLocation();
     const { lostObject, newdate } = ubicacion.state.data || {};
     const userLogin = useAppSelector(selectUserLogin);
     const dispatch = useAppDispatch();
-    const isCurrentUserOwner = userLogin && userLogin.email === lostObject.user.email;
+    const isCurrentUserOwner =
+        userLogin && userLogin.email === lostObject.userReport.email;
 
-
-    const [airportCoordinate, setAirportCoordinate] = useState<{ lat: number; lng: number }>(
-        { lat: 0, lng: 0 }
-    );
+    const [airportCoordinate, setAirportCoordinate] = useState<{
+        lat: number;
+        lng: number;
+    }>({ lat: 0, lng: 0 });
 
     const mapRef = useRef<any>(null);
     const markerRef = useRef<any>(null);
@@ -44,7 +43,7 @@ const DetailsReports: React.FC = () => {
         console.log("Latitude:", lat);
         console.log("Longitude:", lng);
         setAirportCoordinate({ lat, lng });
-    }
+    };
     const [isDialogOpen, setDialogOpen] = useState(false);
 
     useEffect(() => {
@@ -65,10 +64,9 @@ const DetailsReports: React.FC = () => {
         markerRef.current.addListener("click", () => {
             infoWindowRef.current.open(map, markerRef.current);
         });
-    }
+    };
 
     const navigate = useNavigate();
-
     const handleOpenDialog = () => {
         setDialogOpen(true);
     };
@@ -78,16 +76,24 @@ const DetailsReports: React.FC = () => {
     };
 
     const handleConfirmReclamar = () => {
+        const dataReclamed = {
+            userRelamed: userLogin,
+        };
 
+        if (!isCurrentUserOwner) {
+            if (lostObject.status === "reclamado") {
+                console.log("Ya reclamaste este objeto.");
+            } else {
+                const dataToReclaim: DataToReclaim = {
+                    userReclamed: dataReclamed.userRelamed!,
+                    idLostObject: lostObject.id,
+                };
+                dispatch(markLostObjectAsClaimed(dataToReclaim));
 
-        const newLostObject = { ...lostObject, id: uuidv4() };
-
-        dispatch(setLostObjectData(newLostObject));
-
-        navigate
-        navigate('/FoundObjects');
-
-        handleCloseDialog();
+                navigate("/FoundObjects");
+                handleCloseDialog();
+            }
+        }
     };
     return (
         <>
@@ -102,13 +108,14 @@ const DetailsReports: React.FC = () => {
                         <Button
                             color="success"
                             variant="contained"
-                            disabled={isCurrentUserOwner === true}
+                            disabled={
+                                isCurrentUserOwner === true || lostObject.status === "reclamado"
+                            }
                             style={{ marginLeft: "auto" }}
                             onClick={handleOpenDialog}
                         >
                             Reclamar
                         </Button>
-
                     </Grid>
                     <Grid container spacing={3}>
                         <Grid item xs={12} sm={6} md={4} p={2}>
@@ -152,29 +159,31 @@ const DetailsReports: React.FC = () => {
                         <Grid item xs={12} sm={6} md={4}>
                             <Box>
                                 <Typography variant="body2">
-                                    <strong>Nombre:</strong>{" "}
-                                    {lostObject.user?.name.first} {lostObject.user?.name.last}
+                                    <strong>Nombre:</strong> {lostObject.userReport?.name.first}{" "}
+                                    {lostObject.userReport?.name.last}
                                 </Typography>
                                 <Typography variant="body2">
-                                    <strong>Email:</strong> {lostObject.user?.email}
+                                    <strong>Email:</strong> {lostObject.userReport?.email}
                                 </Typography>
                                 <Typography variant="body2">
-                                    <strong>Teléfono:</strong> {lostObject.user?.phone}
+                                    <strong>Teléfono:</strong> {lostObject.userReport?.phone}
                                 </Typography>
                                 <Typography variant="body2">
                                     <strong>Dirección de domicilio:</strong>{" "}
-                                    {lostObject.user?.location.city} {lostObject.user?.location.country}{" "}
-                                    <i>Estado</i> {lostObject.user?.location.state}
+                                    {lostObject.userReport?.location.city}{" "}
+                                    {lostObject.userReport?.location.country} <i>Estado</i>{" "}
+                                    {lostObject.userReport?.location.state}
                                 </Typography>
                                 <Typography variant="body2">
-                                    <strong>Código postal:</strong> {lostObject.user?.location.postcode}
+                                    <strong>Código postal:</strong>{" "}
+                                    {lostObject.userReport?.location.postcode}
                                 </Typography>
                             </Box>
                         </Grid>
                         <Grid item xs={12} sm={6} md={4}>
                             <Box>
                                 <Avatar
-                                    src={lostObject.user?.picture.large}
+                                    src={lostObject.userReport?.picture.large}
                                     alt="fotografía de la persona del reporte"
                                     sx={{ width: "100%", maxWidth: "200px", height: "auto" }}
                                 />
@@ -191,10 +200,14 @@ const DetailsReports: React.FC = () => {
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleCloseDialog} variant="outlined" color="error" >
+                    <Button onClick={handleCloseDialog} variant="outlined" color="error">
                         Cancelar
                     </Button>
-                    <Button onClick={handleConfirmReclamar} variant="outlined" color="success" >
+                    <Button
+                        onClick={handleConfirmReclamar}
+                        variant="outlined"
+                        color="success"
+                    >
                         Confirmar
                     </Button>
                 </DialogActions>

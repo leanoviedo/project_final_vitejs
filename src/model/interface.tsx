@@ -63,7 +63,13 @@ interface LostObjectData {
     description: string;
     type: string;
     status: string;
-    user?: UserData | null;
+    userReport?: UserData | null;
+    userReclamed?: UserData | null;
+}
+
+interface DataToReclaim {
+    userReclamed: UserData;
+    idLostObject: string;
 }
 
 interface Country {
@@ -109,7 +115,7 @@ interface Message {
     timestamp: number;
     image?: string;
     likes: number;
-    likedBy: string[]
+    likedBy: string[];
 }
 
 export type {
@@ -122,5 +128,6 @@ export type {
     Country,
     City,
     Airport,
-    Message
+    Message,
+    DataToReclaim,
 };

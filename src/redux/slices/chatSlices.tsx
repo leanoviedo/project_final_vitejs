@@ -16,14 +16,20 @@ const chatSlice = createSlice({
         addMessage: (state, action: PayloadAction<Message>) => {
             state.messages.push({ ...action.payload, likes: 0, likedBy: [] });
         },
-        addLike: (state, action: PayloadAction<{ index: number; username: string }>) => {
+        addLike: (
+            state,
+            action: PayloadAction<{ index: number; username: string }>
+        ) => {
             const { index, username } = action.payload;
             if (!state.messages[index].likedBy.includes(username)) {
                 state.messages[index].likes++;
                 state.messages[index].likedBy.push(username);
             }
         },
-        removeLike: (state, action: PayloadAction<{ index: number; username: string }>) => {
+        removeLike: (
+            state,
+            action: PayloadAction<{ index: number; username: string }>
+        ) => {
             const { index, username } = action.payload;
             const likedIndex = state.messages[index].likedBy.indexOf(username);
             if (likedIndex !== -1) {

@@ -26,12 +26,10 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs, { Dayjs } from "dayjs";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import CustomNavbar from "./CustomNavbar";
-import { LostObjectData, Country, City, Airport } from "../model/interface"
+import { LostObjectData, Country, City, Airport } from "../model/interface";
 import { setLostObjectData } from "../redux/slices/lostObjectSlice";
 import { selectUserLogin } from "../redux/slices/UserLogin";
-import { v4 as uuidv4 } from 'uuid';
-
-
+import { v4 as uuidv4 } from "uuid";
 
 const errorStyles = {
   color: "red",
@@ -79,12 +77,11 @@ const LandingPage = () => {
   const [dateError, setDateError] = useState("");
   const [descriptionError, setDescriptionError] = useState("");
   const [photoError, setPhotoError] = useState("");
-
+  const [lostTypeError, setLostTypeError] = useState("");
   const [selectedCountry, setSelectedCountry] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
   const [selectedAirport, setSelectedCAirport] = useState("");
   const [lostType, setLostType] = useState("");
-
 
   const dispatch = useAppDispatch();
   const loggedInUser = useAppSelector(selectUserLogin);
@@ -93,7 +90,6 @@ const LandingPage = () => {
     const fetchData = async () => {
       try {
         const countries = await AirportServices.fetchCountries();
-        console.log(countries);
         setCountryData(countries);
       } catch (error) {
         console.error(error);
@@ -116,7 +112,6 @@ const LandingPage = () => {
 
     AirportServices.fetchCitiesByCountry(conutrynew.code)
       .then((response) => {
-        console.log(response.data.response);
         const citiesByCountry = response.data.response;
         setCityData(citiesByCountry);
       })
@@ -176,7 +171,6 @@ const LandingPage = () => {
   };
   const handlePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setLostObject({ ...lostObject, [event.target.name]: event.target.value });
-    console.log(event.target.value);
   };
   const resetFormFields = () => {
     setLostObject({
@@ -206,7 +200,7 @@ const LandingPage = () => {
       photo: "",
       type: "",
       status: "",
-      id:"",
+      id: "",
     });
     setCountryError("");
     setCityError("");
@@ -214,7 +208,7 @@ const LandingPage = () => {
     setDateError("");
     setDescriptionError("");
     setPhotoError("");
-    setLostType("")
+    setLostType("");
   };
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -224,6 +218,8 @@ const LandingPage = () => {
     setDateError("");
     setDescriptionError("");
     setPhotoError("");
+    setLostType("");
+    setLostTypeError("");
 
     let hasErrors = false;
 
@@ -258,10 +254,9 @@ const LandingPage = () => {
     }
 
     if (!lostType) {
-      setLostType("Campo obligatorio");
+      setLostTypeError("Campo obligatorio");
       hasErrors = true;
     }
-
 
     if (hasErrors) {
       return;
@@ -281,7 +276,7 @@ const LandingPage = () => {
       type: lostType,
       status: lostObject.status,
       id: uuidv4(),
-      user: loggedInUser
+      userReport: loggedInUser
         ? {
           name: {
             first: loggedInUser.name.first,
@@ -303,45 +298,35 @@ const LandingPage = () => {
           cell: loggedInUser.cell,
           picture: loggedInUser.picture,
           password: loggedInUser.login.password,
-
         }
         : null,
-
     };
-    console.log(selectData);
 
     dispatch(setLostObjectData(selectData));
+    setSelectedCountry("");
+    setSelectedCity("");
+    setSelectedCAirport("");
   };
 
   return (
-    <Grid
-      container
-      alignContent="center"
-      justifyContent="center"
-      alignItems="center"
-      spacing={3}
-    >
+    <Grid container alignContent="center" justifyContent="center" alignItems="center" spacing={3}>
       <CustomNavbar />
-      <Grid item mt={5} xs={12} sm={6} md={4} >
+      <Grid item mt={5} xs={12} sm={6} md={4}>
         <Card sx={{ p: 3, boxShadow: 3 }}>
           <Typography variant="h4" align="center" marginBottom={4}>
             ¡Reporta tu objeto perdido!
           </Typography>
-          <Box
-            component="form"
-            onSubmit={handleSubmit}
-            sx={{ borderColor: "primary.main" }}
-          >
-            <Grid item xs={12}  >
+          <Box component="form" onSubmit={handleSubmit} sx={{ borderColor: "primary.main" }}>
+            <Grid item xs={12}>
               <FormControl fullWidth>
-                <InputLabel id="country-label">Pais</InputLabel>
+                <InputLabel id="country-label">País</InputLabel>
                 <Select
                   labelId="country-select-label"
                   id="country-simple-select"
                   value={selectedCountry}
                   label="country"
                   onChange={handleCountryChange}
-                  input={<OutlinedInput label="Pain" />}
+                  input={<OutlinedInput label="País" />}
                 >
                   {countryData.map((country: any, index: number) => (
                     <MenuItem key={index} value={country}>
@@ -353,7 +338,7 @@ const LandingPage = () => {
               </FormControl>
             </Grid>
 
-            <Grid item marginTop={2} xs={12}  >
+            <Grid item marginTop={2} xs={12}>
               <FormControl fullWidth>
                 <InputLabel id="city-label">Ciudad</InputLabel>
                 <Select
@@ -374,11 +359,9 @@ const LandingPage = () => {
               </FormControl>
             </Grid>
 
-            <Grid item marginTop={2} xs={12}  >
+            <Grid item marginTop={2} xs={12}>
               <FormControl fullWidth>
-                <InputLabel id="demo-multiple-name-label">
-                  Aeropuerto
-                </InputLabel>
+                <InputLabel id="demo-multiple-name-label">Aeropuerto</InputLabel>
                 <Select
                   labelId="airport-select-label"
                   id="airport-simple-select"
@@ -395,9 +378,9 @@ const LandingPage = () => {
                 <FormHelperText sx={errorStyles}>{airportError}</FormHelperText>
               </FormControl>
             </Grid>
-            <Grid item marginTop={2} xs={12} >
+            <Grid item marginTop={2} xs={12}>
               <DatePicker
-                label="Fecha de la perdida"
+                label="Fecha de objeto encontrado /o pérdido"
                 value={lostObject.date}
                 onChange={handleDateChange}
                 minDate={startDate}
@@ -407,18 +390,18 @@ const LandingPage = () => {
               />
               <FormHelperText sx={errorStyles}>{dateError}</FormHelperText>
             </Grid>
-            <Grid item marginTop={2} xs={12}  >
+            <Grid item marginTop={2} xs={12}>
               <TextField
                 fullWidth
                 id="photo"
-                label="Foto"
+                label="link de la imagen /o foto "
                 name="photo"
                 value={lostObject.photo}
                 onChange={handlePhotoChange}
               />
               <FormHelperText sx={errorStyles}>{photoError}</FormHelperText>
             </Grid>
-            <Grid item marginTop={2} xs={12} >
+            <Grid item marginTop={2} xs={12}>
               <TextField
                 aria-label="minimum height"
                 id="description"
@@ -431,12 +414,10 @@ const LandingPage = () => {
                 onChange={handleDescriptionChange}
                 placeholder="Escriba la Descripción"
               />
-              <FormHelperText sx={errorStyles}>
-                {descriptionError}
-              </FormHelperText>
+              <FormHelperText sx={errorStyles}>{descriptionError}</FormHelperText>
             </Grid>
             <Grid>
-              <FormControl component="fieldset">
+              <FormControl component="fieldset" error={Boolean(lostTypeError)}>
                 <FormLabel component="legend">Estado</FormLabel>
                 <RadioGroup
                   aria-label="lostStatus"
@@ -446,25 +427,25 @@ const LandingPage = () => {
                 >
                   <FormControlLabel
                     value="encontrado"
-                    control={<Radio color="primary" />}
+                    control={<Radio color="success" />}
                     label="Encontrado"
                   />
                   <FormControlLabel
                     value="perdido"
-                    control={<Radio color="primary" />}
+                    control={<Radio color="error" />}
                     label="Perdido"
                   />
                 </RadioGroup>
+                <FormHelperText>{lostTypeError}</FormHelperText>
               </FormControl>
             </Grid>
-
-
-            <Grid item sx={{ textAlign: 'center', mt: 2 }}>
+            <Grid item sx={{ textAlign: "center", mt: 2 }}>
               <Button
                 type="submit"
                 variant="contained"
                 color="primary"
                 startIcon={<SendIcon />}
+              // disabled={hasErrors}
               >
                 Enviar reporte
               </Button>
@@ -483,8 +464,7 @@ const LandingPage = () => {
           severity="success"
           sx={{ width: "100%" }}
         >
-          ¡Gracias por reportar tu objeto perdido...! Tu reporte ha sido enviado
-          con éxito
+          ¡Gracias por reportar tu objeto perdido...! Tu reporte ha sido enviado con éxito
         </Alert>
       </Snackbar>
     </Grid>
