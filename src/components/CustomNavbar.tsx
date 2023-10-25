@@ -93,6 +93,7 @@ const CustomNavbar = () => {
                         aria-controls="avatar-menu-appbar"
                         aria-haspopup="true"
                         onClick={handleAvatarMenuOpen}
+
                         color="inherit"
                     >
                         {loggedInUser && (
@@ -138,6 +139,12 @@ const CustomNavbar = () => {
                             aria-haspopup="true"
                             onClick={handleMainMenuOpen}
                             color="inherit"
+                            sx={{
+                                display: {
+                                    xs: "block",
+                                    md: "none",
+                                },
+                            }}
                         >
                             <MenuIcon />
                         </IconButton>
@@ -146,6 +153,12 @@ const CustomNavbar = () => {
                             anchorEl={mainMenuAnchor}
                             open={isMainMenuOpen}
                             onClose={handleMainMenuClose}
+                            sx={{
+                                display: {
+                                    xs: "block",
+                                    md: "none",
+                                },
+                            }}
                         >
                             <MenuItem
                                 onClick={() => {
@@ -160,6 +173,7 @@ const CustomNavbar = () => {
                             <MenuItem
                                 onClick={() => {
                                     handleMainMenuClose();
+
 
                                 }}
                                 component={Link}
