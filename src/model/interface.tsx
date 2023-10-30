@@ -116,6 +116,11 @@ interface Message {
     image?: string;
     likes: number;
     likedBy: string[];
+    lostObjectId: string | null;
+}
+
+interface MessageState {
+    messages: Message[];
 }
 
 export type {
@@ -128,6 +133,6 @@ export type {
     Country,
     City,
     Airport,
-    Message,
-    DataToReclaim,
+    MessageState,
+    DataToReclaim, Message,
 };

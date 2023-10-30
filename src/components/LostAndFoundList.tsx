@@ -91,6 +91,7 @@ const LostAndFoundList = () => {
                             <Typography variant="body2" color="textPrimary">
                               <strong>Nombre:</strong> {item.userReport?.name.first}, {item.userReport?.name.last}
                             </Typography>
+
                           </React.Fragment>
                         }
                       />

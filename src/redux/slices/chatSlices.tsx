@@ -14,7 +14,8 @@ const chatSlice = createSlice({
     initialState,
     reducers: {
         addMessage: (state, action: PayloadAction<Message>) => {
-            state.messages.push({ ...action.payload, likes: 0, likedBy: [] });
+            state.messages.push({ ...action.payload, likes: 0, likedBy: [] })
+            
         },
         addLike: (
             state,
