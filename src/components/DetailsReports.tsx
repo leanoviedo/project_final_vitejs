@@ -90,7 +90,7 @@ const DetailsReports = () => {
                 };
                 dispatch(markLostObjectAsClaimed(dataToReclaim));
 
-                navigate("/FoundObjects");
+                navigate("/FoundObjects/:id");
                 handleCloseDialog();
             }
         }

@@ -65,7 +65,7 @@ const LostAndFoundList = () => {
             <Grid container spacing={2}>
               {userReports.map((item, index) => (
                 <Grid item xs={6} key={index}>
-                  <Link to={`/FoundObjects/`} style={{ textDecoration: "none" }}>
+                  <Link to={`/FoundObjects/${item.id}`}style={{ textDecoration: "none" }}>
                     <ListItem alignItems="flex-start">
                       <ListItemIcon>
                         <CardMedia
@@ -91,7 +91,6 @@ const LostAndFoundList = () => {
                             <Typography variant="body2" color="textPrimary">
                               <strong>Nombre:</strong> {item.userReport?.name.first}, {item.userReport?.name.last}
                             </Typography>
-
                           </React.Fragment>
                         }
                       />
@@ -104,7 +103,7 @@ const LostAndFoundList = () => {
             <Grid container spacing={2}>
               {userClaims.map((item, index) => (
                 <Grid item xs={6} key={index}>
-                  <Link to={`/FoundObjects/`} style={{ textDecoration: "none" }}>
+                  <Link to={`/FoundObjects/${item.id}`} style={{ textDecoration: "none" }}>
                     <ListItem alignItems="flex-start">
                       <ListItemIcon>
                         <CardMedia

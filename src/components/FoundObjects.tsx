@@ -24,7 +24,7 @@ import { selectLostObjects } from "../redux/slices/lostObjectSlice";
 function FoundObjects() {
     const selectedUser = useSelector(selectUserLogin);
     const messages = useSelector((state: RootState) => state.chat.messages);
-    const lostObject = useSelector(selectLostObjects)
+    const lostObject = useSelector(selectLostObjects);
     const dispatch = useDispatch();
 
     const [inputMessage, setInputMessage] = useState("");
@@ -38,10 +38,10 @@ function FoundObjects() {
         setImageUrl(e.target.value);
     };
 
-    const foundLostObject = lostObject.find((item) => item.id);
+    const foundLostObjectid = lostObject.find((item) => item.id);
 
     const handleCommentSubmit = () => {
-        if (inputMessage.trim() !== "" && selectedUser && foundLostObject && (selectedUser.email === foundLostObject.userReport?.email || selectedUser.email === foundLostObject.userReclamed?.email)) {
+        if (selectedUser && foundLostObjectid) {
             const newMessage = {
                 id: uuidv4(),
                 user: selectedUser!,
@@ -50,11 +50,15 @@ function FoundObjects() {
                 image: imageUrl && (imageUrl.startsWith("http") ? imageUrl : undefined),
                 likes: 0,
                 likedBy: [],
-                lostObjectId: foundLostObject.id || null
+                lostObjectId: foundLostObjectid?.id || null
             };
             dispatch(addMessage(newMessage));
             setInputMessage("");
             setImageUrl("");
+            console.log(foundLostObjectid);
+            console.log(foundLostObjectid?.userReclamed);
+        } else {
+            console.log("No hay mensaje o objeto perdido seleccionado");
         }
     };
 
@@ -71,6 +75,9 @@ function FoundObjects() {
     };
 
     const isButtonDisabled = !selectedUser;
+    const filteredMessages = foundLostObjectid
+        ? messages.filter(msg => msg.lostObjectId === foundLostObjectid.id)
+        : [];
 
     return (
         <div>
@@ -87,57 +94,63 @@ function FoundObjects() {
                 </Typography>
 
                 <Box display="flex" flexDirection="column" alignItems="center">
-                    {foundLostObject && (selectedUser?.email === foundLostObject.userReport?.email || selectedUser?.email === foundLostObject.userReclamed?.email) && (
-                        messages.map((msg, index) => (
-                            <Card
-                                key={index}
-                                elevation={3}
-                                sx={{ width: "100%", maxWidth: 800, mb: 2 }}
-                            >
-                                <CardContent>
-                                    <Box display="flex" alignItems="center" mb={2}>
-                                        <Avatar
-                                            src={msg.user.picture.thumbnail}
-                                            alt="Avatar"
-                                            sx={{ mr: 2 }}
-                                        />
-                                        <Typography variant="h6">
-                                            {msg.user.login.username}:
+                    {filteredMessages.length > 0 ? (
+                        filteredMessages.map((msg, index) => (
+                            (msg.lostObjectId === foundLostObjectid?.id &&
+                                (msg.user.email === foundLostObjectid.userReport?.email || msg.user.email === foundLostObjectid.userReclamed?.email)) && (
+                                <Card
+                                    key={index}
+                                    elevation={3}
+                                    sx={{ width: "100%", maxWidth: 800, mb: 2 }}
+                                >
+                                    <CardContent>
+                                        <Box display="flex" alignItems="center" mb={2}>
+                                            <Avatar
+                                                src={msg.user.picture.thumbnail}
+                                                alt="Avatar"
+                                                sx={{ mr: 2 }}
+                                            />
+                                            <Typography variant="h6">
+                                                {msg.user.login.username}:
+                                            </Typography>
+                                        </Box>
+                                        <Typography>{msg.message}</Typography>
+                                        {msg.image && (
+                                            <img
+                                                src={msg.image}
+                                                alt="Mensaje con imagen"
+                                                style={{ maxWidth: "100%" }}
+                                            />
+                                        )}
+                                        <Typography
+                                            variant="caption"
+                                            color="textSecondary"
+                                            sx={{ mt: 1 }}
+                                        >
+                                            Enviado: {new Date(msg.timestamp).toLocaleTimeString()}
                                         </Typography>
-                                    </Box>
-                                    <Typography>{msg.message}</Typography>
-                                    {msg.image && (
-                                        <img
-                                            src={msg.image}
-                                            alt="Mensaje con imagen"
-                                            style={{ maxWidth: "100%" }}
-                                        />
-                                    )}
-                                    <Typography
-                                        variant="caption"
-                                        color="textSecondary"
-                                        sx={{ mt: 1 }}
-                                    >
-                                        Enviado: {new Date(msg.timestamp).toLocaleTimeString()}
-                                    </Typography>
-                                    <Box display="flex" alignItems="center" mt={1}>
-                                        <IconButton color="info" onClick={() => handleLike(index)}>
-                                            {selectedUser &&
-                                                msg.likedBy.includes(selectedUser.login.username) ? (
-                                                <ThumbUp color="primary" />
-                                            ) : (
-                                                <ThumbUpOutlined />
-                                            )}
-                                        </IconButton>
-                                        <Typography variant="caption" color="textSecondary" ml={1}>
-                                            {msg.likes} {msg.likes === 1 ? "like" : "likes"}
-                                        </Typography>
-                                    </Box>
-                                </CardContent>
-                            </Card>
+                                        <Box display="flex" alignItems="center" mt={1}>
+                                            <IconButton color="info" onClick={() => handleLike(index)}>
+                                                {selectedUser &&
+                                                    msg.likedBy.includes(selectedUser.login.username) ? (
+                                                    <ThumbUp color="primary" />
+                                                ) : (
+                                                    <ThumbUpOutlined />
+                                                )}
+                                            </IconButton>
+                                            <Typography variant="caption" color="textSecondary" ml={1}>
+                                                {msg.likes} {msg.likes === 1 ? "like" : "likes"}
+                                            </Typography>
+                                        </Box>
+                                    </CardContent>
+                                </Card>
+                            )
                         ))
+                    ) : (
+                        <Typography variant="body1">No hay mensajes para este objeto perdido.</Typography>
                     )}
                 </Box>
+
                 <Paper sx={{ p: 1, mt: 1, mb: 5 }}>
                     <Typography variant="h5">Te ponemos en contacto</Typography>
                     <TextField
