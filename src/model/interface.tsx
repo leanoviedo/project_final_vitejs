@@ -109,20 +109,17 @@ interface LostObjectState {
     lostObjects: LostObjectData[];
 }
 interface Message {
-    id: string;
     user: UserData;
     message: string;
-    timestamp: number;
+    timestamp: string
     image?: string;
-    likes: number;
-    likedBy: string[];
-    lostObjectId: string | null;
+    lostObjectId?: string | null;
 }
+
 
 interface MessageState {
     messages: Message[];
 }
-
 export type {
     UserData,
     RegistrationState,

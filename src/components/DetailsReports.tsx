@@ -22,7 +22,7 @@ import { markLostObjectAsClaimed } from "../redux/slices/lostObjectSlice";
 import { DataToReclaim } from "../model/interface";
 const DetailsReports = () => {
     const ubicacion = useLocation();
-    const { lostObject, newdate } = ubicacion.state.data || {};
+    const { lostObject, newdate, } = ubicacion.state.data || {};
     const userLogin = useAppSelector(selectUserLogin);
     const dispatch = useAppDispatch();
     const isCurrentUserOwner =
@@ -40,8 +40,6 @@ const DetailsReports = () => {
     const handleAddressDataReceived = () => {
         const lat = lostObject.airport.lat;
         const lng = lostObject.airport.lng;
-        console.log("Latitude:", lat);
-        console.log("Longitude:", lng);
         setAirportCoordinate({ lat, lng });
     };
     const [isDialogOpen, setDialogOpen] = useState(false);
@@ -89,8 +87,8 @@ const DetailsReports = () => {
                     idLostObject: lostObject.id,
                 };
                 dispatch(markLostObjectAsClaimed(dataToReclaim));
+                navigate(`/FoundObjects/${lostObject.id}`, { state: lostObject.id });
 
-                navigate("/FoundObjects/:id");
                 handleCloseDialog();
             }
         }

@@ -35,113 +35,115 @@ const LostAndFoundList = () => {
   };
 
   return (
-    <Grid container spacing={3}>
-      <CustomNavbar />
-      <Grid item xs={12}>
-        <Typography variant="h5" component="h1" gutterBottom align="center">
-          Lista de reportes
-        </Typography>
-      </Grid>
-      <Grid item xs={12}>
-        <Paper elevation={2}>
-          <Tabs
-            value={tabValue}
-            onChange={handleChangeTab}
-            centered
-            TabIndicatorProps={{
-              style: { background: tabValue === 0 ? "green" : "red" },
-            }}
-          >
-            <Tab
-              label="Objetos Reportados"
-              style={{ color: tabValue === 0 ? "green" : "black" }}
-            />
-            <Tab
-              label="Objetos Reclamados"
-              style={{ color: tabValue === 1 ? "red" : "black" }}
-            />
-          </Tabs>
-          {tabValue === 0 ? (
-            <Grid container spacing={2}>
-              {userReports.map((item, index) => (
-                <Grid item xs={6} key={index}>
-                  <Link to={`/FoundObjects/${item.id}`}style={{ textDecoration: "none" }}>
-                    <ListItem alignItems="flex-start">
-                      <ListItemIcon>
-                        <CardMedia
-                          component="img"
-                          alt="Objeto perdido"
-                          height="100"
-                          image={item.photo}
+    <>
+      <Grid container spacing={3}>
+        <CustomNavbar />
+        <Grid item xs={12}>
+          <Typography variant="h5" component="h1" gutterBottom align="center">
+            Lista de reportes
+          </Typography>
+        </Grid>
+        <Grid item xs={12}>
+          <Paper elevation={2}>
+            <Tabs
+              value={tabValue}
+              onChange={handleChangeTab}
+              centered
+              TabIndicatorProps={{
+                style: { background: tabValue === 0 ? "green" : "red" },
+              }}
+            >
+              <Tab
+                label="Objetos Reportados"
+                style={{ color: tabValue === 0 ? "green" : "black" }}
+              />
+              <Tab
+                label="Objetos Reclamados"
+                style={{ color: tabValue === 1 ? "red" : "black" }}
+              />
+            </Tabs>
+            {tabValue === 0 ? (
+              <Grid container spacing={2}>
+                {userReports.map((item, index) => (
+                  <Grid item xs={6} key={index}>
+                    <Link to={`/FoundObjects/${item.id}`} style={{ textDecoration: "none" }}>
+                      <ListItem alignItems="flex-start">
+                        <ListItemIcon>
+                          <CardMedia
+                            component="img"
+                            alt="Objeto perdido"
+                            height="100"
+                            image={item.photo}
+                          />
+                        </ListItemIcon>
+                        <ListItemText
+                          primary={item.status === "encontrado" ? "Encontrado" : "Perdido"}
+                          secondary={
+                            <>
+                              <Typography variant="body2" color="textPrimary">
+                                <strong>Descripción:</strong> {item.description}
+                              </Typography>
+                              <Typography variant="body2" color="textPrimary">
+                                <strong>Aeropuerto:</strong> {item.airport.name}
+                              </Typography>
+                              <Typography variant="body2" color="textPrimary">
+                                <strong>Lugar:</strong> {item.city.name} {item.country.name}
+                              </Typography>
+                              <Typography variant="body2" color="textPrimary">
+                                <strong>Nombre:</strong> {item.userReport?.name.first}, {item.userReport?.name.last}
+                              </Typography>
+                            </>
+                          }
                         />
-                      </ListItemIcon>
-                      <ListItemText
-                        primary={item.status === "encontrado" ? "Encontrado" : "Perdido"}
-                        secondary={
-                          <React.Fragment>
-                            <Typography variant="body2" color="textPrimary">
-                              <strong>Descripción:</strong> {item.description}
-                            </Typography>
-                            <Typography variant="body2" color="textPrimary">
-                              <strong>Aeropuerto:</strong> {item.airport.name}
-                            </Typography>
-                            <Typography variant="body2" color="textPrimary">
-                              <strong>Lugar:</strong> {item.city.name} {item.country.name}
-                            </Typography>
-                            <Typography variant="body2" color="textPrimary">
-                              <strong>Nombre:</strong> {item.userReport?.name.first}, {item.userReport?.name.last}
-                            </Typography>
-                          </React.Fragment>
-                        }
-                      />
-                    </ListItem>
-                  </Link>
-                </Grid>
-              ))}
-            </Grid>
-          ) : (
-            <Grid container spacing={2}>
-              {userClaims.map((item, index) => (
-                <Grid item xs={6} key={index}>
-                  <Link to={`/FoundObjects/${item.id}`} style={{ textDecoration: "none" }}>
-                    <ListItem alignItems="flex-start">
-                      <ListItemIcon>
-                        <CardMedia
-                          component="img"
-                          alt="Objeto perdido"
-                          height="100"
-                          image={item.photo}
-                          sx={{ padding: 2 }}
+                      </ListItem>
+                    </Link>
+                  </Grid>
+                ))}
+              </Grid>
+            ) : (
+              <Grid container spacing={2}>
+                {userClaims.map((item, index) => (
+                  <Grid item xs={6} key={index}>
+                    <Link to={`/FoundObjects/${item.id}`} style={{ textDecoration: "none" }}>
+                      <ListItem alignItems="flex-start">
+                        <ListItemIcon>
+                          <CardMedia
+                            component="img"
+                            alt="Objeto perdido"
+                            height="100"
+                            image={item.photo}
+                            sx={{ padding: 2 }}
+                          />
+                        </ListItemIcon>
+                        <ListItemText
+                          primary={item.status === "encontrado" ? "Encontrado" : "Perdido"}
+                          secondary={
+                            <>
+                              <Typography variant="body2" color="textPrimary">
+                                <strong>Descripción:</strong> {item.description}
+                              </Typography>
+                              <Typography variant="body2" color="textPrimary">
+                                <strong>Aeropuerto:</strong> {item.airport.name}
+                              </Typography>
+                              <Typography variant="body2" color="textPrimary">
+                                <strong>Lugar:</strong> {item.city.name} {item.country.name}
+                              </Typography>
+                              <Typography variant="body2" color="textPrimary">
+                                <strong>Nombre:</strong> {item.userReport?.name.first}, {item.userReport?.name.last}
+                              </Typography>
+                            </>
+                          }
                         />
-                      </ListItemIcon>
-                      <ListItemText
-                        primary={item.status === "encontrado" ? "Encontrado" : "Perdido"}
-                        secondary={
-                          <React.Fragment>
-                            <Typography variant="body2" color="textPrimary">
-                              <strong>Descripción:</strong> {item.description}
-                            </Typography>
-                            <Typography variant="body2" color="textPrimary">
-                              <strong>Aeropuerto:</strong> {item.airport.name}
-                            </Typography>
-                            <Typography variant="body2" color="textPrimary">
-                              <strong>Lugar:</strong> {item.city.name} {item.country.name}
-                            </Typography>
-                            <Typography variant="body2" color="textPrimary">
-                              <strong>Nombre:</strong> {item.userReport?.name.first}, {item.userReport?.name.last}
-                            </Typography>
-                          </React.Fragment>
-                        }
-                      />
-                    </ListItem>
-                  </Link>
-                </Grid>
-              ))}
-            </Grid>
-          )}
-        </Paper>
+                      </ListItem>
+                    </Link>
+                  </Grid>
+                ))}
+              </Grid>
+            )}
+          </Paper>
+        </Grid>
       </Grid>
-    </Grid>
+    </>
   );
 };
 
