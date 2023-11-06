@@ -66,7 +66,10 @@ const LostAndFoundList = () => {
               <Grid container spacing={2}>
                 {userReports.map((item, index) => (
                   <Grid item xs={6} key={index}>
-                    <Link to={`/FoundObjects/${item.id}`} style={{ textDecoration: "none" }}>
+                    <Link
+                      to={`/FoundObjects/${item.id}`}
+                      style={{ textDecoration: "none" }}
+                    >
                       <ListItem alignItems="flex-start">
                         <ListItemIcon>
                           <CardMedia
@@ -77,7 +80,11 @@ const LostAndFoundList = () => {
                           />
                         </ListItemIcon>
                         <ListItemText
-                          primary={item.status === "encontrado" ? "Encontrado" : "Perdido"}
+                          primary={
+                            item.status === "encontrado"
+                              ? "Encontrado"
+                              : "Perdido"
+                          }
                           secondary={
                             <>
                               <Typography variant="body2" color="textPrimary">
@@ -87,10 +94,13 @@ const LostAndFoundList = () => {
                                 <strong>Aeropuerto:</strong> {item.airport.name}
                               </Typography>
                               <Typography variant="body2" color="textPrimary">
-                                <strong>Lugar:</strong> {item.city.name} {item.country.name}
+                                <strong>Lugar:</strong> {item.city.name}{" "}
+                                {item.country.name}
                               </Typography>
                               <Typography variant="body2" color="textPrimary">
-                                <strong>Nombre:</strong> {item.userReport?.name.first}, {item.userReport?.name.last}
+                                <strong>Nombre:</strong>{" "}
+                                {item.userReport?.name.first},{" "}
+                                {item.userReport?.name.last}
                               </Typography>
                             </>
                           }
@@ -104,7 +114,10 @@ const LostAndFoundList = () => {
               <Grid container spacing={2}>
                 {userClaims.map((item, index) => (
                   <Grid item xs={6} key={index}>
-                    <Link to={`/FoundObjects/${item.id}`} style={{ textDecoration: "none" }}>
+                    <Link
+                      to={`/FoundObjects/${item.id}`}
+                      style={{ textDecoration: "none" }}
+                    >
                       <ListItem alignItems="flex-start">
                         <ListItemIcon>
                           <CardMedia
@@ -116,7 +129,11 @@ const LostAndFoundList = () => {
                           />
                         </ListItemIcon>
                         <ListItemText
-                          primary={item.status === "encontrado" ? "Encontrado" : "Perdido"}
+                          primary={
+                            item.status === "encontrado"
+                              ? "Encontrado"
+                              : "Perdido"
+                          }
                           secondary={
                             <>
                               <Typography variant="body2" color="textPrimary">
@@ -126,10 +143,13 @@ const LostAndFoundList = () => {
                                 <strong>Aeropuerto:</strong> {item.airport.name}
                               </Typography>
                               <Typography variant="body2" color="textPrimary">
-                                <strong>Lugar:</strong> {item.city.name} {item.country.name}
+                                <strong>Lugar:</strong> {item.city.name}{" "}
+                                {item.country.name}
                               </Typography>
                               <Typography variant="body2" color="textPrimary">
-                                <strong>Nombre:</strong> {item.userReport?.name.first}, {item.userReport?.name.last}
+                                <strong>Nombre:</strong>{" "}
+                                {item.userReport?.name.first},{" "}
+                                {item.userReport?.name.last}
                               </Typography>
                             </>
                           }

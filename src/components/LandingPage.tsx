@@ -160,12 +160,13 @@ const LandingPage = () => {
       description: newValue,
     }));
   };
-  const handleDateChange = (date: Dayjs | null) => {
+  const handleDateChange = (date: Dayjs | any) => {
     setLostObject((prev) => ({
       ...prev,
-      date: date || null,
+      date: date ? date.toISOString() : null, 
     }));
   };
+
   const handleLostTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setLostType(event.target.value);
   };
@@ -278,27 +279,27 @@ const LandingPage = () => {
       id: uuidv4(),
       userReport: loggedInUser
         ? {
-          name: {
-            first: loggedInUser.name.first,
-            last: loggedInUser.name.last,
-          },
-          location: {
-            city: loggedInUser.location.city,
-            state: loggedInUser.location.state,
-            country: loggedInUser.location.country,
-            postcode: loggedInUser.location.postcode,
-            coordinates: {
-              latitude: loggedInUser.location.coordinates.latitude,
-              longitude: loggedInUser.location.coordinates.longitude,
+            name: {
+              first: loggedInUser.name.first,
+              last: loggedInUser.name.last,
             },
-          },
-          email: loggedInUser.email,
-          login: loggedInUser.login,
-          phone: loggedInUser.phone,
-          cell: loggedInUser.cell,
-          picture: loggedInUser.picture,
-          password: loggedInUser.login.password,
-        }
+            location: {
+              city: loggedInUser.location.city,
+              state: loggedInUser.location.state,
+              country: loggedInUser.location.country,
+              postcode: loggedInUser.location.postcode,
+              coordinates: {
+                latitude: loggedInUser.location.coordinates.latitude,
+                longitude: loggedInUser.location.coordinates.longitude,
+              },
+            },
+            email: loggedInUser.email,
+            login: loggedInUser.login,
+            phone: loggedInUser.phone,
+            cell: loggedInUser.cell,
+            picture: loggedInUser.picture,
+            password: loggedInUser.login.password,
+          }
         : null,
     };
 
@@ -309,14 +310,24 @@ const LandingPage = () => {
   };
 
   return (
-    <Grid container alignContent="center" justifyContent="center" alignItems="center" spacing={3}>
+    <Grid
+      container
+      alignContent="center"
+      justifyContent="center"
+      alignItems="center"
+      spacing={3}
+    >
       <CustomNavbar />
       <Grid item mt={5} xs={12} sm={6} md={4}>
         <Card sx={{ p: 3, boxShadow: 3 }}>
           <Typography variant="h4" align="center" marginBottom={4}>
             ¡Reporta tu objeto perdido!
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} sx={{ borderColor: "primary.main" }}>
+          <Box
+            component="form"
+            onSubmit={handleSubmit}
+            sx={{ borderColor: "primary.main" }}
+          >
             <Grid item xs={12}>
               <FormControl fullWidth>
                 <InputLabel id="country-label">País</InputLabel>
@@ -361,7 +372,9 @@ const LandingPage = () => {
 
             <Grid item marginTop={2} xs={12}>
               <FormControl fullWidth>
-                <InputLabel id="demo-multiple-name-label">Aeropuerto</InputLabel>
+                <InputLabel id="demo-multiple-name-label">
+                  Aeropuerto
+                </InputLabel>
                 <Select
                   labelId="airport-select-label"
                   id="airport-simple-select"
@@ -414,7 +427,9 @@ const LandingPage = () => {
                 onChange={handleDescriptionChange}
                 placeholder="Escriba la Descripción"
               />
-              <FormHelperText sx={errorStyles}>{descriptionError}</FormHelperText>
+              <FormHelperText sx={errorStyles}>
+                {descriptionError}
+              </FormHelperText>
             </Grid>
             <Grid>
               <FormControl component="fieldset" error={Boolean(lostTypeError)}>
@@ -445,7 +460,6 @@ const LandingPage = () => {
                 variant="contained"
                 color="primary"
                 startIcon={<SendIcon />}
-              // disabled={hasErrors}
               >
                 Enviar reporte
               </Button>
@@ -464,7 +478,8 @@ const LandingPage = () => {
           severity="success"
           sx={{ width: "100%" }}
         >
-          ¡Gracias por reportar tu objeto perdido...! Tu reporte ha sido enviado con éxito
+          ¡Gracias por reportar tu objeto perdido...! Tu reporte ha sido enviado
+          con éxito
         </Alert>
       </Snackbar>
     </Grid>
