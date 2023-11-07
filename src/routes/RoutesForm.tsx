@@ -16,7 +16,7 @@ const RoutesForm = () => {
       <Route path="/LandingPage" element={<LandingPage />} />
       <Route path="/LostObjectsDetails" element={<LostObjectDetails />} />
       <Route path="/DetailsReports" element={<DetailsReports />} />
-      <Route path="/FoundObjects" element={<FoundObjects />} />
+      <Route path="/FoundObjects/:id" element={<FoundObjects />} />
       <Route path="/LostAndFoundList" element={<LostAndFoundList />} />
     </Routes>
   );
