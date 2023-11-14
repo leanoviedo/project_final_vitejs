@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../redux/Store";
 import {
   Typography,
   Card,
@@ -11,29 +9,38 @@ import {
   Box,
   Paper,
   Grid,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
-import { addMessage } from "../redux/slices/chatSlices";
 import CustomNavbar from "./CustomNavbar";
 import { v4 as uuidv4 } from "uuid";
 import { selectUserLogin } from "../redux/slices/UserLogin";
-
 import { useParams } from "react-router-dom";
 import dayjs from "dayjs";
+import { addMessage, selectMenssage } from "../redux/slices/chatSlices";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { updateLostObjectStatus } from "../redux/slices/lostObjectSlice";
+import { DataToReclaim } from "../model/interface";
 
-function FoundObjects() {
-  const selectedUser = useSelector(selectUserLogin);
-  const messages = useSelector((state: RootState) => state.chat.messages);
-  const dispatch = useDispatch();
+const FoundObjects = () => {
+  const selectedUser = useAppSelector(selectUserLogin);
+  const messages = useAppSelector(selectMenssage);
+  const dispatch = useAppDispatch();
 
   const [inputMessage, setInputMessage] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+  const [status, setStatus] = useState("");
   const { id } = useParams();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedMessageId, setSelectedMessageId] = useState(null);
 
   const handleMessageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputMessage(e.target.value);
   };
-
   const handleImageUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setImageUrl(e.target.value);
   };
@@ -59,15 +66,54 @@ function FoundObjects() {
         dispatch(addMessage(newMessage));
         setInputMessage("");
         setImageUrl("");
-      } else {
       }
-    } else {
-      console.log("No hay mensaje o objeto perdido seleccionado");
     }
   };
 
+  const handleOpenDialog = (messageId: any) => {
+    setSelectedMessageId(messageId);
+    setIsDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setSelectedMessageId(null);
+    setIsDialogOpen(false);
+  };
+  const handleReportSent = () => {
+    if (selectedMessageId) {
+      const dataToReclaim: DataToReclaim = {
+        userReclamed: selectedUser!,
+        idLostObject: id,
+        status: "enviado",
+      };
+      dispatch(updateLostObjectStatus(dataToReclaim));
+      setStatus("enviado");
+      if (status === "enviado") {
+        isStatusDisabled;
+      }
+    }
+    handleCloseDialog();
+  };
+
+  const handleReportReceived = () => {
+    if (selectedMessageId) {
+      const dataToReclaim: DataToReclaim = {
+        userReclamed: selectedUser!,
+        idLostObject: id,
+        status: "recibido",
+      };
+
+      dispatch(updateLostObjectStatus(dataToReclaim));
+      setStatus("recibido");
+    }
+    if (status === "recibido") {
+      setStatus("finalizado");
+    }
+    handleCloseDialog();
+  };
   const filteredMessages = messages.filter((msg) => msg.lostObjectId === id);
   const isButtonDisabled = !selectedUser || inputMessage.trim() === "";
+  const isStatusDisabled = status === "finalizado";
 
   return (
     <>
@@ -82,7 +128,12 @@ function FoundObjects() {
           Bienvenid@ {selectedUser?.name.first}
         </Typography>
 
-        <Box display="flex" flexDirection="column" alignItems="center">
+        <Box
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          sx={{ MarginTop: 2 }}
+        >
           {filteredMessages.length > 0 ? (
             filteredMessages.map((msg, index) => (
               <Card
@@ -128,6 +179,7 @@ function FoundObjects() {
 
         <Paper sx={{ p: 1, mt: 1, mb: 5 }}>
           <Typography variant="h5">Te ponemos en contacto</Typography>
+
           <TextField
             placeholder="Escribe tu mensaje aquí..."
             fullWidth
@@ -146,13 +198,58 @@ function FoundObjects() {
             sx={{ mt: 1 }}
           />
         </Paper>
-        <Box sx={{ display: "flex", justifyContent: "center", pb: 5 }}>
+        <Box sx={{ display: "flex" }}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleOpenDialog}
+            disabled={isStatusDisabled}
+          >
+            Reportar envío/recibido
+          </Button>
+
+          <Dialog open={isDialogOpen} onClose={handleCloseDialog}>
+            <DialogTitle>
+              {selectedMessageId ? "Informar sobre el mensaje" : ""}
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                {selectedMessageId
+                  ? "¿Has enviado o recibido el objeto?"
+                  : "Seleccione un mensaje para informar."}
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              {selectedMessageId && (
+                <>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleReportSent}
+                  >
+                    Informar enviado
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleReportReceived}
+                    disabled={isStatusDisabled}
+                  >
+                    Informar recibido
+                  </Button>
+                </>
+              )}
+              <Button onClick={handleCloseDialog}>Cancelar</Button>
+            </DialogActions>
+          </Dialog>
+        </Box>
+        <Box sx={{ display: "flex", justifyContent: "center" }}>
           <Button
             variant="contained"
             color="primary"
             startIcon={<SendIcon />}
             onClick={handleCommentSubmit}
-            disabled={isButtonDisabled}
+            disabled={isButtonDisabled || isStatusDisabled}
           >
             Enviar Mensaje
           </Button>
@@ -160,6 +257,6 @@ function FoundObjects() {
       </Card>
     </>
   );
-}
+};
 
 export default FoundObjects;

@@ -85,6 +85,7 @@ const DetailsReports = () => {
         const dataToReclaim: DataToReclaim = {
           userReclamed: dataReclamed.userRelamed!,
           idLostObject: lostObject.id,
+          status: ""
         };
         dispatch(markLostObjectAsClaimed(dataToReclaim));
         navigate(`/FoundObjects/${lostObject.id}`, { state: lostObject.id });

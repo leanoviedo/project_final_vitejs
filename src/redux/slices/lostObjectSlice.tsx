@@ -18,21 +18,43 @@ export const lostObjectSlice = createSlice({
       state.lostObjects = [...state.lostObjects, action.payload];
     },
     markLostObjectAsClaimed: (state, action: PayloadAction<DataToReclaim>) => {
-      const userReclamed = action.payload.userReclamed;
-      const lostObjectId = action.payload.idLostObject;
+      const { userReclamed, idLostObject } = action.payload;
       const lostObject = state.lostObjects.find(
-        (obj) => obj.id === lostObjectId
+        (obj) => obj.id === idLostObject
       );
+
       if (lostObject) {
         lostObject.status = "reclamado";
         lostObject.userReclamed = userReclamed;
       }
     },
+    updateLostObjectStatus: (state, action: PayloadAction<DataToReclaim>) => {
+      const { idLostObject, status } = action.payload;
+      const lostObject = state.lostObjects.find(
+        (obj) => obj.id === idLostObject
+      );
+      if (lostObject) {
+        const validStatuses = ["enviado", "recibido", "finalizado"];
+
+        if (validStatuses.includes(status)) {
+          if (status === "recibido") {
+            lostObject.status = "finalizado";
+          } else {
+            lostObject.status = status;
+          }
+        } else {
+          console.error("Estado no válido");
+        }
+      }
+    },
   },
 });
 
-export const { setLostObjectData, markLostObjectAsClaimed } =
-  lostObjectSlice.actions;
+export const {
+  setLostObjectData,
+  markLostObjectAsClaimed,
+  updateLostObjectStatus,
+} = lostObjectSlice.actions;
 
 export const selectLostObjects = (state: RootState) =>
   state.lostObject.lostObjects;

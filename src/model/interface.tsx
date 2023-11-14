@@ -67,7 +67,8 @@ interface LostObjectData {
 
 interface DataToReclaim {
   userReclamed: UserData;
-  idLostObject: string;
+  idLostObject: string | undefined;
+  status: string;
 }
 
 interface Country {

@@ -54,19 +54,19 @@ const LostAndFoundList = () => {
             }
             secondary={
               <div>
-                <div>
+                <Typography variant="body1">
                   <strong>Descripción:</strong> {item.description}
-                </div>
-                <div>
+                </Typography>
+                <Typography variant="body1">
                   <strong>Aeropuerto:</strong> {item.airport.name}
-                </div>
-                <div>
+                </Typography>
+                <Typography variant="body1">
                   <strong>Lugar:</strong> {item.city.name} {item.country.name}
-                </div>
-                <div>
+                </Typography>
+                <Typography variant="body1">
                   <strong>Nombre:</strong> {item.userReport?.name.first},{" "}
                   {item.userReport?.name.last}
-                </div>
+                </Typography>
               </div>
             }
           />
