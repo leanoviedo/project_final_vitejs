@@ -24,13 +24,12 @@ import dayjs from "dayjs";
 import { addMessage, selectMenssage } from "../redux/slices/chatSlices";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { updateLostObjectStatus } from "../redux/slices/lostObjectSlice";
-import { DataToReclaim } from "../model/interface";
 
 const FoundObjects = () => {
   const selectedUser = useAppSelector(selectUserLogin);
   const messages = useAppSelector(selectMenssage);
   const dispatch = useAppDispatch();
-
+  const [isReclaimed, setIsReclaimed] = useState(false);
   const [inputMessage, setInputMessage] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [status, setStatus] = useState("");
@@ -80,37 +79,41 @@ const FoundObjects = () => {
     setIsDialogOpen(false);
   };
   const handleReportSent = () => {
-    if (selectedMessageId) {
-      const dataToReclaim: DataToReclaim = {
-        userReclamed: selectedUser!,
-        idLostObject: id,
-        status: "enviado",
-      };
-      dispatch(updateLostObjectStatus(dataToReclaim));
-      setStatus("enviado");
-      if (status === "enviado") {
-        isStatusDisabled;
+    if (selectedMessageId && status !== "finalizado") {
+      if (selectedUser && id) {
+        const dataToReclaim = {
+          userReclamed: selectedUser!,
+          idLostObject: id,
+          status: "enviado",
+        };
+        dispatch(updateLostObjectStatus(dataToReclaim));
+        setStatus("enviado");
+        if (status === "enviado") {
+          setIsReclaimed(true);
+        }
+      }
+      handleCloseDialog();
+    }
+  };
+  const handleReportReceived = () => {
+    if (selectedMessageId && status !== "finalizado") {
+      if (selectedUser && id) {
+        const dataToReclaim = {
+          userReclamed: selectedUser!,
+          idLostObject: id,
+          status: "recibido",
+        };
+        dispatch(updateLostObjectStatus(dataToReclaim));
+        setStatus("finalizado");
+        if (status === "recibido") {
+          setStatus("finalizado");
+          setIsReclaimed(true);
+        }
       }
     }
     handleCloseDialog();
   };
 
-  const handleReportReceived = () => {
-    if (selectedMessageId) {
-      const dataToReclaim: DataToReclaim = {
-        userReclamed: selectedUser!,
-        idLostObject: id,
-        status: "recibido",
-      };
-
-      dispatch(updateLostObjectStatus(dataToReclaim));
-      setStatus("recibido");
-    }
-    if (status === "recibido") {
-      setStatus("finalizado");
-    }
-    handleCloseDialog();
-  };
   const filteredMessages = messages.filter((msg) => msg.lostObjectId === id);
   const isButtonDisabled = !selectedUser || inputMessage.trim() === "";
   const isStatusDisabled = status === "finalizado";
@@ -203,11 +206,10 @@ const FoundObjects = () => {
             variant="contained"
             color="primary"
             onClick={handleOpenDialog}
-            disabled={isStatusDisabled}
+            disabled={status === "finalizado"}
           >
             Reportar envío/recibido
           </Button>
-
           <Dialog open={isDialogOpen} onClose={handleCloseDialog}>
             <DialogTitle>
               {selectedMessageId ? "Informar sobre el mensaje" : ""}
@@ -226,6 +228,7 @@ const FoundObjects = () => {
                     variant="contained"
                     color="primary"
                     onClick={handleReportSent}
+                    disabled={isReclaimed}
                   >
                     Informar enviado
                   </Button>
@@ -233,7 +236,7 @@ const FoundObjects = () => {
                     variant="contained"
                     color="primary"
                     onClick={handleReportReceived}
-                    disabled={isStatusDisabled}
+                    disabled={isReclaimed}
                   >
                     Informar recibido
                   </Button>

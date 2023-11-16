@@ -47,13 +47,12 @@ const LostAndFoundList = () => {
             />
           </ListItemIcon>
           <ListItemText
-            primary={
-              <div>
-                {item.status === "encontrado" ? "Encontrado" : "Perdido"}
-              </div>
-            }
+            primary={item.status === "encontrado" ? "Encontrado" : "Perdido"}
             secondary={
               <div>
+                <Typography variant="body1">
+                  <strong>Estado:</strong> {item.status}
+                </Typography>
                 <Typography variant="body1">
                   <strong>Descripción:</strong> {item.description}
                 </Typography>
@@ -74,7 +73,6 @@ const LostAndFoundList = () => {
       </Link>
     </Grid>
   );
-
   return (
     <Grid container spacing={3}>
       <CustomNavbar />

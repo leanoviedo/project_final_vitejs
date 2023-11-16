@@ -59,12 +59,13 @@ const FormLogin = () => {
           (registration) => registration.login.password === userLogin.password
         )
       ) {
-        setErrorSnackbarMessage("El correo electrónico es incorrecto.");
+        setErrorSnackbarMessage(
+          "contraseña incorrecta.Por favor, verifica tu contraseña"
+        );
       }
       setErrorSnackbarOpen(true);
     }
   };
-
   return (
     <Grid container justifyContent="center" alignItems="center">
       <AppBar position="static">

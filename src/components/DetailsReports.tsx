@@ -20,13 +20,17 @@ import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { selectUserLogin } from "../redux/slices/UserLogin";
 import { markLostObjectAsClaimed } from "../redux/slices/lostObjectSlice";
 import { DataToReclaim } from "../model/interface";
+
 const DetailsReports = () => {
   const ubicacion = useLocation();
   const { lostObject, newdate } = ubicacion.state.data || {};
   const userLogin = useAppSelector(selectUserLogin);
   const dispatch = useAppDispatch();
   const isCurrentUserOwner =
-    userLogin && userLogin.email === lostObject.userReport.email;
+    lostObject &&
+    lostObject.userReport &&
+    userLogin &&
+    userLogin.email === lostObject.userReport.email;
 
   const [airportCoordinate, setAirportCoordinate] = useState<{
     lat: number;
@@ -38,30 +42,35 @@ const DetailsReports = () => {
   const infoWindowRef = useRef<any>(null);
 
   const handleAddressDataReceived = () => {
-    const lat = lostObject.airport.lat;
-    const lng = lostObject.airport.lng;
-    setAirportCoordinate({ lat, lng });
+    if (lostObject && lostObject.airport) {
+      const lat = lostObject.airport.lat || 0;
+      const lng = lostObject.airport.lng || 0;
+      setAirportCoordinate({ lat, lng });
+    }
   };
+
   const [isDialogOpen, setDialogOpen] = useState(false);
 
   useEffect(() => {
     handleAddressDataReceived();
-  }, []);
+  }, [lostObject]);
 
   const maprender = (map: any, maps: any) => {
     mapRef.current = map;
-    markerRef.current = new maps.Marker({
-      position: airportCoordinate,
-      map,
-    });
+    if (maps && airportCoordinate) {
+      markerRef.current = new maps.Marker({
+        position: airportCoordinate,
+        map,
+      });
 
-    infoWindowRef.current = new maps.InfoWindow({
-      content: `<h3>${lostObject.airport.name}</h3>`,
-    });
+      infoWindowRef.current = new maps.InfoWindow({
+        content: `<h3>${lostObject?.airport?.name}</h3>`,
+      });
 
-    markerRef.current.addListener("click", () => {
-      infoWindowRef.current.open(map, markerRef.current);
-    });
+      markerRef.current.addListener("click", () => {
+        infoWindowRef.current.open(map, markerRef.current);
+      });
+    }
   };
 
   const navigate = useNavigate();
@@ -77,15 +86,20 @@ const DetailsReports = () => {
     const dataReclamed = {
       userRelamed: userLogin,
     };
-
-    if (!isCurrentUserOwner) {
-      if (lostObject.status === "reclamado") {
-        console.log("Ya reclamaste este objeto.");
+    if (lostObject && !isCurrentUserOwner) {
+      if (
+        lostObject.status === "reclamado" ||
+        lostObject.status === "enviado" ||
+        lostObject.status === "finalizado"
+      ) {
+        console.log(
+          "Este objeto ya ha sido reclamado o tiene un estado final."
+        );
       } else {
         const dataToReclaim: DataToReclaim = {
           userReclamed: dataReclamed.userRelamed!,
           idLostObject: lostObject.id,
-          status: ""
+          status: "",
         };
         dispatch(markLostObjectAsClaimed(dataToReclaim));
         navigate(`/FoundObjects/${lostObject.id}`, { state: lostObject.id });
@@ -108,7 +122,10 @@ const DetailsReports = () => {
               color="success"
               variant="contained"
               disabled={
-                isCurrentUserOwner === true || lostObject.status === "reclamado"
+                isCurrentUserOwner === true ||
+                lostObject.status === "finalizado" ||
+                lostObject.status === "reclamado" ||
+                lostObject.status === "enviado"
               }
               style={{ marginLeft: "auto" }}
               onClick={handleOpenDialog}
@@ -120,7 +137,7 @@ const DetailsReports = () => {
             <Grid item xs={12} sm={6} md={4} p={2}>
               <Box>
                 <Typography variant="body2">
-                  <strong>objeto:</strong> {lostObject.status}
+                  <strong>Estado:</strong> {lostObject.status}
                 </Typography>
                 <Typography variant="body2">
                   <strong>Descripción:</strong> {lostObject.description}
