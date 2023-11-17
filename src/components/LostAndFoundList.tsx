@@ -47,26 +47,25 @@ const LostAndFoundList = () => {
             />
           </ListItemIcon>
           <ListItemText
-            primary={
-              <div>
-                {item.status === "encontrado" ? "Encontrado" : "Perdido"}
-              </div>
-            }
+            primary={item.status === "encontrado" ? "Encontrado" : "Perdido"}
             secondary={
               <div>
-                <div>
+                <Typography variant="body1">
+                  <strong>Estado:</strong> {item.status}
+                </Typography>
+                <Typography variant="body1">
                   <strong>Descripción:</strong> {item.description}
-                </div>
-                <div>
+                </Typography>
+                <Typography variant="body1">
                   <strong>Aeropuerto:</strong> {item.airport.name}
-                </div>
-                <div>
+                </Typography>
+                <Typography variant="body1">
                   <strong>Lugar:</strong> {item.city.name} {item.country.name}
-                </div>
-                <div>
+                </Typography>
+                <Typography variant="body1">
                   <strong>Nombre:</strong> {item.userReport?.name.first},{" "}
                   {item.userReport?.name.last}
-                </div>
+                </Typography>
               </div>
             }
           />
@@ -74,7 +73,6 @@ const LostAndFoundList = () => {
       </Link>
     </Grid>
   );
-
   return (
     <Grid container spacing={3}>
       <CustomNavbar />

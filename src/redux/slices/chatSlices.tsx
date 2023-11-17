@@ -1,5 +1,6 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { Message } from "../../model/interface";
+import { RootState } from "../Store";
 
 interface ChatState {
   messages: Message[];
@@ -20,5 +21,5 @@ const chatSlice = createSlice({
 });
 
 export const { addMessage } = chatSlice.actions;
-
+export const selectMenssage = (state: RootState) => state.chat.messages;
 export default chatSlice.reducer;
