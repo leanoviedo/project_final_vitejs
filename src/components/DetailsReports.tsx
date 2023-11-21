@@ -4,7 +4,6 @@ import {
   Avatar,
   Box,
   Grid,
-  Paper,
   Divider,
   Button,
   Dialog,
@@ -12,6 +11,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Stack,
 } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import CustomNavbar from "./CustomNavbar";
@@ -111,144 +111,162 @@ const DetailsReports = () => {
   return (
     <>
       <CustomNavbar />
-      <Typography variant="h4" component="h1" sx={{ textAlign: "center" }}>
+      <Typography
+        variant="h4"
+        component="h1"
+        align="center"
+        gutterBottom
+        sx={{
+          textDecoration: "underline",
+          textDecorationStyle: "unset",
+          textDecorationColor: "#1976d2",
+        }}
+      >
         Detalle del reporte
       </Typography>
-      <Divider sx={{ marginTop: 2, marginBottom: 2 }} />
       {lostObject && (
-        <Paper elevation={1} sx={{ padding: 2 }}>
-          <Grid style={{ display: "flex", justifyContent: "space-between" }}>
+        <>
+          <Grid item xs={12}>
             <Button
-              color="success"
               variant="contained"
+              color="success"
+              fullWidth
               disabled={
                 isCurrentUserOwner === true ||
                 lostObject.status === "finalizado" ||
                 lostObject.status === "reclamado" ||
                 lostObject.status === "enviado"
               }
-              style={{ marginLeft: "auto" }}
               onClick={handleOpenDialog}
             >
               Reclamar
             </Button>
           </Grid>
-          <Grid container spacing={3}>
-            <Grid item xs={12} sm={6} md={4} p={2}>
-              <Box>
-                <Typography variant="body2">
+          <Box
+            component="img"
+            sx={{
+              height: "70%",
+              width: "30vh",
+              display: "block",
+              margin: "auto",
+              objectFit: "cover",
+            }}
+            src={lostObject.photo}
+            alt="objeto perdido"
+          />
+          <Grid container item>
+            <Grid item xs={12} sm={6} md={4}>
+              <Stack direction="column" spacing={1}>
+                <Typography variant="h5">
                   <strong>Estado:</strong> {lostObject.status}
                 </Typography>
-                <Typography variant="body2">
+                <Typography variant="h5">
                   <strong>Descripción:</strong> {lostObject.description}
                 </Typography>
-                <Typography variant="body2">
+                <Typography variant="h5">
                   <strong>Aeropuerto:</strong> {lostObject.airport.name}
                 </Typography>
-                <Typography variant="body2">
+                <Typography variant="h5">
                   <strong>País:</strong> {lostObject.country.name}
                 </Typography>
-                <Typography variant="body2">
+                <Typography variant="h5">
                   <strong>Ciudad:</strong> {lostObject.city.name}
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="h5" color="text.secondary">
                   <strong>Fecha:</strong> {newdate}
                 </Typography>
-              </Box>
-            </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              <Box>
-                <img
-                  src={lostObject.photo}
-                  alt="objeto perdido"
-                  style={{
-                    width: "100%",
-                    maxWidth: "200px",
-                    height: "auto",
-                  }}
-                />
-              </Box>
+              </Stack>
             </Grid>
           </Grid>
+
           <Divider sx={{ marginTop: 2, marginBottom: 2 }} />
-          <Grid container spacing={3}>
-            <Grid item xs={12} sm={6} md={4}>
-              <Box>
-                <Typography variant="body2">
-                  <strong>Nombre:</strong> {lostObject.userReport?.name.first}{" "}
-                  {lostObject.userReport?.name.last}
-                </Typography>
-                <Typography variant="body2">
-                  <strong>Email:</strong> {lostObject.userReport?.email}
-                </Typography>
-                <Typography variant="body2">
-                  <strong>Teléfono:</strong> {lostObject.userReport?.phone}
-                </Typography>
-                <Typography variant="body2">
-                  <strong>Dirección de domicilio:</strong>{" "}
-                  {lostObject.userReport?.location.city}{" "}
-                  {lostObject.userReport?.location.country} <i>Estado</i>{" "}
-                  {lostObject.userReport?.location.state}
-                </Typography>
-                <Typography variant="body2">
-                  <strong>Código postal:</strong>{" "}
-                  {lostObject.userReport?.location.postcode}
-                </Typography>
-              </Box>
-            </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              <Box>
-                <Avatar
-                  src={lostObject.userReport?.picture.large}
-                  alt="fotografía de la persona del reporte"
-                  sx={{ width: "100%", maxWidth: "200px", height: "auto" }}
-                />
-              </Box>
-            </Grid>
-          </Grid>
-        </Paper>
-      )}
-      <Dialog open={isDialogOpen} onClose={handleCloseDialog}>
-        <DialogTitle>Confirmar reclamo</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            ¿Estás seguro de que quieres reclamar este objeto?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog} variant="outlined" color="error">
-            Cancelar
-          </Button>
-          <Button
-            onClick={handleConfirmReclamar}
-            variant="outlined"
-            color="success"
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            md={4}
+            sx={{ display: "flex", alignItems: "center" }}
           >
-            Confirmar
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <Grid container spacing={3}>
-        <Grid item xs={12} sm={12} md={12}>
-          <Typography variant="h6" component="h2" sx={{ textAlign: "center" }}>
-            ubicacion del Aeropuerto
-          </Typography>
-          <Divider sx={{ marginTop: 2, marginBottom: 2 }} />
-          <div style={{ height: "60vh", width: "100%" }}>
-            <GoogleMapReact
-              bootstrapURLKeys={{
-                key: "AIzaSyDMVoFJqQljWVR7J2d4_ElY4oTe2wa5ygQ",
+            <Stack direction="column" spacing={1}>
+              <Avatar
+                src={lostObject.userReport?.picture.large}
+                alt="fotografía de la persona del reporte"
+                sx={{
+                  width: 150,
+                  height: 150,
+                  display: "flex",
+                  alignSelf: "center",
+                }}
+              />
+              <Typography variant="h5">
+                <strong>Nombre:</strong>{" "}
+                {`${lostObject.userReport?.name.first} ${lostObject.userReport?.name.last}`}
+              </Typography>
+              <Typography variant="h5">
+                <strong>Email:</strong> {lostObject.userReport?.email}
+              </Typography>
+              <Typography variant="h5">
+                <strong>Teléfono:</strong> {lostObject.userReport?.phone}
+              </Typography>
+              <Typography variant="h5">
+                <strong>Dirección de domicilio:</strong>{" "}
+                {`${lostObject.userReport?.location.city}, ${lostObject.userReport?.location.country} ${lostObject.userReport?.location.state}`}
+              </Typography>
+              <Typography variant="h5">
+                <strong>Código postal:</strong>{" "}
+                {lostObject.userReport?.location.postcode}
+              </Typography>
+            </Stack>
+          </Grid>
+          <Grid item xs={12} sm={6} md={4}>
+            <Typography
+              variant="h4"
+              component="h1"
+              align="center"
+              gutterBottom
+              sx={{
+                textDecoration: "underline",
+                textDecorationStyle: "unset",
+                textDecorationColor: "#1976d2",
               }}
-              center={airportCoordinate}
-              defaultZoom={15}
-              yesIWantToUseGoogleMapApiInternals={true}
-              onGoogleApiLoaded={({ map, maps }) => maprender(map, maps)}
-            />
-          </div>
-        </Grid>
-      </Grid>
+            >
+              Ubicación del Aeropuerto
+            </Typography>
+            <div style={{ height: "55 vh", width: "100%" }}>
+              <GoogleMapReact
+                bootstrapURLKeys={{
+                  key: "AIzaSyDMVoFJqQljWVR7J2d4_ElY4oTe2wa5ygQ",
+                }}
+                center={airportCoordinate}
+                defaultZoom={15}
+                yesIWantToUseGoogleMapApiInternals={true}
+                onGoogleApiLoaded={({ map, maps }) => maprender(map, maps)}
+              />
+            </div>
+          </Grid>
+          <Dialog open={isDialogOpen} onClose={handleCloseDialog}>
+            <DialogTitle>Confirmar reclamo</DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                ¿Estás seguro de que quieres reclamar este objeto?
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleCloseDialog} variant="text" color="error">
+                Cancelar
+              </Button>
+              <Button
+                onClick={handleConfirmReclamar}
+                variant="text"
+                color="success"
+              >
+                Confirmar
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </>
+      )}
     </>
   );
 };
-
 export default DetailsReports;
