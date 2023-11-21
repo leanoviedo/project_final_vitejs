@@ -27,7 +27,7 @@ import dayjs, { Dayjs } from "dayjs";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import CustomNavbar from "./CustomNavbar";
 import { LostObjectData, Country, City, Airport } from "../model/interface";
-import { setLostObjectData } from "../redux/slices/lostObjectSlice";
+import { setLostObjectData } from "../redux/slices/LostObjectSlice";
 import { selectUserLogin } from "../redux/slices/UserLogin";
 import { v4 as uuidv4 } from "uuid";
 

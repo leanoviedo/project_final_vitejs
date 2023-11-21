@@ -15,7 +15,7 @@ import AirportServices from "../services/AirportServices";
 import CustomNavbar from "./CustomNavbar";
 import dayjs from "dayjs";
 import { useAppSelector } from "../redux/hooks";
-import { selectLostObjects } from "../redux/slices/lostObjectSlice";
+import { selectLostObjects } from "../redux/slices/LostObjectSlice";
 import { Link } from "react-router-dom";
 import SearchIcon from "@mui/icons-material/Search";
 
@@ -183,7 +183,7 @@ const LostObjectDetails = () => {
               ) : (
                 filteredObjects?.map((lostObject, index) => (
                   <Grid item xs={12} md={6} key={index}>
-                    <Card elevation={3}>
+                    <Card elevation={3}  sx={{ width: "100%", height: "100%" }}>
                       <Link
                         to="/DetailsReports"
                         state={{
@@ -200,10 +200,12 @@ const LostObjectDetails = () => {
                           component="img"
                           src={lostObject.photo}
                           alt="objeto perdido"
-                          width={"80%"}
-                          justifyContent="center"
+                          width={"100%"}
+                          height={"760px"} // Set a fixed height for the image
+                          sx={{ objectFit: "cover" }}
                         />
                         <CardContent>
+                          
                           <Stack spacing={1}>
                             <Typography variant="h6" color="text.primary">
                               Estado: {lostObject.status}

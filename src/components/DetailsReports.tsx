@@ -18,7 +18,7 @@ import CustomNavbar from "./CustomNavbar";
 import GoogleMapReact from "google-map-react";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { selectUserLogin } from "../redux/slices/UserLogin";
-import { markLostObjectAsClaimed } from "../redux/slices/lostObjectSlice";
+import { markLostObjectAsClaimed } from "../redux/slices/LostObjectSlice";
 import { DataToReclaim } from "../model/interface";
 
 const DetailsReports = () => {

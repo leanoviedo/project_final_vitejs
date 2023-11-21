@@ -23,7 +23,7 @@ import { useParams } from "react-router-dom";
 import dayjs from "dayjs";
 import { addMessage, selectMenssage } from "../redux/slices/chatSlices";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { updateLostObjectStatus } from "../redux/slices/lostObjectSlice";
+import { updateLostObjectStatus } from "../redux/slices/LostObjectSlice";
 
 const FoundObjects = () => {
   const selectedUser = useAppSelector(selectUserLogin);

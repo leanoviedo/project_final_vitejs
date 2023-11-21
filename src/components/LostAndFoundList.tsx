@@ -11,7 +11,7 @@ import {
   Tab,
 } from "@mui/material";
 import { useAppSelector } from "../redux/hooks";
-import { selectLostObjects } from "../redux/slices/lostObjectSlice";
+import { selectLostObjects } from "../redux/slices/LostObjectSlice";
 import CustomNavbar from "./CustomNavbar";
 import { Link } from "react-router-dom";
 import { selectUserLogin } from "../redux/slices/UserLogin";
@@ -49,24 +49,24 @@ const LostAndFoundList = () => {
           <ListItemText
             primary={item.status === "encontrado" ? "Encontrado" : "Perdido"}
             secondary={
-              <div>
-                <Typography variant="body1">
+              <>
+                <Typography component="div" variant="body1">
                   <strong>Estado:</strong> {item.status}
                 </Typography>
-                <Typography variant="body1">
+                <Typography component={"div"} variant="body1">
                   <strong>Descripción:</strong> {item.description}
                 </Typography>
-                <Typography variant="body1">
+                <Typography component={"div"} variant="body1">
                   <strong>Aeropuerto:</strong> {item.airport.name}
                 </Typography>
-                <Typography variant="body1">
+                <Typography component={"div"} variant="body1">
                   <strong>Lugar:</strong> {item.city.name} {item.country.name}
                 </Typography>
-                <Typography variant="body1">
+                <Typography component={"div"} variant="body1">
                   <strong>Nombre:</strong> {item.userReport?.name.first},{" "}
                   {item.userReport?.name.last}
                 </Typography>
-              </div>
+              </>
             }
           />
         </ListItem>
