@@ -16,7 +16,6 @@ import {
 } from "@mui/material";
 import {
   ArrowCircleRight as ArrowCircleRightIcon,
-  ArrowBack as ArrowBackIcon,
 } from "@mui/icons-material";
 
 const FormRegistration = () => {
@@ -204,6 +203,11 @@ const FormRegistration = () => {
             >
               Regístrate
             </Button>
+            <Link to="/" style={{ textDecoration: "none", color: "blue" }}>
+              <Typography mt={2} ml={10}>
+                Ir a inicio de Sesión
+              </Typography>
+            </Link>
           </Box>
           <Snackbar
             open={successSnackbarOpen}
@@ -234,22 +238,6 @@ const FormRegistration = () => {
             </Alert>
           </Snackbar>
         </Card>
-      </Grid>
-      <Grid
-        item
-        xs={12}
-        md={6}
-        sm={4}
-        style={{ position: "absolute", bottom: "5px", left: "16px" }}
-      >
-        <Button
-          variant="contained"
-          startIcon={<ArrowBackIcon fontSize="large" />}
-        >
-          <Link to="/" style={{ textDecoration: "none", color: "white" }}>
-            Atrás
-          </Link>
-        </Button>
       </Grid>
     </Grid>
   );

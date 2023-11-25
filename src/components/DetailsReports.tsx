@@ -3,7 +3,6 @@ import {
   Typography,
   Box,
   Card,
-  Collapse,
   CardMedia,
   CardContent,
   CardActions,
@@ -14,7 +13,6 @@ import {
   DialogContentText,
   DialogTitle,
   Stack,
-  styled,
   ListItemText,
   Drawer,
   Divider,
@@ -28,22 +26,9 @@ import CustomNavbar from "./CustomNavbar";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { selectUserLogin } from "../redux/slices/UserLogin";
 import { markLostObjectAsClaimed } from "../redux/slices/LostObjectSlice";
-import { DataToReclaim, ExpandMoreProps, Anchor } from "../model/interface";
-import IconButton from "@mui/material/IconButton";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { DataToReclaim, Anchor } from "../model/interface";
 import GoogleMapReact from "google-map-react";
 import CloseIcon from "@mui/icons-material/Close";
-
-const ExpandMore = styled((props: ExpandMoreProps) => {
-  const { expand, ...other } = props;
-  return <IconButton {...other} />;
-})(({ theme, expand }) => ({
-  transform: !expand ? "rotate(0deg)" : "rotate(180deg)",
-  marginBottom: "auto",
-  transition: theme.transitions.create("transform", {
-    duration: theme.transitions.duration.shortest,
-  }),
-}));
 
 const DetailsReports = () => {
   const ubicacion = useLocation();
@@ -132,12 +117,6 @@ const DetailsReports = () => {
     }
   };
 
-  const [expanded, setExpanded] = useState(false);
-
-  const handleExpandClick = () => {
-    setExpanded(!expanded);
-  };
-
   const [state, setState] = useState({
     left: false,
     right: false,
@@ -211,7 +190,7 @@ const DetailsReports = () => {
             <Grid item xs={12} md={6}>
               <Card elevation={3} sx={{ height: "100%" }}>
                 <CardContent>
-                  <Typography gutterBottom variant="h4">
+                  <Typography gutterBottom variant="h5">
                     Informacion del reporte
                   </Typography>
                   <Stack direction="column" spacing={1}>
@@ -327,7 +306,7 @@ const DetailsReports = () => {
                       />
                     </ListItemAvatar>
                     <Typography
-                      variant="h6"
+                      variant="h5"
                       gutterBottom
                       sx={{
                         padding: 1,
@@ -335,85 +314,74 @@ const DetailsReports = () => {
                       }}
                     >
                       {`${lostObject.userReport?.name.first} ${lostObject.userReport?.name.last}`}
-
-                      <ExpandMore
-                        expand={expanded}
-                        onClick={handleExpandClick}
-                        aria-expanded={expanded}
-                        aria-label="show more"
-                      >
-                        <ExpandMoreIcon />
-                      </ExpandMore>
                     </Typography>
                   </ListItem>
-                  <Collapse in={expanded} timeout="auto" unmountOnExit>
-                    <CardContent>
-                      <ListItemText
-                        primary="Email"
-                        secondary={
-                          <React.Fragment>
-                            <Typography
-                              gutterBottom
-                              sx={{ display: "inline" }}
-                              component="span"
-                              variant="h6"
-                              color="text.primary"
-                            >
-                              {lostObject.userReport?.email}
-                            </Typography>
-                          </React.Fragment>
-                        }
-                      />
-                      <ListItemText
-                        primary="numero de contacto"
-                        secondary={
-                          <React.Fragment>
-                            <Typography
-                              gutterBottom
-                              sx={{ display: "inline" }}
-                              component="span"
-                              variant="h5"
-                              color="text.primary"
-                            >
-                              {lostObject.userReport?.phone}
-                            </Typography>
-                          </React.Fragment>
-                        }
-                      />
-                      <ListItemText
-                        primary="Direccion de domicilio "
-                        secondary={
-                          <React.Fragment>
-                            <Typography
-                              gutterBottom
-                              sx={{ display: "inline" }}
-                              component="span"
-                              variant="h6"
-                              color="text.primary"
-                            >
-                              {`${lostObject.userReport?.location.city}, ${lostObject.userReport?.location.country} ${lostObject.userReport?.location.state}`}
-                            </Typography>
-                          </React.Fragment>
-                        }
-                      />
-                      <ListItemText
-                        primary="Codigo postal"
-                        secondary={
-                          <React.Fragment>
-                            <Typography
-                              gutterBottom
-                              sx={{ display: "inline" }}
-                              component="span"
-                              variant="h6"
-                              color="text.primary"
-                            >
-                              {lostObject.userReport?.location.postcode}
-                            </Typography>
-                          </React.Fragment>
-                        }
-                      />
-                    </CardContent>
-                  </Collapse>
+                  <CardContent>
+                    <ListItemText
+                      primary="Email"
+                      secondary={
+                        <React.Fragment>
+                          <Typography
+                            gutterBottom
+                            sx={{ display: "inline" }}
+                            component="span"
+                            variant="h5"
+                            color="text.primary"
+                          >
+                            {lostObject.userReport?.email}
+                          </Typography>
+                        </React.Fragment>
+                      }
+                    />
+                    <ListItemText
+                      primary="numero de contacto"
+                      secondary={
+                        <React.Fragment>
+                          <Typography
+                            gutterBottom
+                            sx={{ display: "inline" }}
+                            component="span"
+                            variant="h5"
+                            color="text.primary"
+                          >
+                            {lostObject.userReport?.phone}
+                          </Typography>
+                        </React.Fragment>
+                      }
+                    />
+                    <ListItemText
+                      primary="Direccion de domicilio "
+                      secondary={
+                        <React.Fragment>
+                          <Typography
+                            gutterBottom
+                            sx={{ display: "inline" }}
+                            component="span"
+                            variant="h5"
+                            color="text.primary"
+                          >
+                            {`${lostObject.userReport?.location.city}, ${lostObject.userReport?.location.country} ${lostObject.userReport?.location.state}`}
+                          </Typography>
+                        </React.Fragment>
+                      }
+                    />
+                    <ListItemText
+                      primary="Codigo postal"
+                      secondary={
+                        <React.Fragment>
+                          <Typography
+                            gutterBottom
+                            sx={{ display: "inline" }}
+                            component="span"
+                            variant="h5"
+                            color="text.primary"
+                          >
+                            {lostObject.userReport?.location.postcode}
+                          </Typography>
+                        </React.Fragment>
+                      }
+                    />
+                  </CardContent>
                 </CardContent>
               </Card>
             </Grid>

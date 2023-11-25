@@ -47,19 +47,19 @@ const LostAndFoundList = () => {
           <CardHeader title={item.description} />
           <CardContent sx={{ display: "flex", flexDirection: "row" }}>
             <div>
-              <Typography variant="body2" color="textSecondary">
+              <Typography variant="h5" color="textPrimary">
                 Estado: {item.status}
               </Typography>
-              <Typography variant="body2" color="textSecondary">
+              <Typography variant="h5" color="textPrimary">
                 Aeropuerto: {item.airport.name}
               </Typography>
-              <Typography variant="body2" color="textSecondary">
+              <Typography variant="h5" color="textPrimary">
                 Dirección: {item.city.name} {item.country.name}
               </Typography>
-              <Typography variant="body2" color="textSecondary">
+              <Typography variant="h5" color="textPrimary">
                 Nombre: {item.userReport.name.first} {item.userReport.name.last}
               </Typography>
-              <Typography variant="body2" color="textSecondary">
+              <Typography variant="h5" color="textPrimary">
                 Email: {item.userReport.email}
               </Typography>
             </div>
@@ -84,7 +84,7 @@ const LostAndFoundList = () => {
     <Grid container>
       <CustomNavbar />
       <Grid item xs={12}>
-        <Typography variant="body1" component="h1" gutterBottom align="center">
+        <Typography variant="h4" component="h1" gutterBottom align="center">
           Lista de reportes
         </Typography>
       </Grid>
