@@ -163,7 +163,7 @@ const LandingPage = () => {
   const handleDateChange = (date: Dayjs | any) => {
     setLostObject((prev) => ({
       ...prev,
-      date: date ? date.toISOString() : null, 
+      date: date ? date.toISOString() : null,
     }));
   };
 

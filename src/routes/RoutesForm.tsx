@@ -2,7 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import FormRegistration from "../components/FormRegistration";
 import FormLogin from "../components/FormLogin";
 import LandingPage from "../components/LandingPage";
-import LostObjectDetails from "../components/LostObjectDetails";
+import LostObjectDetails from "../components/SearchLostObjects";
 import DetailsReports from "../components/DetailsReports";
 import FoundObjects from "../components/FoundObjects";
 import LostAndFoundList from "../components/LostAndFoundList";
