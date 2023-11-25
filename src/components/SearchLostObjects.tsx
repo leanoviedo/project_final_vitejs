@@ -186,7 +186,14 @@ const LostObjectDetails = () => {
               ) : (
                 filteredObjects?.map((lostObject, index) => (
                   <Grid item xs={12} md={3} key={index}>
-                    <Card elevation={3}>
+                    <Card
+                      elevation={3}
+                      sx={{
+                        height: "100%",
+                        display: "flex",
+                        flexDirection: "column",
+                      }}
+                    >
                       <Link
                         to="/DetailsReports"
                         state={{
@@ -197,16 +204,29 @@ const LostObjectDetails = () => {
                             lostObject: lostObject,
                           },
                         }}
-                        style={{ textDecoration: "none", color: "inherit" }}
+                        style={{
+                          textDecoration: "none",
+                          color: "inherit",
+                          flex: 1,
+                        }}
                       >
-                        <CardActionArea>
-                          <Paper elevation={3}>
+                        <CardActionArea style={{ flex: 1 }}>
+                          <Paper
+                            elevation={3}
+                            sx={{ flex: 1, display: "flex" }}
+                          >
                             <CardMedia
                               component="img"
                               src={lostObject.photo}
                               alt="objeto perdido"
                               hidden
-                              sx={{ maxHeight: "600px", padding: "5px" }}
+                              sx={{
+                                maxHeight: "100%",
+                                objectFit: "cover",
+                                flex: 1,
+                                width: "100%",
+                                height: "600px",
+                              }}
                             />
                           </Paper>
                           <CardContent>
@@ -243,7 +263,6 @@ const LostObjectDetails = () => {
                                   </React.Fragment>
                                 }
                               />
-
                               <ListItemText
                                 primary="Pais"
                                 secondary={
