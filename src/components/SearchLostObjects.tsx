@@ -8,8 +8,11 @@ import {
   Typography,
   TextField,
   CardContent,
-  Divider,
   Stack,
+  CardMedia,
+  CardActionArea,
+  ListItemText,
+  Paper,
 } from "@mui/material";
 import AirportServices from "../services/AirportServices";
 import CustomNavbar from "./CustomNavbar";
@@ -18,6 +21,7 @@ import { useAppSelector } from "../redux/hooks";
 import { selectLostObjects } from "../redux/slices/LostObjectSlice";
 import { Link } from "react-router-dom";
 import SearchIcon from "@mui/icons-material/Search";
+import React from "react";
 
 const LostObjectDetails = () => {
   const lostObjects = useAppSelector(selectLostObjects);
@@ -33,7 +37,6 @@ const LostObjectDetails = () => {
     inputMinimumLength:
       "Por favor, ingrese al menos 3 caracteres para buscar un país.",
   };
-
   const handleSearch = () => {
     if (selectedCountry || searchText.length >= 3) {
       const filtered = lostObjects.filter((lostObject) => {
@@ -59,7 +62,7 @@ const LostObjectDetails = () => {
       }
     } else {
       setFilteredObjects(lostObjects);
-      setErrorMessage(validationMessages.inputMinimumLength);
+      setErrorMessage(null);
       setResultsFound(true);
     }
   };
@@ -89,7 +92,7 @@ const LostObjectDetails = () => {
     <Grid container spacing={3} justifyContent="center">
       <CustomNavbar />
       <Grid item xs={12} md={8}>
-        <Typography variant="h4" color="darkblue" align="center" gutterBottom>
+        <Typography variant="h4" align="center" gutterBottom>
           Buscar Objetos Perdidos
         </Typography>
         <Box p={3}>
@@ -110,7 +113,7 @@ const LostObjectDetails = () => {
                     {...params}
                     label="Buscar por país"
                     fullWidth
-                    variant="standard"
+                    variant="outlined"
                   />
                 )}
               />
@@ -118,7 +121,7 @@ const LostObjectDetails = () => {
             <Grid item xs={12} md={5}>
               <TextField
                 label="Buscar por descripción"
-                variant="standard"
+                variant="outlined"
                 value={searchText}
                 onChange={(e) => setSearchText(e.target.value)}
                 fullWidth
@@ -126,11 +129,11 @@ const LostObjectDetails = () => {
             </Grid>
             <Grid item xs={12} md={2} sx={{ textAlign: "center" }}>
               <Button
-                variant="outlined"
+                variant="contained"
                 endIcon={<SearchIcon />}
                 color="primary"
                 onClick={handleSearch}
-                sx={{ marginTop: 2, height: "100%" }}
+                sx={{ height: "100%" }}
               >
                 Buscar
               </Button>
@@ -182,8 +185,8 @@ const LostObjectDetails = () => {
                 </Grid>
               ) : (
                 filteredObjects?.map((lostObject, index) => (
-                  <Grid item xs={12} md={6} key={index}>
-                    <Card elevation={3}  sx={{ width: "100%", height: "100%" }}>
+                  <Grid item xs={12} md={3} key={index}>
+                    <Card elevation={3}>
                       <Link
                         to="/DetailsReports"
                         state={{
@@ -196,54 +199,70 @@ const LostObjectDetails = () => {
                         }}
                         style={{ textDecoration: "none", color: "inherit" }}
                       >
-                        <Box
-                          component="img"
-                          src={lostObject.photo}
-                          alt="objeto perdido"
-                          width={"100%"}
-                          height={"760px"} // Set a fixed height for the image
-                          sx={{ objectFit: "cover" }}
-                        />
-                        <CardContent>
-                          
-                          <Stack spacing={1}>
-                            <Typography variant="h6" color="text.primary">
-                              Estado: {lostObject.status}
-                            </Typography>
-                            <Typography variant="h6" color="text.primary">
-                              Descripción: {lostObject.description}
-                            </Typography>
-                            <Typography variant="h6" color="text.primary">
-                              Aeropuerto: {lostObject.airport.name}
-                            </Typography>
-                            <Typography variant="h6" color="text.primary">
-                              País: {lostObject.country.name}
-                            </Typography>
-                            <Typography variant="h6" color="text.primary">
-                              Ciudad: {lostObject.city.name}
-                            </Typography>
-                            <Typography variant="h6" color="text.primary">
-                              Fecha:{" "}
-                              {lostObject.date
-                                ? dayjs(lostObject.date).format("DD-MM-YYYY")
-                                : "N/A"}
-                            </Typography>
-                            <Divider />
-                            <Typography variant="h5" color="InfoText">
-                              Información de Contacto:
-                            </Typography>
-                            <Typography variant="h6" color="text.primary">
-                              Nombre: {lostObject.userReport?.name.first}{" "}
-                              {lostObject.userReport?.name.last}
-                            </Typography>
-                            <Typography variant="h6" color="text.primary">
-                              Email: {lostObject.userReport?.email}
-                            </Typography>
-                            <Typography variant="h6" color="text.primary">
-                              Teléfono: {lostObject.userReport?.phone}
-                            </Typography>
-                          </Stack>
-                        </CardContent>
+                        <CardActionArea>
+                          <Paper elevation={3}>
+                            <CardMedia
+                              component="img"
+                              src={lostObject.photo}
+                              alt="objeto perdido"
+                              hidden
+                              sx={{ maxHeight: "600px", padding: "5px" }}
+                            />
+                          </Paper>
+                          <CardContent>
+                            <Stack direction="column">
+                              <ListItemText
+                                primary="Estado"
+                                secondary={
+                                  <React.Fragment>
+                                    <Typography
+                                      gutterBottom
+                                      sx={{ display: "inline" }}
+                                      component="span"
+                                      variant="h6"
+                                      color="text.primary"
+                                    >
+                                      {lostObject.status}
+                                    </Typography>
+                                  </React.Fragment>
+                                }
+                              />
+                              <ListItemText
+                                primary="Descripcion"
+                                secondary={
+                                  <React.Fragment>
+                                    <Typography
+                                      gutterBottom
+                                      sx={{ display: "inline" }}
+                                      component="span"
+                                      variant="h6"
+                                      color="text.primary"
+                                    >
+                                      {lostObject.description}
+                                    </Typography>
+                                  </React.Fragment>
+                                }
+                              />
+
+                              <ListItemText
+                                primary="Pais"
+                                secondary={
+                                  <React.Fragment>
+                                    <Typography
+                                      gutterBottom
+                                      sx={{ display: "inline" }}
+                                      component="span"
+                                      variant="h6"
+                                      color="text.primary"
+                                    >
+                                      {lostObject.country.name}
+                                    </Typography>
+                                  </React.Fragment>
+                                }
+                              />
+                            </Stack>
+                          </CardContent>
+                        </CardActionArea>
                       </Link>
                     </Card>
                   </Grid>
