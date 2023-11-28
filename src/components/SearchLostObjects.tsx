@@ -242,7 +242,7 @@ const LostObjectDetails = () => {
                                       variant="h6"
                                       color="text.primary"
                                     >
-                                      {lostObject.status}
+                                      {lostObject.type}
                                     </Typography>
                                   </React.Fragment>
                                 }

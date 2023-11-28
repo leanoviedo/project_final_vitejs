@@ -205,7 +205,7 @@ const DetailsReports = () => {
                             variant="h5"
                             color="text.primary"
                           >
-                            {lostObject.status}
+                            {lostObject.type}
                           </Typography>
                         </React.Fragment>
                       }
