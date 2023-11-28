@@ -2,7 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import usersReducer from "./slices/UsersSlices.tsx";
 import registrationReducer from "./slices/RegistrationSlices.tsx";
 import userLoginReducer from "./slices/UserLogin.tsx";
-import lostObjectReducer from "./slices/lostObjectSlice.tsx";
+import lostObjectReducer from "./slices/LostObjectSlice.tsx";
 import chatReducer from "./slices/chatSlices.tsx";
 
 const store = configureStore({
@@ -13,9 +13,10 @@ const store = configureStore({
     lostObject: lostObjectReducer,
     chat: chatReducer,
   },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware({
-    serializableCheck: false
-  }),
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

@@ -1,25 +1,34 @@
-import { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import {
   Typography,
-  Avatar,
   Box,
-  Grid,
-  Paper,
-  Divider,
+  Card,
+  CardMedia,
+  CardContent,
+  CardActions,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Stack,
+  ListItemText,
+  Drawer,
+  Divider,
+  Avatar,
+  ListItem,
+  ListItemAvatar,
+  Grid,
 } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import CustomNavbar from "./CustomNavbar";
-import GoogleMapReact from "google-map-react";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { selectUserLogin } from "../redux/slices/UserLogin";
-import { markLostObjectAsClaimed } from "../redux/slices/lostObjectSlice";
-import { DataToReclaim } from "../model/interface";
+import { markLostObjectAsClaimed } from "../redux/slices/LostObjectSlice";
+import { DataToReclaim, Anchor } from "../model/interface";
+import GoogleMapReact from "google-map-react";
+import CloseIcon from "@mui/icons-material/Close";
 
 const DetailsReports = () => {
   const ubicacion = useLocation();
@@ -103,152 +112,361 @@ const DetailsReports = () => {
         };
         dispatch(markLostObjectAsClaimed(dataToReclaim));
         navigate(`/FoundObjects/${lostObject.id}`, { state: lostObject.id });
-
         handleCloseDialog();
       }
     }
   };
+
+  const [state, setState] = useState({
+    left: false,
+    right: false,
+    top: false,
+    bottom: false,
+  });
+
+  const toggleDrawer =
+    (anchor: Anchor, open: boolean) =>
+    (event: React.KeyboardEvent | React.MouseEvent) => {
+      if (
+        event.type === "keydown" &&
+        ((event as React.KeyboardEvent).key === "Tab" ||
+          (event as React.KeyboardEvent).key === "Shift")
+      ) {
+        return;
+      }
+
+      setState({ ...state, [anchor]: open });
+    };
+
+  const list = (anchor: Anchor) => (
+    <Box
+      sx={{ width: anchor === "bottom" ? "auto" : 250 }}
+      role="presentation"
+      onClick={toggleDrawer(anchor, false)}
+      onKeyDown={toggleDrawer(anchor, false)}
+    >
+      <Typography variant="h6" component="h2" sx={{ textAlign: "center" }}>
+        Ubicacion del Aeropuerto
+      </Typography>
+      <Button
+        onClick={toggleDrawer(anchor, false)}
+        color="warning"
+        style={{ marginLeft: "auto" }}
+      >
+        <CloseIcon />
+      </Button>
+      <Divider sx={{ marginTop: 2, marginBottom: 2 }} />
+      <div style={{ height: "60vh", width: "100%" }}>
+        <GoogleMapReact
+          bootstrapURLKeys={{
+            key: "AIzaSyDMVoFJqQljWVR7J2d4_ElY4oTe2wa5ygQ",
+          }}
+          center={airportCoordinate}
+          defaultZoom={15}
+          yesIWantToUseGoogleMapApiInternals={true}
+          onGoogleApiLoaded={({ map, maps }) => maprender(map, maps)}
+        />
+      </div>
+    </Box>
+  );
+
   return (
     <>
       <CustomNavbar />
-      <Typography variant="h4" component="h1" sx={{ textAlign: "center" }}>
+      <Typography variant="h4" align="center" gutterBottom>
         Detalle del reporte
       </Typography>
-      <Divider sx={{ marginTop: 2, marginBottom: 2 }} />
       {lostObject && (
-        <Paper elevation={1} sx={{ padding: 2 }}>
-          <Grid style={{ display: "flex", justifyContent: "space-between" }}>
+        <>
+          <CardMedia
+            component="img"
+            height="400"
+            sx={{
+              objectFit: "contain",
+            }}
+            image={lostObject.photo}
+          />
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={6}>
+              <Card elevation={3} sx={{ height: "100%" }}>
+                <CardContent>
+                  <Typography gutterBottom variant="h5">
+                    Informacion del reporte
+                  </Typography>
+                  <Stack direction="column" spacing={1}>
+                    <ListItemText
+                      primary="Estado:"
+                      secondary={
+                        <React.Fragment>
+                          <Typography
+                            gutterBottom
+                            sx={{ display: "inline" }}
+                            component="span"
+                            variant="h5"
+                            color="text.primary"
+                          >
+                            {lostObject.type}
+                          </Typography>
+                        </React.Fragment>
+                      }
+                    />
+                    <ListItemText
+                      primary="Descripcion:"
+                      secondary={
+                        <React.Fragment>
+                          <Typography
+                            gutterBottom
+                            sx={{ display: "inline" }}
+                            component="span"
+                            variant="h5"
+                            color="text.primary"
+                          >
+                            {lostObject.description}
+                          </Typography>
+                        </React.Fragment>
+                      }
+                    />
+                    <ListItemText
+                      primary="Fecha de la Perdida:"
+                      secondary={
+                        <React.Fragment>
+                          <Typography
+                            gutterBottom
+                            sx={{ display: "inline" }}
+                            component="span"
+                            variant="h5"
+                            color="text.primary"
+                          >
+                            {newdate}
+                          </Typography>
+                        </React.Fragment>
+                      }
+                    />
+                    <ListItemText
+                      primary="Nombre del Aeropuerto:"
+                      secondary={
+                        <React.Fragment>
+                          <Typography
+                            gutterBottom
+                            sx={{ display: "inline" }}
+                            component="span"
+                            variant="h5"
+                            color="text.primary"
+                          >
+                            {lostObject.airport.name}
+                          </Typography>
+                        </React.Fragment>
+                      }
+                    />
+                    <ListItemText
+                      primary="ciudad:"
+                      secondary={
+                        <React.Fragment>
+                          <Typography
+                            gutterBottom
+                            sx={{ display: "inline" }}
+                            component="span"
+                            variant="h5"
+                            color="text.primary"
+                          >
+                            {lostObject.city.name}
+                          </Typography>
+                        </React.Fragment>
+                      }
+                    />
+                    <ListItemText
+                      primary="Pais:"
+                      secondary={
+                        <React.Fragment>
+                          <Typography
+                            gutterBottom
+                            sx={{ display: "inline" }}
+                            component="span"
+                            variant="h5"
+                            color="text.primary"
+                          >
+                            {lostObject.country.name}
+                          </Typography>
+                        </React.Fragment>
+                      }
+                    />
+                  </Stack>
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <Card elevation={3} sx={{ height: "100%" }}>
+                <CardContent>
+                  <ListItem alignItems="flex-start">
+                    <ListItemAvatar>
+                      <Avatar
+                        src={lostObject.userReport?.picture.large}
+                        alt="fotografía de la persona del reporte"
+                        sx={{ width: 150, height: 150 }}
+                      />
+                    </ListItemAvatar>
+                    <Typography
+                      variant="h5"
+                      gutterBottom
+                      sx={{
+                        padding: 1,
+                        display: "inline",
+                      }}
+                    >
+                      {`${lostObject.userReport?.name.first} ${lostObject.userReport?.name.last}`}
+                    </Typography>
+                  </ListItem>
+                  <CardContent>
+                    <ListItemText
+                      primary="Email"
+                      secondary={
+                        <React.Fragment>
+                          <Typography
+                            gutterBottom
+                            sx={{ display: "inline" }}
+                            component="span"
+                            variant="h5"
+                            color="text.primary"
+                          >
+                            {lostObject.userReport?.email}
+                          </Typography>
+                        </React.Fragment>
+                      }
+                    />
+                    <ListItemText
+                      primary="numero de contacto"
+                      secondary={
+                        <React.Fragment>
+                          <Typography
+                            gutterBottom
+                            sx={{ display: "inline" }}
+                            component="span"
+                            variant="h5"
+                            color="text.primary"
+                          >
+                            {lostObject.userReport?.phone}
+                          </Typography>
+                        </React.Fragment>
+                      }
+                    />
+                    <ListItemText
+                      primary="Direccion de domicilio "
+                      secondary={
+                        <React.Fragment>
+                          <Typography
+                            gutterBottom
+                            sx={{ display: "inline" }}
+                            component="span"
+                            variant="h5"
+                            color="text.primary"
+                          >
+                            {`${lostObject.userReport?.location.city}, ${lostObject.userReport?.location.country} ${lostObject.userReport?.location.state}`}
+                          </Typography>
+                        </React.Fragment>
+                      }
+                    />
+                    <ListItemText
+                      primary="Codigo postal"
+                      secondary={
+                        <React.Fragment>
+                          <Typography
+                            gutterBottom
+                            sx={{ display: "inline" }}
+                            component="span"
+                            variant="h5"
+                            color="text.primary"
+                          >
+                            {lostObject.userReport?.location.postcode}
+                          </Typography>
+                        </React.Fragment>
+                      }
+                    />
+                  </CardContent>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
+
+          <CardContent>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              {(["bottom"] as const).map((anchor) => (
+                <React.Fragment key={anchor}>
+                  <Button
+                    onClick={toggleDrawer(anchor, true)}
+                    variant="contained"
+                    sx={{ textAlign: "center" }}
+                  >
+                    Ver ubicación del Aeropuerto
+                  </Button>
+
+                  <Drawer
+                    anchor={anchor}
+                    open={state[anchor]}
+                    onClose={toggleDrawer(anchor, false)}
+                  >
+                    {list(anchor)}
+                  </Drawer>
+                </React.Fragment>
+              ))}
+            </div>
+          </CardContent>
+          <CardActions disableSpacing>
             <Button
-              color="success"
               variant="contained"
+              color="success"
+              fullWidth
               disabled={
                 isCurrentUserOwner === true ||
                 lostObject.status === "finalizado" ||
                 lostObject.status === "reclamado" ||
                 lostObject.status === "enviado"
               }
-              style={{ marginLeft: "auto" }}
               onClick={handleOpenDialog}
             >
               Reclamar
             </Button>
-          </Grid>
-          <Grid container spacing={3}>
-            <Grid item xs={12} sm={6} md={4} p={2}>
-              <Box>
-                <Typography variant="body2">
-                  <strong>Estado:</strong> {lostObject.status}
-                </Typography>
-                <Typography variant="body2">
-                  <strong>Descripción:</strong> {lostObject.description}
-                </Typography>
-                <Typography variant="body2">
-                  <strong>Aeropuerto:</strong> {lostObject.airport.name}
-                </Typography>
-                <Typography variant="body2">
-                  <strong>País:</strong> {lostObject.country.name}
-                </Typography>
-                <Typography variant="body2">
-                  <strong>Ciudad:</strong> {lostObject.city.name}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  <strong>Fecha:</strong> {newdate}
-                </Typography>
-              </Box>
-            </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              <Box>
-                <img
-                  src={lostObject.photo}
-                  alt="objeto perdido"
-                  style={{
-                    width: "100%",
-                    maxWidth: "200px",
-                    height: "auto",
-                  }}
-                />
-              </Box>
-            </Grid>
-          </Grid>
-          <Divider sx={{ marginTop: 2, marginBottom: 2 }} />
-          <Grid container spacing={3}>
-            <Grid item xs={12} sm={6} md={4}>
-              <Box>
-                <Typography variant="body2">
-                  <strong>Nombre:</strong> {lostObject.userReport?.name.first}{" "}
-                  {lostObject.userReport?.name.last}
-                </Typography>
-                <Typography variant="body2">
-                  <strong>Email:</strong> {lostObject.userReport?.email}
-                </Typography>
-                <Typography variant="body2">
-                  <strong>Teléfono:</strong> {lostObject.userReport?.phone}
-                </Typography>
-                <Typography variant="body2">
-                  <strong>Dirección de domicilio:</strong>{" "}
-                  {lostObject.userReport?.location.city}{" "}
-                  {lostObject.userReport?.location.country} <i>Estado</i>{" "}
-                  {lostObject.userReport?.location.state}
-                </Typography>
-                <Typography variant="body2">
-                  <strong>Código postal:</strong>{" "}
-                  {lostObject.userReport?.location.postcode}
-                </Typography>
-              </Box>
-            </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              <Box>
-                <Avatar
-                  src={lostObject.userReport?.picture.large}
-                  alt="fotografía de la persona del reporte"
-                  sx={{ width: "100%", maxWidth: "200px", height: "auto" }}
-                />
-              </Box>
-            </Grid>
-          </Grid>
-        </Paper>
+          </CardActions>
+
+          <Box
+            component="img"
+            sx={{
+              height: "70%",
+              width: "30vh",
+              display: "block",
+              margin: "auto",
+              objectFit: "cover",
+            }}
+          />
+
+          <Dialog open={isDialogOpen} onClose={handleCloseDialog}>
+            <DialogTitle>Confirmar reclamo</DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                ¿Estás seguro de que quieres reclamar este objeto?
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleCloseDialog} variant="text" color="error">
+                Cancelar
+              </Button>
+              <Button
+                onClick={handleConfirmReclamar}
+                variant="text"
+                color="success"
+              >
+                Confirmar
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </>
       )}
-      <Dialog open={isDialogOpen} onClose={handleCloseDialog}>
-        <DialogTitle>Confirmar reclamo</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            ¿Estás seguro de que quieres reclamar este objeto?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog} variant="outlined" color="error">
-            Cancelar
-          </Button>
-          <Button
-            onClick={handleConfirmReclamar}
-            variant="outlined"
-            color="success"
-          >
-            Confirmar
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <Grid container spacing={3}>
-        <Grid item xs={12} sm={12} md={12}>
-          <Typography variant="h6" component="h2" sx={{ textAlign: "center" }}>
-            ubicacion del Aeropuerto
-          </Typography>
-          <Divider sx={{ marginTop: 2, marginBottom: 2 }} />
-          <div style={{ height: "60vh", width: "100%" }}>
-            <GoogleMapReact
-              bootstrapURLKeys={{
-                key: "AIzaSyDMVoFJqQljWVR7J2d4_ElY4oTe2wa5ygQ",
-              }}
-              center={airportCoordinate}
-              defaultZoom={15}
-              yesIWantToUseGoogleMapApiInternals={true}
-              onGoogleApiLoaded={({ map, maps }) => maprender(map, maps)}
-            />
-          </div>
-        </Grid>
-      </Grid>
     </>
   );
 };
-
 export default DetailsReports;

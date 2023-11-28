@@ -1,3 +1,5 @@
+import { IconButtonProps } from "@mui/material";
+
 interface UserData {
   gender?: string;
   name: {
@@ -108,6 +110,7 @@ interface LostObjectState {
   lostObjects: LostObjectData[];
 }
 interface Message {
+  id: number | any;
   user: UserData;
   message: string;
   timestamp: string;
@@ -118,6 +121,11 @@ interface Message {
 interface MessageState {
   messages: Message[];
 }
+interface ExpandMoreProps extends IconButtonProps {
+  expand: boolean;
+}
+
+type Anchor = "bottom";
 export type {
   UserData,
   RegistrationState,
@@ -131,4 +139,6 @@ export type {
   MessageState,
   DataToReclaim,
   Message,
+  ExpandMoreProps,
+  Anchor,
 };

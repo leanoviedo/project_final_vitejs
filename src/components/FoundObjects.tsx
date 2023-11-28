@@ -23,7 +23,7 @@ import { useParams } from "react-router-dom";
 import dayjs from "dayjs";
 import { addMessage, selectMenssage } from "../redux/slices/chatSlices";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { updateLostObjectStatus } from "../redux/slices/lostObjectSlice";
+import { updateLostObjectStatus } from "../redux/slices/LostObjectSlice";
 
 const FoundObjects = () => {
   const selectedUser = useAppSelector(selectUserLogin);
@@ -121,29 +121,26 @@ const FoundObjects = () => {
   return (
     <>
       <CustomNavbar />
-      <Grid textAlign="center">
+      <Grid textAlign="center" mt={2}>
         <Typography variant="h4" component="h2">
-          chat Messenger...!!!
+          Chat Messenger
         </Typography>
       </Grid>
-      <Card sx={{ width: "100%", mx: "auto" }}>
+      <Card sx={{ width: "100%", maxWidth: 800, mx: "auto", mt: 2, mb: 5 }}>
         <Typography variant="h5" gutterBottom margin={2}>
-          Bienvenid@ {selectedUser?.name.first}
+          Bienvenido/a {selectedUser?.name.first}
         </Typography>
 
         <Box
           display="flex"
           flexDirection="column"
           alignItems="center"
-          sx={{ MarginTop: 2 }}
+          mt={2}
+          mb={2}
         >
           {filteredMessages.length > 0 ? (
             filteredMessages.map((msg, index) => (
-              <Card
-                key={index}
-                elevation={3}
-                sx={{ width: "100%", maxWidth: 800, mb: 2 }}
-              >
+              <Card key={index} elevation={3} sx={{ width: "100%", mb: 2 }}>
                 <CardContent>
                   <Box display="flex" alignItems="center" mb={2}>
                     <Avatar
@@ -152,7 +149,7 @@ const FoundObjects = () => {
                       sx={{ mr: 2 }}
                     />
                     <Typography variant="h6">
-                      {msg.user.login.username}:
+                      {msg.user.name.first} {msg.user.name.last}
                     </Typography>
                   </Box>
                   <Typography>{msg.message}</Typography>
@@ -163,11 +160,7 @@ const FoundObjects = () => {
                       style={{ maxWidth: "100%" }}
                     />
                   )}
-                  <Typography
-                    variant="caption"
-                    color="textSecondary"
-                    sx={{ mt: 1 }}
-                  >
+                  <Typography variant="caption" color="textSecondary" mt={1}>
                     Enviado: {new Date(msg.timestamp).toLocaleTimeString()}
                   </Typography>
                 </CardContent>
@@ -180,7 +173,7 @@ const FoundObjects = () => {
           )}
         </Box>
 
-        <Paper sx={{ p: 1, mt: 1, mb: 5 }}>
+        <Paper sx={{ p: 2, mt: 2, mb: 5 }}>
           <Typography variant="h5">Te ponemos en contacto</Typography>
 
           <TextField
@@ -190,7 +183,7 @@ const FoundObjects = () => {
             variant="outlined"
             value={inputMessage}
             onChange={handleMessageChange}
-            sx={{ mt: 1 }}
+            sx={{ mb: "2" }}
           />
           <TextField
             placeholder="Ingresa la URL de una imagen (opcional)"
@@ -198,15 +191,15 @@ const FoundObjects = () => {
             variant="outlined"
             value={imageUrl}
             onChange={handleImageUrlChange}
-            sx={{ mt: 1 }}
+            sx={{ mb: "2" }}
           />
         </Paper>
-        <Box sx={{ display: "flex" }}>
+        <Box sx={{ display: "flex" }} mt={2}>
           <Button
             variant="contained"
             color="primary"
-            onClick={handleOpenDialog}
-            disabled={status === "finalizado"}
+            onClick={() => handleOpenDialog(filteredMessages[0]?.id)}
+            disabled={isStatusDisabled}
           >
             Reportar envío/recibido
           </Button>
@@ -246,7 +239,7 @@ const FoundObjects = () => {
             </DialogActions>
           </Dialog>
         </Box>
-        <Box sx={{ display: "flex", justifyContent: "center" }}>
+        <Box sx={{ display: "flex", justifyContent: "center" }} mt={2}>
           <Button
             variant="contained"
             color="primary"

@@ -16,7 +16,6 @@ import {
 } from "@mui/material";
 import {
   ArrowCircleRight as ArrowCircleRightIcon,
-  ArrowBack as ArrowBackIcon,
 } from "@mui/icons-material";
 
 const FormRegistration = () => {
@@ -110,23 +109,29 @@ const FormRegistration = () => {
   };
 
   return (
-    <Grid container justifyContent="center" alignItems="center" spacing={2}>
-      <Card sx={{ p: 3, mt: 2, boxShadow: 3 }}>
-        <Typography variant="h5" align="center" sx={{ mb: 3 }}>
-          Regístrate
-        </Typography>
-        <Avatar
-          alt=""
-          src={avatarSrc}
-          sx={{ width: "100px", height: "100px", ml: 16 }}
-        />
-        <Grid item xs={12} md={8}>
+    <Grid
+      container
+      justifyContent="center"
+      alignItems="center"
+      spacing={2}
+      style={{ minHeight: "100%" }}
+    >
+      <Grid item xs={12} sm={8} md={6} lg={4}>
+        <Card sx={{ p: 3, mt: 2, boxShadow: 3 }}>
+          <Typography variant="h5" align="center" mb={3}>
+            Regístrate
+          </Typography>
+          <Avatar
+            alt=""
+            src={avatarSrc}
+            sx={{ width: 100, height: 100, ml: "auto", mr: "auto", mb: 2 }}
+          />
           <Box
             component="form"
             onSubmit={handleSubmit}
             sx={{
               width: 300,
-              m: 2,
+              m: "auto",
             }}
           >
             <TextField
@@ -198,6 +203,11 @@ const FormRegistration = () => {
             >
               Regístrate
             </Button>
+            <Link to="/" style={{ textDecoration: "none", color: "blue" }}>
+              <Typography mt={2} ml={10}>
+                Ir a inicio de Sesión
+              </Typography>
+            </Link>
           </Box>
           <Snackbar
             open={successSnackbarOpen}
@@ -210,7 +220,7 @@ const FormRegistration = () => {
               severity="success"
               sx={{ width: "100%" }}
             >
-              ¡Usuario registrado con exito..!
+              ¡Usuario registrado con éxito!
             </Alert>
           </Snackbar>
           <Snackbar
@@ -224,20 +234,11 @@ const FormRegistration = () => {
               severity="error"
               sx={{ width: "100%" }}
             >
-              Error sus datos no figuran en ningun Aeropuerto...!
+              Error: Sus datos no figuran en ningún Aeropuerto.
             </Alert>
           </Snackbar>
-        </Grid>
-      </Card>
-      <Button
-        variant="contained"
-        startIcon={<ArrowBackIcon fontSize="large" />}
-        sx={{ position: "absolute", bottom: "16px", left: "16px" }}
-      >
-        <Link to="/" style={{ textDecoration: "none", color: "white" }}>
-          Atrás
-        </Link>
-      </Button>
+        </Card>
+      </Grid>
     </Grid>
   );
 };
