@@ -119,9 +119,9 @@ const DetailsReports = () => {
 
   const reclamarButtonText = (() => {
     if (lostObject.type === "encontrado") {
-      return "devolver";
+      return "reclamar";
     } else {
-      return lostObject.type === "perdido" ? "Reclamar" : "devolver";
+      return lostObject.type === "perdido" ? "devolver" : "reclamar";
     }
   })();
 
