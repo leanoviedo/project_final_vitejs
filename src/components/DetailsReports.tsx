@@ -117,6 +117,14 @@ const DetailsReports = () => {
     }
   };
 
+  const reclamarButtonText = (() => {
+    if (lostObject.type === "encontrado") {
+      return "reclamar";
+    } else {
+      return lostObject.type === "perdido" ? "devolver" : "reclamar";
+    }
+  })();
+
   const [state, setState] = useState({
     left: false,
     right: false,
@@ -422,14 +430,13 @@ const DetailsReports = () => {
               color="success"
               fullWidth
               disabled={
-                isCurrentUserOwner === true ||
+                isCurrentUserOwner ||
                 lostObject.status === "finalizado" ||
-                lostObject.status === "reclamado" ||
                 lostObject.status === "enviado"
               }
               onClick={handleOpenDialog}
             >
-              Reclamar
+              {reclamarButtonText}
             </Button>
           </CardActions>
 
