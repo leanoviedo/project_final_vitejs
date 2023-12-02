@@ -1,4 +1,4 @@
-import { useState, MouseEvent } from "react";
+import { useState, MouseEvent, useEffect } from "react";
 import {
   AppBar,
   Box,
@@ -22,7 +22,30 @@ import { useAppDispatch, useAppSelector } from "../redux/hooks";
 
 const CustomNavbar = () => {
   const loggedInUser = useAppSelector(selectUserLogin);
+  const [storedUser, setStoredUser] = useState<any>();
+
+  useEffect(() => {
+    const storedUserData = localStorage.getItem("userData");
+    if (storedUserData) {
+      const parsedUserData = JSON.parse(storedUserData);
+      setStoredUser(parsedUserData);
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("userData");
+    setStoredUser(null);
+    dispatch(clearUserLogin());
+  };
+
   const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    if (loggedInUser) {
+      localStorage.setItem("userData", JSON.stringify(loggedInUser));
+      setStoredUser(loggedInUser);
+    }
+  }, [loggedInUser]);
 
   const [mainMenuAnchor, setMainMenuAnchor] = useState<null | HTMLElement>(
     null
@@ -36,6 +59,7 @@ const CustomNavbar = () => {
   const handleMainMenuClose = () => {
     setMainMenuAnchor(null);
   };
+
   const [avatarMenuAnchor, setAvatarMenuAnchor] = useState<null | HTMLElement>(
     null
   );
@@ -99,10 +123,10 @@ const CustomNavbar = () => {
             onClick={handleAvatarMenuOpen}
             color="inherit"
           >
-            {loggedInUser && (
+            {(loggedInUser || storedUser) && (
               <Avatar
                 alt=""
-                src={loggedInUser.picture?.large}
+                src={(loggedInUser || storedUser)?.picture?.large}
                 sx={{ width: 56, height: 56 }}
               />
             )}
@@ -114,14 +138,7 @@ const CustomNavbar = () => {
           open={isAvatarMenuOpen}
           onClose={handleAvatarMenuClose}
         >
-          <MenuItem
-            onClick={() => {
-              handleAvatarMenuClose();
-              dispatch(clearUserLogin());
-            }}
-            component={Link}
-            to="/"
-          >
+          <MenuItem onClick={handleLogout} component={Link} to="/">
             cerrar sesión
           </MenuItem>
         </Menu>
