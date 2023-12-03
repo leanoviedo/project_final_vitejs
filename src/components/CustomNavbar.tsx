@@ -16,13 +16,26 @@ import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import ListAltIcon from "@mui/icons-material/ListAlt";
 import ReportIcon from "@mui/icons-material/Report";
+import OutputIcon from "@mui/icons-material/Output";
 import { Link } from "react-router-dom";
-import { clearUserLogin, selectUserLogin } from "../redux/slices/UserLogin";
+import {
+  clearUserLogin,
+  selectUserLogin
+} from "../redux/slices/UserLogin";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { UserData } from "../model/interface";
+import { useMediaQuery } from "@mui/material";
 
 const CustomNavbar = () => {
   const loggedInUser = useAppSelector(selectUserLogin);
-  const [storedUser, setStoredUser] = useState<any>();
+  const [storedUser, setStoredUser] = useState<UserData | undefined>();
+  const [mainMenuAnchor, setMainMenuAnchor] = useState<null | HTMLElement>(
+    null
+  );
+  const [avatarMenuAnchor, setAvatarMenuAnchor] = useState<null | HTMLElement>(
+    null
+  );
+  const isMobile = useMediaQuery("(max-width:600px)");
 
   useEffect(() => {
     const storedUserData = localStorage.getItem("userData");
@@ -34,7 +47,7 @@ const CustomNavbar = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("userData");
-    setStoredUser(null);
+    setStoredUser(undefined);
     dispatch(clearUserLogin());
   };
 
@@ -47,23 +60,15 @@ const CustomNavbar = () => {
     }
   }, [loggedInUser]);
 
-  const [mainMenuAnchor, setMainMenuAnchor] = useState<null | HTMLElement>(
-    null
-  );
-  const isMainMenuOpen = Boolean(mainMenuAnchor);
-
   const handleMainMenuOpen = (event: MouseEvent<HTMLElement>) => {
-    setMainMenuAnchor(event.currentTarget);
+    if (isMobile) {
+      setMainMenuAnchor(event.currentTarget);
+    }
   };
 
   const handleMainMenuClose = () => {
     setMainMenuAnchor(null);
   };
-
-  const [avatarMenuAnchor, setAvatarMenuAnchor] = useState<null | HTMLElement>(
-    null
-  );
-  const isAvatarMenuOpen = Boolean(avatarMenuAnchor);
 
   const handleAvatarMenuOpen = (event: MouseEvent<HTMLElement>) => {
     setAvatarMenuAnchor(event.currentTarget);
@@ -135,14 +140,15 @@ const CustomNavbar = () => {
         <Menu
           id="avatar-menu-appbar"
           anchorEl={avatarMenuAnchor}
-          open={isAvatarMenuOpen}
+          open={Boolean(avatarMenuAnchor)}
           onClose={handleAvatarMenuClose}
         >
           <MenuItem onClick={handleLogout} component={Link} to="/">
+            <OutputIcon />
             cerrar sesión
           </MenuItem>
         </Menu>
-        {loggedInUser && (
+        {isMobile && (
           <Box
             display="flex"
             alignItems="center"
@@ -171,7 +177,7 @@ const CustomNavbar = () => {
             <Menu
               id="main-menu-appbar"
               anchorEl={mainMenuAnchor}
-              open={isMainMenuOpen}
+              open={Boolean(mainMenuAnchor)}
               onClose={handleMainMenuClose}
               sx={{
                 display: {
@@ -181,9 +187,7 @@ const CustomNavbar = () => {
               }}
             >
               <MenuItem
-                onClick={() => {
-                  handleMainMenuClose();
-                }}
+                onClick={handleMainMenuClose}
                 component={Link}
                 to="/LandingPage"
               >
@@ -191,9 +195,7 @@ const CustomNavbar = () => {
                 reportar objeto
               </MenuItem>
               <MenuItem
-                onClick={() => {
-                  handleMainMenuClose();
-                }}
+                onClick={handleMainMenuClose}
                 component={Link}
                 to="/LostObjectsDetails"
               >
@@ -201,14 +203,16 @@ const CustomNavbar = () => {
                 buscador de objetos perdidos
               </MenuItem>
               <MenuItem
-                onClick={() => {
-                  handleMainMenuClose();
-                }}
+                onClick={handleMainMenuClose}
                 component={Link}
                 to="/LostAndFoundList"
               >
                 <ListAltIcon />
                 mis reportes
+              </MenuItem>
+              <MenuItem onClick={handleLogout} component={Link} to="/">
+                <OutputIcon />
+                cerrar sesión
               </MenuItem>
             </Menu>
           </Box>
