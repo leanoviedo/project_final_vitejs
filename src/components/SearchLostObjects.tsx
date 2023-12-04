@@ -221,8 +221,10 @@ const LostObjectDetails = () => {
                               alt="objeto perdido"
                               hidden
                               sx={{
-                                maxHeight: "100%",
-                                objectFit: "cover",
+                                maxHeight: "auto",
+                                maxWidth: "auto",
+                                objectFit: "contain",
+                                objectPosition: "center",
                                 flex: 1,
                                 width: "100%",
                                 height: "600px",

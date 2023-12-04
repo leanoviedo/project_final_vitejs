@@ -21,7 +21,7 @@ import { v4 as uuidv4 } from "uuid";
 import { selectUserLogin } from "../redux/slices/UserLogin";
 import { useParams } from "react-router-dom";
 import dayjs from "dayjs";
-import { addMessage, selectMenssage } from "../redux/slices/chatSlices";
+import { addMessage, selectMenssage } from "../redux/slices/ChatSlices";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { updateLostObjectStatus } from "../redux/slices/LostObjectSlice";
 
