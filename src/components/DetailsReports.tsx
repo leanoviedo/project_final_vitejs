@@ -23,18 +23,26 @@ import {
 } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import CustomNavbar from "./CustomNavbar";
-import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { selectUserLogin } from "../redux/slices/UserLogin";
+import { useAppDispatch } from "../redux/hooks";
 import { markLostObjectAsClaimed } from "../redux/slices/LostObjectSlice";
-import { DataToReclaim, Anchor } from "../model/interface";
+import { DataToReclaim, Anchor, UserData } from "../model/interface";
 import GoogleMapReact from "google-map-react";
 import CloseIcon from "@mui/icons-material/Close";
 
 const DetailsReports = () => {
   const ubicacion = useLocation();
   const { lostObject, newdate } = ubicacion.state.data || {};
-  const userLogin = useAppSelector(selectUserLogin);
+
   const dispatch = useAppDispatch();
+  const [storedUser, setStoredUser] = useState<UserData | null>(null);
+  useEffect(() => {
+    const storedUserData = localStorage.getItem("userData");
+    if (storedUserData) {
+      const parsedUserData = JSON.parse(storedUserData);
+      setStoredUser(parsedUserData);
+    }
+  }, []);
+  const userLogin = storedUser;
   const isCurrentUserOwner =
     lostObject &&
     lostObject.userReport &&

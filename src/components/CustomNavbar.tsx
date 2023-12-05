@@ -1,4 +1,4 @@
-import { useState, MouseEvent, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   AppBar,
   Box,
@@ -17,18 +17,12 @@ import SearchIcon from "@mui/icons-material/Search";
 import ListAltIcon from "@mui/icons-material/ListAlt";
 import ReportIcon from "@mui/icons-material/Report";
 import OutputIcon from "@mui/icons-material/Output";
-import { Link } from "react-router-dom";
-import {
-  clearUserLogin,
-  selectUserLogin
-} from "../redux/slices/UserLogin";
-import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { Link, useNavigate } from "react-router-dom";
 import { UserData } from "../model/interface";
 import { useMediaQuery } from "@mui/material";
 
 const CustomNavbar = () => {
-  const loggedInUser = useAppSelector(selectUserLogin);
-  const [storedUser, setStoredUser] = useState<UserData | undefined>();
+  const [storedUser, setStoredUser] = useState<UserData | null>(null);
   const [mainMenuAnchor, setMainMenuAnchor] = useState<null | HTMLElement>(
     null
   );
@@ -36,7 +30,7 @@ const CustomNavbar = () => {
     null
   );
   const isMobile = useMediaQuery("(max-width:600px)");
-
+  const navigate = useNavigate();
   useEffect(() => {
     const storedUserData = localStorage.getItem("userData");
     if (storedUserData) {
@@ -47,20 +41,11 @@ const CustomNavbar = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("userData");
-    setStoredUser(undefined);
-    dispatch(clearUserLogin());
+    setStoredUser(null);
+    navigate("/");
   };
 
-  const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    if (loggedInUser) {
-      localStorage.setItem("userData", JSON.stringify(loggedInUser));
-      setStoredUser(loggedInUser);
-    }
-  }, [loggedInUser]);
-
-  const handleMainMenuOpen = (event: MouseEvent<HTMLElement>) => {
+  const handleMainMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     if (isMobile) {
       setMainMenuAnchor(event.currentTarget);
     }
@@ -70,7 +55,7 @@ const CustomNavbar = () => {
     setMainMenuAnchor(null);
   };
 
-  const handleAvatarMenuOpen = (event: MouseEvent<HTMLElement>) => {
+  const handleAvatarMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAvatarMenuAnchor(event.currentTarget);
   };
 
@@ -128,10 +113,10 @@ const CustomNavbar = () => {
             onClick={handleAvatarMenuOpen}
             color="inherit"
           >
-            {(loggedInUser || storedUser) && (
+            {storedUser && (
               <Avatar
                 alt=""
-                src={(loggedInUser || storedUser)?.picture?.large}
+                src={storedUser.picture?.large}
                 sx={{ width: 56, height: 56 }}
               />
             )}
@@ -143,7 +128,7 @@ const CustomNavbar = () => {
           open={Boolean(avatarMenuAnchor)}
           onClose={handleAvatarMenuClose}
         >
-          <MenuItem onClick={handleLogout} component={Link} to="/">
+          <MenuItem onClick={handleLogout}>
             <OutputIcon />
             cerrar sesión
           </MenuItem>
@@ -221,5 +206,4 @@ const CustomNavbar = () => {
     </AppBar>
   );
 };
-
 export default CustomNavbar;

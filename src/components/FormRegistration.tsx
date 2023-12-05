@@ -14,9 +14,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import {
-  ArrowCircleRight as ArrowCircleRightIcon,
-} from "@mui/icons-material";
+import { ArrowCircleRight as ArrowCircleRightIcon } from "@mui/icons-material";
 
 const FormRegistration = () => {
   const { usersAvailable } = useAppSelector((state) => state.usersList);

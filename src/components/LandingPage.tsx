@@ -24,11 +24,16 @@ import { Send as SendIcon } from "@mui/icons-material";
 import AirportServices from "../services/AirportServices";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs, { Dayjs } from "dayjs";
-import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { useAppDispatch } from "../redux/hooks";
 import CustomNavbar from "./CustomNavbar";
-import { LostObjectData, Country, City, Airport } from "../model/interface";
+import {
+  LostObjectData,
+  Country,
+  City,
+  Airport,
+  UserData,
+} from "../model/interface";
 import { setLostObjectData } from "../redux/slices/LostObjectSlice";
-import { selectUserLogin } from "../redux/slices/UserLogin";
 import { v4 as uuidv4 } from "uuid";
 
 const errorStyles = {
@@ -84,8 +89,14 @@ const LandingPage = () => {
   const [lostType, setLostType] = useState("");
 
   const dispatch = useAppDispatch();
-  const loggedInUser = useAppSelector(selectUserLogin);
-
+  const [storedUser, setStoredUser] = useState<UserData | null>(null);
+  useEffect(() => {
+    const storedUserData = localStorage.getItem("userData");
+    if (storedUserData) {
+      const parsedUserData = JSON.parse(storedUserData);
+      setStoredUser(parsedUserData);
+    }
+  }, []);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -277,28 +288,28 @@ const LandingPage = () => {
       type: lostType,
       status: lostObject.status,
       id: uuidv4(),
-      userReport: loggedInUser
+      userReport: storedUser
         ? {
             name: {
-              first: loggedInUser.name.first,
-              last: loggedInUser.name.last,
+              first: storedUser.name.first,
+              last: storedUser.name.last,
             },
             location: {
-              city: loggedInUser.location.city,
-              state: loggedInUser.location.state,
-              country: loggedInUser.location.country,
-              postcode: loggedInUser.location.postcode,
+              city: storedUser.location.city,
+              state: storedUser.location.state,
+              country: storedUser.location.country,
+              postcode: storedUser.location.postcode,
               coordinates: {
-                latitude: loggedInUser.location.coordinates.latitude,
-                longitude: loggedInUser.location.coordinates.longitude,
+                latitude: storedUser.location.coordinates.latitude,
+                longitude: storedUser.location.coordinates.longitude,
               },
             },
-            email: loggedInUser.email,
-            login: loggedInUser.login,
-            phone: loggedInUser.phone,
-            cell: loggedInUser.cell,
-            picture: loggedInUser.picture,
-            password: loggedInUser.login.password,
+            email: storedUser.email,
+            login: storedUser.login,
+            phone: storedUser.phone,
+            cell: storedUser.cell,
+            picture: storedUser.picture,
+            password: storedUser.login.password,
           }
         : null,
     };
