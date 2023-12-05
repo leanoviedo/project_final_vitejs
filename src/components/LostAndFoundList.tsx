@@ -70,6 +70,8 @@ const LostAndFoundList = () => {
                   width: "100%",
                   height: "auto",
                   marginBottom: 2,
+                  padding:10,
+                  margin:10,
                 }}
               />
             )}
