@@ -48,50 +48,42 @@ const LostAndFoundList = () => {
   };
 
   const renderLostObject = (item: any) => (
-    <Grid item xs={12} sm={6} md={4} key={item.id}>
+    <Grid item xs={12} sm={6} md={4} lg={3} key={item.id}>
       <StyledLink
         to={`/FoundObjects/${item.id}`}
         style={{ textDecoration: "none" }}
       >
-        <Card sx={{ height: "100%" }}>
+        <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
           <CardHeader title={item.description} />
-          <CardContent
-            sx={{
-              display: "flex",
-              flexDirection: { xs: "column-reverse", sm: "row" },
-              alignItems: "center",
-            }}
-          >
+          <CardContent sx={{ flex: 1 }}>
             {item.photo && (
               <img
                 src={item.photo}
                 alt="Objeto perdido"
                 style={{
                   width: "100%",
-                  height: "auto",
+                  height: "600px",
                   marginBottom: 2,
-                  padding:10,
-                  margin:10,
+                  padding: 10,
+                  margin: 10,
                 }}
               />
             )}
-            <div>
-              <Typography variant="h6" color="textPrimary" gutterBottom>
-                Estado: {item.status}
-              </Typography>
-              <Typography variant="body1" color="textPrimary" gutterBottom>
-                Aeropuerto: {item.airport.name}
-              </Typography>
-              <Typography variant="body1" color="textPrimary" gutterBottom>
-                Dirección: {item.city.name} {item.country.name}
-              </Typography>
-              <Typography variant="body1" color="textPrimary" gutterBottom>
-                Nombre: {item.userReport.name.first} {item.userReport.name.last}
-              </Typography>
-              <Typography variant="body1" color="textPrimary" gutterBottom>
-                Email: {item.userReport.email}
-              </Typography>
-            </div>
+            <Typography variant="h6" color="textPrimary" gutterBottom>
+              Estado: {item.status}
+            </Typography>
+            <Typography variant="body1" color="textPrimary" gutterBottom>
+              Aeropuerto: {item.airport.name}
+            </Typography>
+            <Typography variant="body1" color="textPrimary" gutterBottom>
+              Dirección: {item.city.name} {item.country.name}
+            </Typography>
+            <Typography variant="body1" color="textPrimary" gutterBottom>
+              Nombre: {item.userReport.name.first} {item.userReport.name.last}
+            </Typography>
+            <Typography variant="body1" color="textPrimary" gutterBottom>
+              Email: {item.userReport.email}
+            </Typography>
           </CardContent>
         </Card>
       </StyledLink>
