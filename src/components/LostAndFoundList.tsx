@@ -55,17 +55,23 @@ const LostAndFoundList = () => {
       >
         <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
           <CardHeader title={item.description} />
-          <CardContent sx={{ flex: 1 }}>
+          <CardContent
+            sx={{
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
             {item.photo && (
               <img
                 src={item.photo}
                 alt="Objeto perdido"
                 style={{
                   width: "100%",
-                  height: "600px",
-                  marginBottom: 2,
+                  maxHeight: "600px",
+                  marginBottom: 10,
                   padding: 10,
-                  margin: 10,
                 }}
               />
             )}
