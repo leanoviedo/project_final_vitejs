@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Typography,
   Card,
@@ -18,15 +18,14 @@ import {
 import SendIcon from "@mui/icons-material/Send";
 import CustomNavbar from "./CustomNavbar";
 import { v4 as uuidv4 } from "uuid";
-import { selectUserLogin } from "../redux/slices/UserLogin";
 import { useParams } from "react-router-dom";
 import dayjs from "dayjs";
 import { addMessage, selectMenssage } from "../redux/slices/ChatSlices";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { updateLostObjectStatus } from "../redux/slices/LostObjectSlice";
+import { UserData } from "../model/interface";
 
 const FoundObjects = () => {
-  const selectedUser = useAppSelector(selectUserLogin);
   const messages = useAppSelector(selectMenssage);
   const dispatch = useAppDispatch();
   const [isReclaimed, setIsReclaimed] = useState(false);
@@ -36,7 +35,15 @@ const FoundObjects = () => {
   const { id } = useParams();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedMessageId, setSelectedMessageId] = useState(null);
-
+  const [storedUser, setStoredUser] = useState<UserData | null>(null);
+  useEffect(() => {
+    const storedUserData = localStorage.getItem("userData");
+    if (storedUserData) {
+      const parsedUserData = JSON.parse(storedUserData);
+      setStoredUser(parsedUserData);
+    }
+  }, []);
+  const selectedUser = storedUser;
   const handleMessageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputMessage(e.target.value);
   };

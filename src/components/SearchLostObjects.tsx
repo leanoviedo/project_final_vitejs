@@ -7,12 +7,12 @@ import {
   Card,
   Typography,
   TextField,
-  CardContent,
   Stack,
   CardMedia,
   CardActionArea,
   ListItemText,
   Paper,
+  CardContent,
 } from "@mui/material";
 import AirportServices from "../services/AirportServices";
 import CustomNavbar from "./CustomNavbar";
@@ -88,6 +88,7 @@ const LostObjectDetails = () => {
       setSelectedCountry(null);
     }
   };
+
   return (
     <Grid container spacing={3} justifyContent="center">
       <CustomNavbar />
@@ -144,29 +145,12 @@ const LostObjectDetails = () => {
                   {errorMessage}
                 </Typography>
               </Grid>
-            )}{" "}
+            )}
           </Grid>
 
           <Box mt={4}>
-            <Grid container spacing={2}>
-              {filteredObjects.length === 0 && resultsFound === true ? (
-                <Grid item xs={12}>
-                  <Typography
-                    variant="h5"
-                    color="error"
-                    textAlign="center"
-                    sx={{
-                      backgroundColor: "#f8d7da",
-                      color: "#721c24",
-                      padding: "5px",
-                      borderRadius: "5px",
-                      margin: "10px 0",
-                    }}
-                  >
-                    Objeto no encontrado
-                  </Typography>
-                </Grid>
-              ) : filteredObjects.length === 0 && resultsFound === true ? (
+            <Grid container spacing={2} justifyContent="center">
+              {filteredObjects.length === 0 && resultsFound ? (
                 <Grid item xs={12}>
                   <Typography
                     variant="h5"
@@ -184,8 +168,8 @@ const LostObjectDetails = () => {
                   </Typography>
                 </Grid>
               ) : (
-                filteredObjects?.map((lostObject, index) => (
-                  <Grid item xs={12} md={3} key={index}>
+                filteredObjects.map((lostObject, index) => (
+                  <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
                     <Card
                       elevation={3}
                       sx={{

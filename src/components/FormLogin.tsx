@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Typography,
   TextField,
@@ -13,26 +13,33 @@ import {
   Alert,
 } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { useAppSelector } from "../redux/hooks";
 import { selectRegistrationData } from "../redux/slices/RegistrationSlices";
-import { setUserLogin } from "../redux/slices/UserLogin";
 import AirplanemodeActiveOutlinedIcon from "@mui/icons-material/AirplanemodeActiveOutlined";
+import { UserData } from "../model/interface";
 
 const FormLogin = () => {
   const registrationData = useAppSelector(selectRegistrationData);
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
   const [userLogin, setUsersLogin] = useState({
     email: "",
     password: "",
   });
-
+  const [, setStoredUser] = useState<UserData | undefined>();
   const [errorSnackbarOpen, setErrorSnackbarOpen] = useState(false);
   const [errorSnackbarMessage, setErrorSnackbarMessage] = useState("");
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUsersLogin({ ...userLogin, [e.target.name]: e.target.value });
   };
+  useEffect(() => {
+    const storedUserData = localStorage.getItem("userData");
+    if (storedUserData) {
+      const parsedUserData = JSON.parse(storedUserData);
+      setStoredUser(parsedUserData);
+      console.log(parsedUserData);
+    }
+  }, []);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -42,7 +49,7 @@ const FormLogin = () => {
         registration.login.password === userLogin.password
     );
     if (existingLogin) {
-      dispatch(setUserLogin(existingLogin));
+      localStorage.setItem("userData", JSON.stringify(existingLogin));
       navigate("/LandingPage");
     } else {
       if (
