@@ -206,7 +206,7 @@ const LostObjectDetails = () => {
                                 objectPosition: "center",
                                 flex: 1,
                                 width: "100%",
-                                height: "400px",
+                                height: "300px",
                               }}
                             >
                               <img
@@ -214,7 +214,7 @@ const LostObjectDetails = () => {
                                 alt="Objeto perdido"
                                 style={{
                                   width: "100%",
-                                  height: "400px",
+                                  height: "300px",
                                 }}
                               />
                             </CardMedia>

@@ -56,11 +56,8 @@ const LostAndFoundList = () => {
       setSnackbarMessage("Reporte No Reclamado...!!!");
       setSnackbarOpen(true);
     } else {
-      setTimeout(function () {
-        navigate(`/FoundObjects/${item.id}`);
-      }, 1000);
-      setSnackbarMessage(" Reporte Reclamado...!!!");
-      setSnackbarOpen(true);
+      setSnackbarOpen(false);
+      navigate(`/FoundObjects/${item.id}`);
     }
   };
 
