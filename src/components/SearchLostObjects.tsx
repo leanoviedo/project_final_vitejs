@@ -200,20 +200,24 @@ const LostObjectDetails = () => {
                             sx={{ flex: 1, display: "flex" }}
                           >
                             <CardMedia
-                              component="img"
-                              src={lostObject.photo}
-                              alt="objeto perdido"
                               hidden
                               sx={{
-                                maxHeight: "auto",
-                                maxWidth: "auto",
                                 objectFit: "contain",
                                 objectPosition: "center",
                                 flex: 1,
                                 width: "100%",
-                                height: "600px",
+                                height: "300px",
                               }}
-                            />
+                            >
+                              <img
+                                src={lostObject.photo}
+                                alt="Objeto perdido"
+                                style={{
+                                  width: "100%",
+                                  height: "300px",
+                                }}
+                              />
+                            </CardMedia>
                           </Paper>
                           <CardContent>
                             <Stack direction="column">
