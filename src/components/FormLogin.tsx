@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Typography,
   TextField,
@@ -16,63 +16,62 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAppSelector } from "../redux/hooks";
 import { selectRegistrationData } from "../redux/slices/RegistrationSlices";
 import AirplanemodeActiveOutlinedIcon from "@mui/icons-material/AirplanemodeActiveOutlined";
-import { UserData } from "../model/interface";
+import { useFormik } from "formik";
+import * as yup from "yup";
 
 const FormLogin = () => {
   const registrationData = useAppSelector(selectRegistrationData);
   const navigate = useNavigate();
-  const [userLogin, setUsersLogin] = useState({
-    email: "",
-    password: "",
-  });
-  const [, setStoredUser] = useState<UserData | undefined>();
   const [errorSnackbarOpen, setErrorSnackbarOpen] = useState(false);
   const [errorSnackbarMessage, setErrorSnackbarMessage] = useState("");
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUsersLogin({ ...userLogin, [e.target.name]: e.target.value });
-  };
-  useEffect(() => {
-    const storedUserData = localStorage.getItem("userData");
-    if (storedUserData) {
-      const parsedUserData = JSON.parse(storedUserData);
-      setStoredUser(parsedUserData);
-      console.log(parsedUserData);
-    }
-  }, []);
+  const validationSchema = yup.object().shape({
+    email: yup
+      .string()
+      .email("Ingresa un correo electrónico válido")
+      .required("Correo electrónico es obligatorio"),
+    password: yup.string().required("Contraseña es obligatoria"),
+  });
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const existingLogin = registrationData.find(
-      (registration) =>
-        registration.email === userLogin.email &&
-        registration.login.password === userLogin.password
-    );
-    if (existingLogin) {
-      localStorage.setItem("userData", JSON.stringify(existingLogin));
-      navigate("/LandingPage");
-    } else {
-      if (
-        !registrationData.some(
-          (registration) => registration.email === userLogin.email
-        )
-      ) {
-        setErrorSnackbarMessage(
-          "Email incorrecto. Por favor, verifica tu email."
-        );
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validationSchema: validationSchema,
+    onSubmit: (values) => {
+      const existingLogin = registrationData.find(
+        (registration) =>
+          registration.email === values.email &&
+          registration.login.password === values.password
+      );
+      if (existingLogin) {
+        localStorage.setItem("userData", JSON.stringify(existingLogin));
+        navigate("/LandingPage");
+      } else {
+        if (
+          !registrationData.some(
+            (registration) => registration.email === values.email
+          )
+        ) {
+          setErrorSnackbarMessage(
+            "Email incorrecto. Por favor, verifica tu email."
+          );
+        }
+        if (
+          !registrationData.some(
+            (registration) => registration.login.password === values.password
+          )
+        ) {
+          setErrorSnackbarMessage(
+            "Contraseña incorrecta. Por favor, verifica tu contraseña"
+          );
+        }
+        setErrorSnackbarOpen(true);
       }
-      if (
-        !registrationData.some(
-          (registration) => registration.login.password === userLogin.password
-        )
-      ) {
-        setErrorSnackbarMessage(
-          "contraseña incorrecta.Por favor, verifica tu contraseña"
-        );
-      }
-      setErrorSnackbarOpen(true);
-    }
-  };
+    },
+  });
+
   return (
     <Grid container justifyContent="center" alignItems="center">
       <AppBar position="static">
@@ -100,7 +99,7 @@ const FormLogin = () => {
           <Grid />
           <Box
             component="form"
-            onSubmit={handleSubmit}
+            onSubmit={formik.handleSubmit}
             sx={{
               width: 300,
             }}
@@ -111,9 +110,9 @@ const FormLogin = () => {
               fullWidth
               id="email"
               label="Correo Electrónico"
-              name="email"
-              value={userLogin.email}
-              onChange={handleInputChange}
+              {...formik.getFieldProps("email")}
+              error={formik.touched.email && Boolean(formik.errors.email)}
+              helperText={formik.touched.email && formik.errors.email}
               autoComplete="email"
               autoFocus
             />
@@ -121,12 +120,11 @@ const FormLogin = () => {
               margin="normal"
               required
               fullWidth
-              name="password"
-              value={userLogin.password}
               label="Contraseña"
               type="password"
-              id="password"
-              onChange={handleInputChange}
+              {...formik.getFieldProps("password")}
+              error={formik.touched.password && Boolean(formik.errors.password)}
+              helperText={formik.touched.password && formik.errors.password}
               autoComplete="current-password"
             />
             <Button type="submit" fullWidth variant="contained">

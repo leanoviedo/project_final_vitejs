@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { addUser } from "../redux/slices/RegistrationSlices";
@@ -15,20 +15,27 @@ import {
   Typography,
 } from "@mui/material";
 import { ArrowCircleRight as ArrowCircleRightIcon } from "@mui/icons-material";
+import * as yup from "yup";
+import { useFormik } from "formik";
 
+const validationSchema = yup.object({
+  email: yup
+    .string()
+    .email("ingresa un email valido")
+    .required("Email es requerido"),
+  first: yup.string().required("Campo requerido"),
+  last: yup.string().required("Campo requerido"),
+  phone: yup.string().required("Campo requerido"),
+  password: yup
+    .string()
+    .min(6, "La contraseña debe tener una cantidad minima de 6 caracteres.")
+    .max(12, "La contraseña debe tener una cantidad máxima de 12 caracteres.")
+    .required("contraseña requerida"),
+});
 const FormRegistration = () => {
   const { usersAvailable } = useAppSelector((state) => state.usersList);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-
-  const [userData, setUserData] = useState({
-    email: "",
-    first: "",
-    last: "",
-    phone: "",
-    password: "",
-  });
-
   const [avatarSrc, setAvatarSrc] = useState("");
   const [successSnackbarOpen, setSuccessSnackbarOpen] = useState(false);
   const [errorSnackbarOpen, setErrorSnackbarOpen] = useState(false);
@@ -37,73 +44,75 @@ const FormRegistration = () => {
     dispatch(UserServices());
   }, [dispatch]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setUserData((prevUserData) => ({
-      ...prevUserData,
-      [name]: value,
-    }));
-  };
-
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-
-    setUserData((prevUserData) => ({
-      ...prevUserData,
-      email: value,
+  const formik = useFormik({
+    initialValues: {
+      email: "",
       first: "",
       last: "",
       phone: "",
       password: "",
-    }));
-
-    setAvatarSrc("");
-
-    if (value) {
+    },
+    validationSchema: validationSchema,
+    onSubmit: (values) => {
       const existingUser = usersAvailable.find(
-        (user: { email: string }) => user.email === value
+        (user) => user.email === values.email
       );
 
       if (existingUser) {
-        setUserData((prevUserData) => ({
-          ...prevUserData,
-          first: existingUser.name.first,
-          last: existingUser.name.last,
-          phone: existingUser.phone,
-        }));
+        const updatedUser = {
+          ...existingUser,
+          login: {
+            ...existingUser.login,
+            password: values.password,
+          },
+        };
 
         if (existingUser.picture) {
           setAvatarSrc(existingUser.picture.large);
         }
+
+        dispatch(addUser(updatedUser));
+        setTimeout(function () {
+          navigate("/FormLogin");
+        }, 1000);
+        setSuccessSnackbarOpen(true);
+      } else {
+        setErrorSnackbarOpen(true);
       }
-    }
-  };
+    },
+  });
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const { values, errors, touched, handleChange, handleBlur } = formik;
 
-    const existingUser = usersAvailable.find(
-      (user: { email: string }) => user.email === userData.email
-    );
+  const handleEmailChange = (e: { target: { value: any } }) => {
+    const { value } = e.target;
+    const existingUser = usersAvailable.find((user) => user.email === value);
 
     if (existingUser) {
-      const updatedUser = {
-        ...existingUser,
-        login: {
-          ...existingUser.login,
-          password: userData.password,
-        },
-      };
+      formik.setValues({
+        ...formik.values,
+        email: value,
+        first: existingUser.name.first || "",
+        last: existingUser.name.last || "",
+        phone: existingUser.phone || "",
+      });
 
-      dispatch(addUser(updatedUser));
-
-      setTimeout(function () {
-        navigate("/FormLogin");
-      }, 1000);
-      setSuccessSnackbarOpen(true);
+      if (existingUser.picture) {
+        setAvatarSrc(existingUser.picture.large);
+      }
     } else {
       setErrorSnackbarOpen(true);
+      formik.setValues({
+        ...formik.values,
+        email: value,
+        first: "",
+        last: "",
+        phone: "",
+      });
+      setAvatarSrc(""); // Reset the avatar if no user is found
     }
+
+    formik.validateForm();
   };
 
   return (
@@ -126,7 +135,7 @@ const FormRegistration = () => {
           />
           <Box
             component="form"
-            onSubmit={handleSubmit}
+            onSubmit={formik.handleSubmit}
             sx={{
               width: 300,
               m: "auto",
@@ -137,59 +146,70 @@ const FormRegistration = () => {
               id="email"
               label="Correo electrónico"
               name="email"
-              autoFocus
-              value={userData.email}
-              onChange={handleEmailChange}
-              helperText="Ingrese un correo electrónico válido"
-              error={false}
+              value={values.email}
+              onBlur={handleBlur}
+              error={touched.email && Boolean(errors.email)}
+              helperText={touched.email && errors.email}
               sx={{ mb: 2 }}
               required
+              onChange={handleEmailChange}
             />
             <TextField
               fullWidth
               id="first"
               label="Nombre"
-              value={userData.first}
               name="first"
+              value={values.first}
               onChange={handleChange}
-              helperText="Ingrese su nombre"
-              error={false}
+              onBlur={handleBlur}
+              error={touched.first && Boolean(errors.first)}
+              helperText={touched.first && errors.first}
+              required
               sx={{ mb: 2 }}
+              autoComplete="on"
             />
             <TextField
               fullWidth
-              name="last"
-              label="Apellido"
               id="last"
-              value={userData.last}
+              label="Apellido"
+              name="last"
+              value={values.last}
               onChange={handleChange}
-              helperText="Ingrese su apellido"
-              error={false}
+              onBlur={handleBlur}
+              error={touched.last && Boolean(errors.last)}
+              helperText={touched.last && errors.last}
+              required
               sx={{ mb: 2 }}
+              autoComplete="on"
             />
             <TextField
               fullWidth
               id="phone"
               label="Número de Contacto"
               name="phone"
-              value={userData.phone}
+              value={values.phone}
               onChange={handleChange}
-              helperText="Ingrese un número de teléfono válido"
-              error={false}
+              onBlur={handleBlur}
+              error={touched.phone && Boolean(errors.phone)}
+              helperText={touched.phone && errors.phone}
+              required
               sx={{ mb: 2 }}
+              autoComplete="on"
             />
             <TextField
               fullWidth
-              name="password"
+              id="password"
               label="Contraseña"
               type="password"
-              id="password"
-              value={userData.password}
+              name="password"
+              value={values.password}
               onChange={handleChange}
-              helperText="Ingrese una contraseña"
-              error={false}
-              sx={{ mb: 2 }}
+              onBlur={handleBlur}
+              error={touched.password && Boolean(errors.password)}
+              helperText={touched.password && errors.password}
               required
+              sx={{ mb: 2 }}
+              autoComplete="on"
             />
             <Button
               type="submit"
