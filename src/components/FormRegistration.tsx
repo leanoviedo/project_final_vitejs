@@ -21,16 +21,16 @@ import { useFormik } from "formik";
 const validationSchema = yup.object({
   email: yup
     .string()
-    .email("ingresa un email valido")
-    .required("Email es requerido"),
-  first: yup.string().required("Campo requerido"),
-  last: yup.string().required("Campo requerido"),
-  phone: yup.string().required("Campo requerido"),
+    .email("Ingresa un email valido")
+    .required("Correo electrónico es obligatorio"),
+  first: yup.string().required(" Nombre es obligatorio"),
+  last: yup.string().required(" Apellido es obligatorio"),
+  phone: yup.string().required("  Telefono es obligatorio"),
   password: yup
     .string()
     .min(6, "La contraseña debe tener una cantidad minima de 6 caracteres.")
     .max(12, "La contraseña debe tener una cantidad máxima de 12 caracteres.")
-    .required("contraseña requerida"),
+    .required("Contraseña es obligatoria"),
 });
 const FormRegistration = () => {
   const { usersAvailable } = useAppSelector((state) => state.usersList);
@@ -109,7 +109,7 @@ const FormRegistration = () => {
         last: "",
         phone: "",
       });
-      setAvatarSrc(""); // Reset the avatar if no user is found
+      setAvatarSrc("");
     }
 
     formik.validateForm();
@@ -151,7 +151,6 @@ const FormRegistration = () => {
               error={touched.email && Boolean(errors.email)}
               helperText={touched.email && errors.email}
               sx={{ mb: 2 }}
-              required
               onChange={handleEmailChange}
             />
             <TextField
@@ -164,7 +163,6 @@ const FormRegistration = () => {
               onBlur={handleBlur}
               error={touched.first && Boolean(errors.first)}
               helperText={touched.first && errors.first}
-              required
               sx={{ mb: 2 }}
               autoComplete="on"
             />
@@ -178,7 +176,6 @@ const FormRegistration = () => {
               onBlur={handleBlur}
               error={touched.last && Boolean(errors.last)}
               helperText={touched.last && errors.last}
-              required
               sx={{ mb: 2 }}
               autoComplete="on"
             />
@@ -192,7 +189,6 @@ const FormRegistration = () => {
               onBlur={handleBlur}
               error={touched.phone && Boolean(errors.phone)}
               helperText={touched.phone && errors.phone}
-              required
               sx={{ mb: 2 }}
               autoComplete="on"
             />
@@ -207,7 +203,6 @@ const FormRegistration = () => {
               onBlur={handleBlur}
               error={touched.password && Boolean(errors.password)}
               helperText={touched.password && errors.password}
-              required
               sx={{ mb: 2 }}
               autoComplete="on"
             />

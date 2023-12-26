@@ -106,7 +106,6 @@ const FormLogin = () => {
           >
             <TextField
               margin="normal"
-              required
               fullWidth
               id="email"
               label="Correo Electrónico"
@@ -118,7 +117,6 @@ const FormLogin = () => {
             />
             <TextField
               margin="normal"
-              required
               fullWidth
               label="Contraseña"
               type="password"
