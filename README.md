@@ -128,4 +128,4 @@ Leandro Oviedo, Junior, Front-End Developer.
 ##### Code-Review a cargo de:
 
 Fernando A. González, Software Lead Engineer.
-[Perfil de LinkedIn](https://www.linkedin.com/in/
+[Perfil de LinkedIn](https://www.linkedin.com/in/fernando-a-gonzalez/)
