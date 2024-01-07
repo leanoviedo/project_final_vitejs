@@ -68,7 +68,7 @@ const CustomNavbar = () => {
       <Toolbar>
         <AirplanemodeActiveOutlinedIcon sx={{ fontSize: 40, mr: 2 }} />
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-          Airport Missing Things (MYT)
+          Airport Missing Things (AMT)
         </Typography>
         <Box
           sx={{
@@ -84,7 +84,7 @@ const CustomNavbar = () => {
             onClick={handleMainMenuOpen}
           >
             <ReportIcon />
-            reportar objeto
+            Reportar objeto
           </Button>
           <Button
             color="inherit"
@@ -93,7 +93,7 @@ const CustomNavbar = () => {
             onClick={handleMainMenuOpen}
           >
             <SearchIcon />
-            buscador de objetos perdidos
+            Buscador de objetos perdidos
           </Button>
           <Button
             color="inherit"
@@ -102,7 +102,7 @@ const CustomNavbar = () => {
             onClick={handleMainMenuOpen}
           >
             <ListAltIcon />
-            lista de reportes
+            Lista de reportes
           </Button>
         </Box>
         <Grid>
@@ -177,7 +177,7 @@ const CustomNavbar = () => {
                 to="/LandingPage"
               >
                 <ReportIcon />
-                reportar objeto
+                Reportar objeto
               </MenuItem>
               <MenuItem
                 onClick={handleMainMenuClose}
@@ -193,11 +193,11 @@ const CustomNavbar = () => {
                 to="/LostAndFoundList"
               >
                 <ListAltIcon />
-                mis reportes
+                Mis reportes
               </MenuItem>
               <MenuItem onClick={handleLogout} component={Link} to="/">
                 <OutputIcon />
-                cerrar sesión
+                Cerrar sesión
               </MenuItem>
             </Menu>
           </Box>
