@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import {
   Typography,
   TextField,
@@ -11,6 +11,13 @@ import {
   Toolbar,
   Snackbar,
   Alert,
+  CardContent,
+  ListItem,
+  List,
+  Divider,
+  ListItemText,
+  Paper,
+  Dialog,
 } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import { useAppSelector } from "../redux/hooks";
@@ -24,6 +31,7 @@ const FormLogin = () => {
   const navigate = useNavigate();
   const [errorSnackbarOpen, setErrorSnackbarOpen] = useState(false);
   const [errorSnackbarMessage, setErrorSnackbarMessage] = useState("");
+  const [state, setState] = useState({ bottom: false });
 
   const validationSchema = yup.object().shape({
     email: yup
@@ -71,6 +79,97 @@ const FormLogin = () => {
       }
     },
   });
+
+  const toggleDrawer =
+    (anchor: string, open: boolean) =>
+    (event: React.KeyboardEvent | React.MouseEvent) => {
+      if (
+        event &&
+        event.type === "keydown" &&
+        ((event as React.KeyboardEvent).key === "Tab" ||
+          (event as React.KeyboardEvent).key === "Shift")
+      ) {
+        return;
+      }
+      setState({ ...state, [anchor]: open });
+    };
+
+  const list = (_anchor: string) => (
+    <Card>
+      <Paper
+        elevation={3}
+        sx={{
+          width: "100%",
+          maxWidth: 360,
+          margin: "auto",
+          padding: 2,
+          textAlign: "center",
+        }}
+      >
+        <Typography variant="h5" gutterBottom>
+          Usuarios registrados
+        </Typography>
+        <List sx={{ width: "100%" }}>
+          <ListItem alignItems="flex-start">
+            <ListItemText
+              primary="jose.ruiz@example.com"
+              secondary={
+                <React.Fragment>
+                  <Typography
+                    sx={{ display: "inline" }}
+                    component="span"
+                    variant="body2"
+                    color="text.primary"
+                  >
+                    Contraseña:
+                  </Typography>
+                  {" asdasd"}
+                </React.Fragment>
+              }
+            />
+          </ListItem>
+          <Divider variant="fullWidth" component="li" />
+          <ListItem alignItems="flex-start">
+            <ListItemText
+              primary=" willie.fleming@example.com"
+              secondary={
+                <React.Fragment>
+                  <Typography
+                    sx={{ display: "inline" }}
+                    component="span"
+                    variant="body2"
+                    color="text.primary"
+                  >
+                    Contraseña:
+                  </Typography>
+                  {" asdasd"}
+                </React.Fragment>
+              }
+            />
+          </ListItem>
+          <Divider variant="fullWidth" component="li" />
+          <ListItem alignItems="flex-start">
+            <ListItemText
+              primary="aishwarya.sullad@example.com"
+              secondary={
+                <React.Fragment>
+                  <Typography
+                    sx={{ display: "inline" }}
+                    component="span"
+                    variant="body2"
+                    color="text.primary"
+                  >
+                    Contraseña:
+                  </Typography>
+                  {" asdasd"}
+                </React.Fragment>
+              }
+            />
+          </ListItem>
+        </List>
+      </Paper>
+    </Card>
+  );
 
   return (
     <Grid container justifyContent="center" alignItems="center">
@@ -124,7 +223,7 @@ const FormLogin = () => {
               helperText={formik.touched.password && formik.errors.password}
               autoComplete="current-password"
             />
-            <Button type="submit" fullWidth variant="contained">
+            <Button onClick={formik.submitForm} fullWidth variant="contained">
               Iniciar sesión
             </Button>
             <Link
@@ -137,6 +236,33 @@ const FormLogin = () => {
             </Link>
           </Box>
         </Card>
+        <CardContent>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            {(["bottom"] as const).map((anchor) => (
+              <React.Fragment key={anchor}>
+                <Button
+                  onClick={toggleDrawer(anchor, true)}
+                  variant="contained"
+                  sx={{ textAlign: "center" }}
+                >
+                  Usuarios Registrados
+                </Button>
+                <Dialog
+                  open={state[anchor]}
+                  onClose={toggleDrawer(anchor, false)}
+                >
+                  {list(anchor)}
+                </Dialog>
+              </React.Fragment>
+            ))}
+          </div>
+        </CardContent>
         <Snackbar
           open={errorSnackbarOpen}
           autoHideDuration={6000}
