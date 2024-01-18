@@ -370,6 +370,7 @@ const LandingPage = () => {
                   label="city"
                   onChange={handleCityChange}
                   input={<OutlinedInput label="Ciudad" />}
+                  disabled={!selectedCountry}
                 >
                   {cityData.map((city: any, index: number) => (
                     <MenuItem key={index} value={city}>
@@ -377,6 +378,7 @@ const LandingPage = () => {
                     </MenuItem>
                   ))}
                 </Select>
+
                 <FormHelperText sx={errorStyles}> {cityError}</FormHelperText>
               </FormControl>
             </Grid>
@@ -392,6 +394,7 @@ const LandingPage = () => {
                   value={selectedAirport}
                   onChange={handleAirportChange}
                   input={<OutlinedInput label="Aeropuerto" />}
+                  disabled={!selectedCity}
                 >
                   {airportData.map((airport: any, index: number) => (
                     <MenuItem key={index} value={airport}>
