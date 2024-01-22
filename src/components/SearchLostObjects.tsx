@@ -22,11 +22,25 @@ import { selectLostObjects } from "../redux/slices/LostObjectSlice";
 import { Link } from "react-router-dom";
 import SearchIcon from "@mui/icons-material/Search";
 import React from "react";
+import { useFormik } from "formik";
+import * as yup from "yup";
+
+const validationSchema = yup.object().shape({
+  selectedCountry: yup.string().nullable().required("Campo obligatorio"),
+  searchText: yup.string().required("Campo obligatorio"),
+});
 
 const LostObjectDetails = () => {
+  const formik = useFormik({
+    initialValues: {
+      selectedCountry: null,
+      searchText: "",
+    },
+    validationSchema: validationSchema,
+    onSubmit: () => {},
+  });
+
   const lostObjects = useAppSelector(selectLostObjects);
-  const [searchText, setSearchText] = useState<string>("");
-  const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
   const [countries, setCountries] = useState<string[]>([]);
   const [filteredObjects, setFilteredObjects] = useState(lostObjects);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -37,7 +51,10 @@ const LostObjectDetails = () => {
     inputMinimumLength:
       "Por favor, ingrese al menos 3 caracteres para buscar un país.",
   };
+
   const handleSearch = () => {
+    const { selectedCountry, searchText } = formik.values;
+
     if (selectedCountry || searchText.length >= 3) {
       const filtered = lostObjects.filter((lostObject) => {
         const descriptionMatch = searchText
@@ -85,7 +102,7 @@ const LostObjectDetails = () => {
       }
     } else if (newInputValue.length === 0) {
       setCountries([]);
-      setSelectedCountry(null);
+      formik.setFieldValue("selectedCountry", null);
     }
   };
 
@@ -106,8 +123,10 @@ const LostObjectDetails = () => {
             <Grid item xs={12} md={5}>
               <Autocomplete
                 options={countries}
-                value={selectedCountry}
-                onChange={(_, newValue) => setSelectedCountry(newValue)}
+                value={formik.values.selectedCountry}
+                onChange={(_, newValue) =>
+                  formik.setFieldValue("selectedCountry", newValue)
+                }
                 onInputChange={handleCountryInputChange}
                 renderInput={(params) => (
                   <TextField
@@ -115,6 +134,14 @@ const LostObjectDetails = () => {
                     label="Buscar por país"
                     fullWidth
                     variant="outlined"
+                    error={
+                      formik.touched.selectedCountry &&
+                      Boolean(formik.errors.selectedCountry)
+                    }
+                    helperText={
+                      formik.touched.selectedCountry &&
+                      formik.errors.selectedCountry
+                    }
                   />
                 )}
               />
@@ -123,9 +150,17 @@ const LostObjectDetails = () => {
               <TextField
                 label="Buscar por descripción"
                 variant="outlined"
-                value={searchText}
-                onChange={(e) => setSearchText(e.target.value)}
+                value={formik.values.searchText}
+                onChange={(e) =>
+                  formik.setFieldValue("searchText", e.target.value)
+                }
                 fullWidth
+                error={
+                  formik.touched.searchText && Boolean(formik.errors.searchText)
+                }
+                helperText={
+                  formik.touched.searchText && formik.errors.searchText
+                }
               />
             </Grid>
             <Grid item xs={12} md={2} sx={{ textAlign: "center" }}>
