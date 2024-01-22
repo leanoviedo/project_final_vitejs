@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Button,
   Grid,
@@ -26,70 +26,122 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs, { Dayjs } from "dayjs";
 import { useAppDispatch } from "../redux/hooks";
 import CustomNavbar from "./CustomNavbar";
-import {
-  LostObjectData,
-  Country,
-  City,
-  Airport,
-  UserData,
-} from "../model/interface";
+import { Country, City, Airport, UserData } from "../model/interface";
 import { setLostObjectData } from "../redux/slices/LostObjectSlice";
 import { v4 as uuidv4 } from "uuid";
+import * as yup from "yup";
+import { useFormik } from "formik";
 
 const errorStyles = {
   color: "red",
 };
+const validationSchema = yup.object().shape({
+  country: yup.object().shape({
+    name: yup.string().required("Campo obligatorio"),
+  }),
+  city: yup.object().shape({
+    name: yup.string().required("Campo obligatorio"),
+  }),
+  airport: yup.object().shape({
+    name: yup.string().required("Campo obligatorio"),
+  }),
+  date: yup.date().required("Campo obligatorio"),
+  description: yup.string().required("Campo obligatorio"),
+  photo: yup.string().required("Campo obligatorio"),
+  type: yup.string().required("Campo obligatorio"),
+});
 
 const LandingPage = () => {
-  const [lostObject, setLostObject] = useState<LostObjectData>({
-    country: {
-      code: "",
-      code3: "",
-      name: "",
-    },
-    city: {
-      name: "",
-      city_code: "",
-      lat: 0.0,
-      lng: 0.0,
-      country_code: "",
-      type: "",
-    },
-    airport: {
-      name: "",
-      iata_code: "",
-      icao_code: "",
-      lat: 0.0,
-      lng: 0.0,
-      country_code: "",
-    },
-    date: null,
-    photo: "",
-    description: "",
-    type: "",
-    status: "creado",
-    id: uuidv4(),
-  });
-
   const [airportData, setAirportData] = useState<any[]>([]);
   const [cityData, setCityData] = useState<any[]>([]);
   const [countryData, setCountryData] = useState<any[]>([]);
-  const [startDate] = useState(dayjs("2023-01-01"));
-  const [endDate] = useState(dayjs());
-  const [countryError, setCountryError] = useState("");
-  const [cityError, setCityError] = useState("");
-  const [airportError, setAirportError] = useState("");
-  const [dateError, setDateError] = useState("");
-  const [descriptionError, setDescriptionError] = useState("");
-  const [photoError, setPhotoError] = useState("");
-  const [lostTypeError, setLostTypeError] = useState("");
+  const [maxDate] = useState(dayjs());
   const [selectedCountry, setSelectedCountry] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
   const [selectedAirport, setSelectedCAirport] = useState("");
-  const [lostType, setLostType] = useState("");
-
-  const dispatch = useAppDispatch();
   const [storedUser, setStoredUser] = useState<UserData | null>(null);
+  const dispatch = useAppDispatch();
+
+  const formik = useFormik({
+    initialValues: {
+      country: {
+        name: "",
+        code: "",
+        code3: "",
+      },
+      city: {
+        name: "",
+        city_code: "",
+        lat: 0.0,
+        lng: 0.0,
+        country_code: "",
+        type: "",
+      },
+      airport: {
+        name: "",
+        iata_code: "",
+        icao_code: "",
+        lat: 0.0,
+        lng: 0.0,
+        country_code: "",
+      },
+      description: "",
+      date: null as Dayjs | null,
+      photo: "",
+      type: "",
+      status: "creado",
+      id: uuidv4(),
+    },
+    validationSchema: validationSchema,
+    onSubmit: (values) => {
+      console.log("onSubmit..");
+      setOpenModal(true);
+      resetFormFields();
+
+      const selectData = {
+        country: values.country,
+        city: values.city,
+        airport: values.airport,
+        date: values.date ? values.date.toISOString() : null,
+        photo: values.photo || "",
+        description: values.description,
+        type: values.type,
+        status: values.status,
+        id: uuidv4(),
+        userReport: storedUser
+          ? {
+              name: {
+                first: storedUser.name.first,
+                last: storedUser.name.last,
+              },
+              location: {
+                city: storedUser.location.city,
+                state: storedUser.location.state,
+                country: storedUser.location.country,
+                postcode: storedUser.location.postcode,
+                coordinates: {
+                  latitude: storedUser.location.coordinates.latitude,
+                  longitude: storedUser.location.coordinates.longitude,
+                },
+              },
+              email: storedUser.email,
+              login: storedUser.login,
+              phone: storedUser.phone,
+              cell: storedUser.cell,
+              picture: storedUser.picture,
+              password: storedUser.login.password,
+            }
+          : null,
+      };
+      console.log("Processed form data:", selectData);
+      dispatch(setLostObjectData(selectData));
+      console.log("guardado");
+      setSelectedCountry("");
+      setSelectedCity("");
+      setSelectedCAirport("");
+    },
+  });
+
   useEffect(() => {
     const storedUserData = localStorage.getItem("userData");
     if (storedUserData) {
@@ -116,10 +168,10 @@ const LandingPage = () => {
     const conutrynew: Country = JSON.parse(JSON.stringify(value));
     setSelectedCountry(value);
 
-    setLostObject((prev) => ({
-      ...prev,
+    formik.setValues({
+      ...formik.values,
       country: conutrynew,
-    }));
+    });
 
     AirportServices.fetchCitiesByCountry(conutrynew.code)
       .then((response) => {
@@ -136,10 +188,10 @@ const LandingPage = () => {
     const citynew: City = JSON.parse(JSON.stringify(value));
     setSelectedCity(value);
 
-    setLostObject((prev) => ({
-      ...prev,
+    formik.setValues({
+      ...formik.values,
       city: citynew,
-    }));
+    });
 
     AirportServices.fetchAirportsByCities(citynew.city_code)
       .then((response) => {
@@ -156,168 +208,13 @@ const LandingPage = () => {
     const Airportnew: Airport = JSON.parse(JSON.stringify(value));
     setSelectedCAirport(value);
 
-    setLostObject((prev) => ({
-      ...prev,
+    formik.setValues({
+      ...formik.values,
       airport: Airportnew,
-    }));
-  };
-
-  const handleDescriptionChange = (
-    event: React.ChangeEvent<HTMLTextAreaElement>
-  ) => {
-    const newValue = event.target.value;
-    setLostObject((prev) => ({
-      ...prev,
-      description: newValue,
-    }));
-  };
-  const handleDateChange = (date: Dayjs | any) => {
-    setLostObject((prev) => ({
-      ...prev,
-      date: date ? date.toISOString() : null,
-    }));
-  };
-
-  const handleLostTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setLostType(event.target.value);
-  };
-  const handlePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setLostObject({ ...lostObject, [event.target.name]: event.target.value });
+    });
   };
   const resetFormFields = () => {
-    setLostObject({
-      country: {
-        code: "",
-        code3: "",
-        name: "",
-      },
-      city: {
-        name: "",
-        city_code: "",
-        lat: 0.0,
-        lng: 0.0,
-        country_code: "",
-        type: "",
-      },
-      airport: {
-        name: "",
-        iata_code: "",
-        icao_code: "",
-        lat: 0.0,
-        lng: 0.0,
-        country_code: "",
-      },
-      description: "",
-      date: null,
-      photo: "",
-      type: "",
-      status: "",
-      id: "",
-    });
-    setCountryError("");
-    setCityError("");
-    setAirportError("");
-    setDateError("");
-    setDescriptionError("");
-    setPhotoError("");
-    setLostType("");
-  };
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-    setCountryError("");
-    setCityError("");
-    setAirportError("");
-    setDateError("");
-    setDescriptionError("");
-    setPhotoError("");
-    setLostType("");
-    setLostTypeError("");
-
-    let hasErrors = false;
-
-    if (!lostObject.country || !lostObject.country.name) {
-      setCountryError("Campo obligatorio");
-      hasErrors = true;
-    }
-
-    if (!lostObject.city || !lostObject.city.name) {
-      setCityError("Campo obligatorio");
-      hasErrors = true;
-    }
-
-    if (!lostObject.airport || !lostObject.airport.name) {
-      setAirportError("Campo obligatorio");
-      hasErrors = true;
-    }
-
-    if (!lostObject.date) {
-      setDateError("Campo obligatorio");
-      hasErrors = true;
-    }
-
-    if (!lostObject.description) {
-      setDescriptionError("Campo obligatorio");
-      hasErrors = true;
-    }
-
-    if (!lostObject.photo) {
-      setPhotoError("Campo obligatorio");
-      hasErrors = true;
-    }
-
-    if (!lostType) {
-      setLostTypeError("Campo obligatorio");
-      hasErrors = true;
-    }
-
-    if (hasErrors) {
-      return;
-    }
-
-    setOpenModal(true);
-
-    resetFormFields();
-
-    const selectData = {
-      country: lostObject.country,
-      city: lostObject.city,
-      airport: lostObject.airport,
-      date: lostObject.date ? lostObject.date : null,
-      photo: lostObject.photo || "",
-      description: lostObject.description,
-      type: lostType,
-      status: lostObject.status,
-      id: uuidv4(),
-      userReport: storedUser
-        ? {
-            name: {
-              first: storedUser.name.first,
-              last: storedUser.name.last,
-            },
-            location: {
-              city: storedUser.location.city,
-              state: storedUser.location.state,
-              country: storedUser.location.country,
-              postcode: storedUser.location.postcode,
-              coordinates: {
-                latitude: storedUser.location.coordinates.latitude,
-                longitude: storedUser.location.coordinates.longitude,
-              },
-            },
-            email: storedUser.email,
-            login: storedUser.login,
-            phone: storedUser.phone,
-            cell: storedUser.cell,
-            picture: storedUser.picture,
-            password: storedUser.login.password,
-          }
-        : null,
-    };
-
-    dispatch(setLostObjectData(selectData));
-    setSelectedCountry("");
-    setSelectedCity("");
-    setSelectedCAirport("");
+    formik.resetForm();
   };
 
   return (
@@ -336,7 +233,7 @@ const LandingPage = () => {
           </Typography>
           <Box
             component="form"
-            onSubmit={handleSubmit}
+            onSubmit={formik.handleSubmit}
             sx={{ borderColor: "primary.main" }}
           >
             <Grid item xs={12}>
@@ -356,7 +253,9 @@ const LandingPage = () => {
                     </MenuItem>
                   ))}
                 </Select>
-                <FormHelperText sx={errorStyles}>{countryError}</FormHelperText>
+                <FormHelperText sx={errorStyles}>
+                  {formik.touched.country?.name && formik.errors.country?.name}
+                </FormHelperText>
               </FormControl>
             </Grid>
 
@@ -379,7 +278,9 @@ const LandingPage = () => {
                   ))}
                 </Select>
 
-                <FormHelperText sx={errorStyles}> {cityError}</FormHelperText>
+                <FormHelperText sx={errorStyles}>
+                  {formik.touched.city?.name && formik.errors.city?.name}
+                </FormHelperText>
               </FormControl>
             </Grid>
 
@@ -402,57 +303,72 @@ const LandingPage = () => {
                     </MenuItem>
                   ))}
                 </Select>
-                <FormHelperText sx={errorStyles}>{airportError}</FormHelperText>
+                <FormHelperText sx={errorStyles}>
+                  {formik.touched.airport?.name && formik.errors.airport?.name}
+                </FormHelperText>
               </FormControl>
             </Grid>
             <Grid item marginTop={2} xs={12}>
-              <DatePicker
-                label="Fecha de objeto encontrado /o pérdido"
-                value={lostObject.date}
-                onChange={handleDateChange}
-                minDate={startDate}
-                maxDate={endDate}
-                views={["year", "month", "day"]}
-                sx={{ width: "100%" }}
-              />
-              <FormHelperText sx={errorStyles}>{dateError}</FormHelperText>
+              <FormControl fullWidth>
+                <DatePicker
+                  label="Fecha de objeto encontrado /o pérdido"
+                  value={formik.values.date || null}
+                  onChange={(date) => formik.setFieldValue("date", date)}
+                  maxDate={maxDate}
+                  views={["year", "month", "day"]}
+                  sx={{ width: "100%" }}
+                />
+                <FormHelperText sx={errorStyles}>
+                  {formik.touched.date && formik.errors.date}
+                </FormHelperText>
+              </FormControl>
             </Grid>
             <Grid item marginTop={2} xs={12}>
-              <TextField
-                fullWidth
-                id="photo"
-                label="link de la imagen /o foto "
-                name="photo"
-                value={lostObject.photo}
-                onChange={handlePhotoChange}
-              />
-              <FormHelperText sx={errorStyles}>{photoError}</FormHelperText>
+              <FormControl fullWidth>
+                <TextField
+                  id="photo"
+                  label="link de la imagen /o foto "
+                  name="photo"
+                  value={formik.values.photo}
+                  onChange={formik.handleChange}
+                />
+                <FormHelperText sx={errorStyles}>
+                  {formik.touched.photo && formik.errors.photo}
+                </FormHelperText>
+              </FormControl>
             </Grid>
             <Grid item marginTop={2} xs={12}>
-              <TextField
-                aria-label="minimum height"
-                id="description"
-                name="description"
-                fullWidth
-                multiline
-                minRows={3}
-                variant="outlined"
-                value={lostObject.description}
-                onChange={handleDescriptionChange}
-                placeholder="Escriba la Descripción"
-              />
-              <FormHelperText sx={errorStyles}>
-                {descriptionError}
-              </FormHelperText>
+              <FormControl fullWidth>
+                <TextField
+                  id="description"
+                  name="description"
+                  multiline
+                  minRows={3}
+                  variant="outlined"
+                  value={formik.values.description}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  placeholder="Escriba la Descripción"
+                />
+                <FormHelperText sx={errorStyles}>
+                  {formik.touched.description && formik.errors.description}
+                </FormHelperText>
+              </FormControl>
             </Grid>
             <Grid>
-              <FormControl component="fieldset" error={Boolean(lostTypeError)}>
-                <FormLabel component="legend">Estado</FormLabel>
+            <FormLabel component="legend">Estado</FormLabel>
+              <FormControl
+                component="fieldset"
+                error={Boolean(formik.errors.type)}
+              >
                 <RadioGroup
                   aria-label="lostStatus"
-                  name="lostStatus"
-                  value={lostType}
-                  onChange={handleLostTypeChange}
+                  name="type"
+                  value={formik.values.type}
+                  onChange={(e) => {
+                    formik.handleChange(e);
+                    formik.setFieldValue("type", e.target.value);
+                  }}
                 >
                   <FormControlLabel
                     value="encontrado"
@@ -465,7 +381,9 @@ const LandingPage = () => {
                     label="Perdido"
                   />
                 </RadioGroup>
-                <FormHelperText>{lostTypeError}</FormHelperText>
+                <FormHelperText sx={errorStyles}>
+                  {formik.touched.type && formik.errors.type}
+                </FormHelperText>
               </FormControl>
             </Grid>
             <Grid item sx={{ textAlign: "center", mt: 2 }}>
