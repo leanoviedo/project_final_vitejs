@@ -19,8 +19,11 @@ import {
   FormLabel,
   Radio,
   RadioGroup,
+  styled,
+  CardMedia,
+  CardContent,
 } from "@mui/material";
-import { Send as SendIcon } from "@mui/icons-material";
+import { Send as SendIcon, CloudUpload } from "@mui/icons-material";
 import AirportServices from "../services/AirportServices";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs, { Dayjs } from "dayjs";
@@ -31,10 +34,22 @@ import { setLostObjectData } from "../redux/slices/LostObjectSlice";
 import { v4 as uuidv4 } from "uuid";
 import * as yup from "yup";
 import { useFormik } from "formik";
+import axios from "axios";
 
 const errorStyles = {
   color: "red",
 };
+const VisuallyHiddenInput = styled("input")({
+  clip: "rect(0 0 0 0)",
+  clipPath: "inset(50%)",
+  height: 1,
+  overflow: "hidden",
+  position: "absolute",
+  bottom: 0,
+  left: 0,
+  whiteSpace: "nowrap",
+  width: 1,
+});
 const validationSchema = yup.object().shape({
   country: yup.object().shape({
     name: yup.string().required("Selecciona Pais obligatorio"),
@@ -60,6 +75,8 @@ const LandingPage = () => {
   const [selectedCity, setSelectedCity] = useState("");
   const [selectedAirport, setSelectedCAirport] = useState("");
   const [storedUser, setStoredUser] = useState<UserData | null>(null);
+  const [imageUrl, setImageUrl] = useState("");
+
   const dispatch = useAppDispatch();
 
   const formik = useFormik({
@@ -205,14 +222,40 @@ const LandingPage = () => {
 
   const handleAirportChange = (event: SelectChangeEvent<string>) => {
     const { value } = event.target;
-    const Airportnew: Airport = JSON.parse(JSON.stringify(value));
+    const airportNew: Airport = JSON.parse(JSON.stringify(value));
     setSelectedCAirport(value);
 
     formik.setValues({
       ...formik.values,
-      airport: Airportnew,
+      airport: airportNew,
     });
   };
+
+  const handleImageUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+
+    if (file) {
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("upload_preset", "ml_default");
+
+        const response = await axios.post(
+          "https://api.cloudinary.com/v1_1/aiportmissingthings/image/upload",
+          formData
+        );
+        const imageURL = response.data.secure_url;
+
+        setImageUrl(imageURL);
+        formik.setFieldValue("photo", imageURL);
+      } catch (error) {
+        console.error("Error uploading image to Cloudinary:", error);
+      }
+    }
+  };
+
   const resetFormFields = () => {
     formik.resetForm();
   };
@@ -326,20 +369,6 @@ const LandingPage = () => {
             <Grid item marginTop={2} xs={12}>
               <FormControl fullWidth>
                 <TextField
-                  id="photo"
-                  label="link de la imagen /o foto "
-                  name="photo"
-                  value={formik.values.photo}
-                  onChange={formik.handleChange}
-                />
-                <FormHelperText sx={errorStyles}>
-                  {formik.touched.photo && formik.errors.photo}
-                </FormHelperText>
-              </FormControl>
-            </Grid>
-            <Grid item marginTop={2} xs={12}>
-              <FormControl fullWidth>
-                <TextField
                   id="description"
                   name="description"
                   multiline
@@ -355,6 +384,53 @@ const LandingPage = () => {
                 </FormHelperText>
               </FormControl>
             </Grid>
+            <Grid item marginTop={2} xs={12}>
+              <FormControl fullWidth>
+                <Button
+                  component="label"
+                  variant="contained"
+                  startIcon={<CloudUpload />}
+                >
+                  {formik.isSubmitting ? "Cargando..." : "Subir foto"}
+                  <VisuallyHiddenInput
+                    type="file"
+                    onChange={handleImageUpload}
+                  />
+                </Button>
+                <Card sx={{ maxWidth: 550, margin: "auto", marginTop: 2 }}>
+                  <CardContent>
+                    {imageUrl ? (
+                      <CardMedia
+                        component="img"
+                        src={imageUrl}
+                        style={{
+                          margin: "auto",
+                          maxWidth: "100%",
+                          height: "auto",
+                          border: "1px solid #ccc",
+                          borderRadius: "4px",
+                          display: "block",
+                          boxShadow: "0px 0px 5px rgba(0, 0, 0, 0.2)",
+                        }}
+                      />
+                    ) : (
+                      <Typography
+                        variant="body2"
+                        color="textSecondary"
+                        align="center"
+                      >
+                        No hay foto subida...!!!
+                      </Typography>
+                    )}
+                  </CardContent>
+                </Card>
+
+                <FormHelperText sx={errorStyles}>
+                  {formik.touched.photo && formik.errors.photo}
+                </FormHelperText>
+              </FormControl>
+            </Grid>
+
             <Grid>
               <FormLabel component="legend">Estado</FormLabel>
               <FormControl
