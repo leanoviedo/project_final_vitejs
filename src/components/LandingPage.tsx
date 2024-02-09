@@ -34,7 +34,7 @@ import { setLostObjectData } from "../redux/slices/LostObjectSlice";
 import { v4 as uuidv4 } from "uuid";
 import * as yup from "yup";
 import { useFormik } from "formik";
-import axios from "axios";
+import uploadImageToCloudinary from "../services/uploadImageToCloudinaryServices";
 
 const errorStyles = {
   color: "red",
@@ -230,7 +230,6 @@ const LandingPage = () => {
       airport: airportNew,
     });
   };
-
   const handleImageUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -238,18 +237,11 @@ const LandingPage = () => {
 
     if (file) {
       try {
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("upload_preset", "ml_default");
-
-        const response = await axios.post(
-          "https://api.cloudinary.com/v1_1/aiportmissingthings/image/upload",
-          formData
-        );
-        const imageURL = response.data.secure_url;
-
-        setImageUrl(imageURL);
-        formik.setFieldValue("photo", imageURL);
+        const imageURL = await uploadImageToCloudinary(file);
+        if (imageURL) {
+          setImageUrl(imageURL);
+          formik.setFieldValue("photo", imageURL);
+        }
       } catch (error) {
         console.error("Error uploading image to Cloudinary:", error);
       }
