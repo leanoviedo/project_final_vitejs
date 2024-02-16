@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Typography,
   TextField,
@@ -7,17 +7,16 @@ import {
   Card,
   Box,
   AppBar,
-  IconButton,
   Toolbar,
   Snackbar,
   Alert,
-  CardContent,
-  ListItem,
+  Dialog,
   List,
   Divider,
-  ListItemText,
   Paper,
-  Dialog,
+  CardContent,
+  ListItem,
+  IconButton,
 } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import { useAppSelector } from "../redux/hooks";
@@ -25,14 +24,17 @@ import { selectRegistrationData } from "../redux/slices/RegistrationSlices";
 import AirplanemodeActiveOutlinedIcon from "@mui/icons-material/AirplanemodeActiveOutlined";
 import { useFormik } from "formik";
 import * as yup from "yup";
+import { UserData } from "../model/interface";
+import CloseIcon from "@mui/icons-material/Close";
 
 const FormLogin = () => {
   const registrationData = useAppSelector(selectRegistrationData);
   const navigate = useNavigate();
   const [errorSnackbarOpen, setErrorSnackbarOpen] = useState(false);
   const [errorSnackbarMessage, setErrorSnackbarMessage] = useState("");
-  const [state, setState] = useState({ bottom: false });
-
+  const [isRegisteredUsersDialogOpen, setRegisteredUsersDialogOpen] =
+    useState(false);
+  const [selectedUser, setSelectedUser] = useState<UserData | null>(null);
   const validationSchema = yup.object().shape({
     email: yup
       .string()
@@ -80,21 +82,23 @@ const FormLogin = () => {
     },
   });
 
-  const toggleDrawer =
-    (anchor: string, open: boolean) =>
-    (event: React.KeyboardEvent | React.MouseEvent) => {
-      if (
-        event &&
-        event.type === "keydown" &&
-        ((event as React.KeyboardEvent).key === "Tab" ||
-          (event as React.KeyboardEvent).key === "Shift")
-      ) {
-        return;
-      }
-      setState({ ...state, [anchor]: open });
-    };
+  const toggleRegisteredUsersDialog = () => {
+    setRegisteredUsersDialogOpen(!isRegisteredUsersDialogOpen);
+  };
+  const handleUserSelection = (user: UserData) => {
+    setSelectedUser(user);
+  };
 
-  const list = (_anchor: string) => (
+  useEffect(() => {
+    if (selectedUser) {
+      formik.setValues({
+        email: selectedUser.email,
+        password: selectedUser.login.password,
+      });
+    }
+  }, [selectedUser]);
+
+  const listRegisteredUsers = (
     <Card>
       <Paper
         elevation={3}
@@ -110,62 +114,26 @@ const FormLogin = () => {
           Usuarios registrados
         </Typography>
         <List sx={{ width: "100%" }}>
-          <ListItem alignItems="flex-start">
-            <ListItemText
-              primary="jose.ruiz@example.com"
-              secondary={
-                <React.Fragment>
-                  <Typography
-                    sx={{ display: "inline" }}
-                    component="span"
-                    variant="body2"
-                    color="text.primary"
-                  >
-                    Contraseña:
-                  </Typography>
-                  {" asdasd"}
-                </React.Fragment>
-              }
-            />
-          </ListItem>
-          <Divider variant="fullWidth" component="li" />
-          <ListItem alignItems="flex-start">
-            <ListItemText
-              primary=" willie.fleming@example.com"
-              secondary={
-                <React.Fragment>
-                  <Typography
-                    sx={{ display: "inline" }}
-                    component="span"
-                    variant="body2"
-                    color="text.primary"
-                  >
-                    Contraseña:
-                  </Typography>
-                  {" asdasd"}
-                </React.Fragment>
-              }
-            />
-          </ListItem>
-          <Divider variant="fullWidth" component="li" />
-          <ListItem alignItems="flex-start">
-            <ListItemText
-              primary="aishwarya.sullad@example.com"
-              secondary={
-                <React.Fragment>
-                  <Typography
-                    sx={{ display: "inline" }}
-                    component="span"
-                    variant="body2"
-                    color="text.primary"
-                  >
-                    Contraseña:
-                  </Typography>
-                  {" asdasd"}
-                </React.Fragment>
-              }
-            />
-          </ListItem>
+          {registrationData.map((user, index) => (
+            <React.Fragment key={index}>
+              <ListItem
+                onClick={() => handleUserSelection(user)}
+                style={{
+                  padding: 8,
+                  cursor: "pointer",
+                  transition: "background-color 0.3s",
+                  backgroundColor:
+                    selectedUser === user ? "rgb(25,118,210)" : "transparent",
+                }}
+              >
+                <div style={{ textAlign: "center" }}>
+                  <Typography>{`Email: ${user.email}`}</Typography>
+                  <Typography>{`Contraseña: ${user.login.password}`}</Typography>
+                </div>
+              </ListItem>
+              <Divider variant="fullWidth" component="li" />
+            </React.Fragment>
+          ))}
         </List>
       </Paper>
     </Card>
@@ -175,16 +143,9 @@ const FormLogin = () => {
     <Grid container justifyContent="center" alignItems="center">
       <AppBar position="static">
         <Toolbar>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            sx={{ mr: 2 }}
-            href="/"
-          >
+          <Button color="inherit" sx={{ mr: 2 }} component={Link} to="/">
             <AirplanemodeActiveOutlinedIcon sx={{ fontSize: 40 }} />
-          </IconButton>
+          </Button>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Airport Missing Things (MYT)
           </Typography>
@@ -195,16 +156,15 @@ const FormLogin = () => {
           <Typography component="h1" variant="h5" align="center">
             Iniciar sesión
           </Typography>
-          <Grid />
           <Box
             component="form"
             onSubmit={formik.handleSubmit}
             sx={{
               width: 300,
+              mt: 2,
             }}
           >
             <TextField
-              margin="normal"
               fullWidth
               id="email"
               label="Correo Electrónico"
@@ -212,9 +172,11 @@ const FormLogin = () => {
               error={formik.touched.email && Boolean(formik.errors.email)}
               helperText={formik.touched.email && formik.errors.email}
               autoComplete="email"
+              sx={{
+                mb: 1,
+              }}
             />
             <TextField
-              margin="normal"
               fullWidth
               label="Contraseña"
               type="password"
@@ -222,8 +184,11 @@ const FormLogin = () => {
               error={formik.touched.password && Boolean(formik.errors.password)}
               helperText={formik.touched.password && formik.errors.password}
               autoComplete="current-password"
+              sx={{
+                mb: 1,
+              }}
             />
-            <Button onClick={formik.submitForm} fullWidth variant="contained">
+            <Button fullWidth variant="contained" type="submit">
               Iniciar sesión
             </Button>
             <Link
@@ -244,25 +209,28 @@ const FormLogin = () => {
               alignItems: "center",
             }}
           >
-            {(["bottom"] as const).map((anchor) => (
-              <React.Fragment key={anchor}>
-                <Button
-                  onClick={toggleDrawer(anchor, true)}
-                  variant="contained"
-                  sx={{ textAlign: "center" }}
-                >
-                  Usuarios Registrados
-                </Button>
-                <Dialog
-                  open={state[anchor]}
-                  onClose={toggleDrawer(anchor, false)}
-                >
-                  {list(anchor)}
-                </Dialog>
-              </React.Fragment>
-            ))}
+            <Button
+              onClick={toggleRegisteredUsersDialog}
+              variant="contained"
+              sx={{ mt: 2 }}
+            >
+              Usuarios Registrados
+            </Button>
+            <Dialog
+              open={isRegisteredUsersDialogOpen}
+              onClose={toggleRegisteredUsersDialog}
+            >
+              <IconButton
+                sx={{ position: "absolute", top: 5, right: 5, color: "red" }}
+                onClick={toggleRegisteredUsersDialog}
+              >
+                <CloseIcon />
+              </IconButton>
+              {listRegisteredUsers}
+            </Dialog>
           </div>
         </CardContent>
+
         <Snackbar
           open={errorSnackbarOpen}
           autoHideDuration={6000}
