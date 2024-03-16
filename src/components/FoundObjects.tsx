@@ -14,20 +14,22 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Badge,
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import CustomNavbar from "./CustomNavbar";
 import { v4 as uuidv4 } from "uuid";
 import { useParams } from "react-router-dom";
 import dayjs from "dayjs";
-import { addMessage, selectMenssage } from "../redux/slices/ChatSlices";
+import { addMessage, markMessageAsRead, selectMessages } from "../redux/slices/ChatSlices";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { updateLostObjectStatus } from "../redux/slices/LostObjectSlice";
 import { UserData } from "../model/interface";
+import MailIcon from "@mui/icons-material/Mail";
 
 const FoundObjects = () => {
-  const messages = useAppSelector(selectMenssage);
   const dispatch = useAppDispatch();
+  const messages = useAppSelector(selectMessages,);
   const [isReclaimed, setIsReclaimed] = useState(false);
   const [inputMessage, setInputMessage] = useState("");
   const [imageUrl, setImageUrl] = useState("");
@@ -36,6 +38,8 @@ const FoundObjects = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedMessageId, setSelectedMessageId] = useState(null);
   const [storedUser, setStoredUser] = useState<UserData | null>(null);
+  const [showNewMessageAlert, setShowNewMessageAlert] = useState(false);
+
   useEffect(() => {
     const storedUserData = localStorage.getItem("userData");
     if (storedUserData) {
@@ -43,10 +47,33 @@ const FoundObjects = () => {
       setStoredUser(parsedUserData);
     }
   }, []);
+
+  useEffect(() => {
+    if (messages.length) {
+      const hasNewMessage = messages.some(
+        (msg, index) =>
+          msg.lostObjectId === id &&
+          index === messages.length - 1 &&
+          msg.user.email !== storedUser?.email
+      );
+      setShowNewMessageAlert(hasNewMessage);
+      if (hasNewMessage) {
+        const timer = setTimeout(() => {
+          setShowNewMessageAlert(false);
+          dispatch(markMessageAsRead);
+        }, 4 * 1000);
+        return () => clearTimeout(timer);
+        
+      }
+    }
+  }, [messages, storedUser, id]);
+
   const selectedUser = storedUser;
+
   const handleMessageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputMessage(e.target.value);
   };
+
   const handleImageUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setImageUrl(e.target.value);
   };
@@ -62,12 +89,14 @@ const FoundObjects = () => {
           user: selectedUser!,
           message: inputMessage,
           timestamp: dateAsString,
-          image:
-            imageUrl && (imageUrl.startsWith("http") ? imageUrl : undefined),
+          image: imageUrl && (imageUrl.startsWith("http") ? imageUrl : undefined),
           likes: 0,
           likedBy: [],
           lostObjectId: id,
+          hasNewMessage: false, 
+          sender:"enviado"
         };
+        
 
         dispatch(addMessage(newMessage));
         setInputMessage("");
@@ -85,6 +114,7 @@ const FoundObjects = () => {
     setSelectedMessageId(null);
     setIsDialogOpen(false);
   };
+
   const handleReportSent = () => {
     if (selectedMessageId && status !== "finalizado") {
       if (selectedUser && id) {
@@ -102,6 +132,7 @@ const FoundObjects = () => {
       handleCloseDialog();
     }
   };
+
   const handleReportReceived = () => {
     if (selectedMessageId && status !== "finalizado") {
       if (selectedUser && id) {
@@ -137,7 +168,6 @@ const FoundObjects = () => {
         <Typography variant="h5" gutterBottom margin={2}>
           Bienvenido/a {selectedUser?.name.first}
         </Typography>
-
         <Box
           display="flex"
           flexDirection="column"
@@ -159,17 +189,27 @@ const FoundObjects = () => {
                       {msg.user.name.first} {msg.user.name.last}
                     </Typography>
                   </Box>
-                  <Typography>{msg.message}</Typography>
-                  {msg.image && (
-                    <img
-                      src={msg.image}
-                      alt="Mensaje con imagen"
-                      style={{ maxWidth: "100%" }}
-                    />
-                  )}
-                  <Typography variant="caption" color="textSecondary" mt={1}>
-                    Enviado: {new Date(msg.timestamp).toLocaleTimeString()}
-                  </Typography>
+                  <Box>
+                    <Typography>{msg.message}</Typography>
+                    {msg.image && (
+                      <img
+                        src={msg.image}
+                        alt="Mensaje con imagen"
+                        style={{ maxWidth: "100%" }}
+                      />
+                    )}
+                    <Typography variant="caption" color="textSecondary" mt={1}>
+                      Enviado: {new Date(msg.timestamp).toLocaleTimeString()}
+                    </Typography>
+                  </Box>
+                  {index === filteredMessages.length - 1 &&
+                    showNewMessageAlert && (
+                      <Box mt={1}>
+                        <Badge badgeContent="Nuevo" color="secondary">
+                          <MailIcon color="action" />
+                        </Badge>
+                      </Box>
+                    )}
                 </CardContent>
               </Card>
             ))
@@ -201,6 +241,7 @@ const FoundObjects = () => {
             sx={{ mb: "2" }}
           />
         </Paper>
+
         <Box sx={{ display: "flex" }} mt={2}>
           <Button
             variant="contained"

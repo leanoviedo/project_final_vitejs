@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   AppBar,
   Box,
@@ -10,6 +10,7 @@ import {
   MenuItem,
   Avatar,
   Grid,
+  Badge,
 } from "@mui/material";
 import AirplanemodeActiveOutlinedIcon from "@mui/icons-material/AirplanemodeActiveOutlined";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -18,10 +19,13 @@ import ListAltIcon from "@mui/icons-material/ListAlt";
 import ReportIcon from "@mui/icons-material/Report";
 import OutputIcon from "@mui/icons-material/Output";
 import { Link, useNavigate } from "react-router-dom";
-import { UserData } from "../model/interface";
+import { UserData } from "../model/interface"; 
 import { useMediaQuery } from "@mui/material";
-
+import MailIcon from "@mui/icons-material/Mail";
+import { useAppSelector, useAppDispatch } from "../redux/hooks"; 
+import { markMessageAsRead, selectMessages } from "../redux/slices/ChatSlices";
 const CustomNavbar = () => {
+  const dispatch = useAppDispatch();
   const [storedUser, setStoredUser] = useState<UserData | null>(null);
   const [mainMenuAnchor, setMainMenuAnchor] = useState<null | HTMLElement>(
     null
@@ -29,8 +33,11 @@ const CustomNavbar = () => {
   const [avatarMenuAnchor, setAvatarMenuAnchor] = useState<null | HTMLElement>(
     null
   );
+  const messages = useAppSelector(selectMessages);
+
   const isMobile = useMediaQuery("(max-width:600px)");
   const navigate = useNavigate();
+
   useEffect(() => {
     const storedUserData = localStorage.getItem("userData");
     if (storedUserData) {
@@ -46,9 +53,7 @@ const CustomNavbar = () => {
   };
 
   const handleMainMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    if (isMobile) {
-      setMainMenuAnchor(event.currentTarget);
-    }
+    setMainMenuAnchor(event.currentTarget);
   };
 
   const handleMainMenuClose = () => {
@@ -62,6 +67,21 @@ const CustomNavbar = () => {
   const handleAvatarMenuClose = () => {
     setAvatarMenuAnchor(null);
   };
+
+  const handleReadMessages = () => {
+    messages.forEach((message) => {
+      if (message.hasNewMessage && message.user.email === storedUser?.email) {
+        dispatch(markMessageAsRead(message.id));
+      }
+    });
+  };
+
+  const unreadMessagesCount = messages.reduce((count, message) => {
+    if (message.hasNewMessage && message.user.email === storedUser?.email) {
+      return count + 1;
+    }
+    return count;
+  }, 0);
 
   return (
     <AppBar position="static" sx={{ margin: 1, padding: 1 }}>
@@ -81,7 +101,7 @@ const CustomNavbar = () => {
             color="inherit"
             component={Link}
             to="/LandingPage"
-            onClick={handleMainMenuOpen}
+            onClick={handleMainMenuClose}
           >
             <ReportIcon />
             Reportar objeto
@@ -90,7 +110,7 @@ const CustomNavbar = () => {
             color="inherit"
             component={Link}
             to="/LostObjectsDetails"
-            onClick={handleMainMenuOpen}
+            onClick={handleMainMenuClose}
           >
             <SearchIcon />
             Buscador de objetos perdidos
@@ -99,29 +119,36 @@ const CustomNavbar = () => {
             color="inherit"
             component={Link}
             to="/LostAndFoundList"
-            onClick={handleMainMenuOpen}
+            onClick={handleMainMenuClose}
           >
             <ListAltIcon />
             Lista de reportes
           </Button>
+          {unreadMessagesCount > 0 && (
+            <IconButton color="inherit" onClick={handleReadMessages}>
+              <Badge badgeContent={unreadMessagesCount} color="secondary">
+                <MailIcon />
+              </Badge>
+            </IconButton>
+          )}
         </Box>
-        <Grid>
-          <IconButton
-            aria-label="account of current user"
-            aria-controls="avatar-menu-appbar"
-            aria-haspopup="true"
-            onClick={handleAvatarMenuOpen}
-            color="inherit"
-          >
-            {storedUser && (
+        {storedUser && (
+          <Grid>
+            <IconButton
+              aria-label="account of current user"
+              aria-controls="avatar-menu-appbar"
+              aria-haspopup="true"
+              onClick={handleAvatarMenuOpen}
+              color="inherit"
+            >
               <Avatar
-                alt=""
+                alt="User Avatar"
                 src={storedUser.picture?.large}
                 sx={{ width: 56, height: 56 }}
               />
-            )}
-          </IconButton>
-        </Grid>
+            </IconButton>
+          </Grid>
+        )}
         <Menu
           id="avatar-menu-appbar"
           anchorEl={avatarMenuAnchor}
@@ -130,7 +157,7 @@ const CustomNavbar = () => {
         >
           <MenuItem onClick={handleLogout}>
             <OutputIcon />
-            cerrar sesión
+            Cerrar sesión
           </MenuItem>
         </Menu>
         {isMobile && (
@@ -145,17 +172,11 @@ const CustomNavbar = () => {
             }}
           >
             <IconButton
-              aria-label="account of current user"
+              aria-label="open drawer"
               aria-controls="main-menu-appbar"
               aria-haspopup="true"
               onClick={handleMainMenuOpen}
               color="inherit"
-              sx={{
-                display: {
-                  xs: "block",
-                  md: "none",
-                },
-              }}
             >
               <MenuIcon />
             </IconButton>
@@ -164,12 +185,6 @@ const CustomNavbar = () => {
               anchorEl={mainMenuAnchor}
               open={Boolean(mainMenuAnchor)}
               onClose={handleMainMenuClose}
-              sx={{
-                display: {
-                  xs: "block",
-                  md: "none",
-                },
-              }}
             >
               <MenuItem
                 onClick={handleMainMenuClose}
@@ -185,7 +200,7 @@ const CustomNavbar = () => {
                 to="/LostObjectsDetails"
               >
                 <SearchIcon />
-                buscador de objetos perdidos
+                Buscador de objetos perdidos
               </MenuItem>
               <MenuItem
                 onClick={handleMainMenuClose}
@@ -195,7 +210,7 @@ const CustomNavbar = () => {
                 <ListAltIcon />
                 Mis reportes
               </MenuItem>
-              <MenuItem onClick={handleLogout} component={Link} to="/">
+              <MenuItem onClick={handleLogout}>
                 <OutputIcon />
                 Cerrar sesión
               </MenuItem>
@@ -206,4 +221,5 @@ const CustomNavbar = () => {
     </AppBar>
   );
 };
+
 export default CustomNavbar;

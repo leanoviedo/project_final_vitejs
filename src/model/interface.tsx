@@ -54,6 +54,7 @@ interface UserData {
 }
 
 interface LostObjectData {
+  hasNewMessages: boolean;
   id: string;
   country: Country;
   city: City;
@@ -109,14 +110,18 @@ interface UserLoginState {
 interface LostObjectState {
   lostObjects: LostObjectData[];
 }
+
 interface Message {
-  id: number | any;
+  sender: string | undefined;
+  id: string;
   user: UserData;
   message: string;
   timestamp: string;
   image?: string;
-  lostObjectId?: string | null;
+  lostObjectId?: string;
+  hasNewMessage: boolean; 
 }
+
 
 interface MessageState {
   messages: Message[];

@@ -20,6 +20,8 @@ import {
   ListItem,
   ListItemAvatar,
   Grid,
+  Alert,
+  Snackbar,
 } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import CustomNavbar from "./CustomNavbar";
@@ -53,7 +55,8 @@ const DetailsReports = () => {
     lat: number;
     lng: number;
   }>({ lat: 0, lng: 0 });
-
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
   const mapRef = useRef<any>(null);
   const markerRef = useRef<any>(null);
   const infoWindowRef = useRef<any>(null);
@@ -98,7 +101,9 @@ const DetailsReports = () => {
   const handleCloseDialog = () => {
     setDialogOpen(false);
   };
-
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
+  };
   const handleConfirmReclamar = () => {
     const dataReclamed = {
       userRelamed: userLogin,
@@ -109,9 +114,10 @@ const DetailsReports = () => {
         lostObject.status === "enviado" ||
         lostObject.status === "finalizado"
       ) {
-        console.log(
+        setSnackbarMessage(
           "Este objeto ya ha sido reclamado o tiene un estado final."
         );
+        setSnackbarOpen(true);
       } else {
         const dataToReclaim: DataToReclaim = {
           userReclamed: dataReclamed.userRelamed!,
@@ -401,6 +407,21 @@ const DetailsReports = () => {
                 </CardContent>
               </Card>
             </Grid>
+            <Snackbar
+              open={snackbarOpen}
+              autoHideDuration={6000}
+              onClose={handleCloseSnackbar}
+              anchorOrigin={{ vertical: "top", horizontal: "right" }}
+              sx={{ marginTop: "150px" }}
+            >
+              <Alert
+                onClose={() => setSnackbarOpen(false)}
+                severity={snackbarMessage ? "success" : "error"}
+                sx={{ width: "100%" }}
+              >
+                {snackbarMessage}
+              </Alert>
+            </Snackbar>
           </Grid>
 
           <CardContent>

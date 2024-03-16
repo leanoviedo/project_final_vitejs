@@ -81,12 +81,20 @@ const FormLogin = () => {
       }
     },
   });
-
+// Establecer valores en el formulario
   const toggleRegisteredUsersDialog = () => {
     setRegisteredUsersDialogOpen(!isRegisteredUsersDialogOpen);
   };
   const handleUserSelection = (user: UserData) => {
     setSelectedUser(user);
+    formik.setValues(
+      {
+        email: user.email,
+        password: user.login.password,
+      },
+      false
+    );
+    setRegisteredUsersDialogOpen(false);
   };
 
   useEffect(() => {
