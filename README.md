@@ -1,5 +1,7 @@
+# Airport Missing Things (AMT)
+
 <div align="center">
- <a href='https://postimages.org/' target='_blank'><img src='https://i.postimg.cc/xTJTKx9V/Airport-Missing-Things.png' border='0' alt='Airport-Missing-Things' Width=750px height=550px /></a>
+ <a href="https://ibb.co/Zm93B4Z"><img src="https://i.ibb.co/YZg6cnr/Airport-Missing-Things.png" alt="Airport-Missing-Things" border="0"></a>
 </div>
 
 ## Índice
@@ -8,25 +10,30 @@
 - [Características](#características)
 - [Funcionalidad](#funcionalidad)
 - [Tecnologías Utilizadas](#tecnologías-utilizadas)
+- [Instalación](#instalación)
+- [Uso](#uso)
 - [Desarrolladores Contribuyentes](#desarrolladores-contribuyentes)
+>[!important]
+>**Live Preview:** [Netlify.app](https://meek-naiad-b597cb.netlify.app/)
+
 
 ### Descripción del Proyecto
 
-Este proyecto se ha creado con fines educativos y prácticos, con el propósito de aplicar y poner en práctica mis conocimientos y habilidades en tecnologías, así como de ejercitar la capacidad autodidacta requerida para el desarrollo de aplicaciones web. Con la finalización de este proyecto, culmina la mentoría, consolidando la adquisición y aplicación de los fundamentos necesarios para el desarrollo exitoso de este tipo de aplicaciones.
+Airport Missing Things (AMT) es una aplicación web diseñada para abordar la problemática común de la pérdida o extravío de objetos personales en los aeropuertos. Facilita la comunicación entre los usuarios para agilizar la devolución de pertenencias extraviadas.
 
 ### Características
 
-La función principal de Airport Missing Things (AMT) es abordar la necesidad de los usuarios de aeropuertos frente a un problema común: la pérdida o extravío de objetos personales en estas instalaciones. Esta plataforma facilita la comunicación entre los usuarios para agilizar la devolución de pertenencias extraviadas.
-
-<div align="center">
- <a href="https://ibb.co/VHcbVqh"><img src="https://i.ibb.co/hXJrsmn/Screenshot-from-2023-12-27-23-04-48.png" alt="Screenshot-from-2023-12-27-23-04-48" border="0"></a>
-</div>
+- Registro de usuarios con experiencia previa en viajes a aeropuertos.
+- Interfaz intuitiva para reportar objetos perdidos o encontrados.
+- Búsqueda avanzada con filtros por país y descripción.
+- Geolocalización de objetos perdidos/encontrados en aeropuertos.
+- Sistema de mensajería para coordinar la devolución de objetos.
 
 ### Funcionalidad
 
 #### Interfaz de Usuarios No Registrados
 
-Se ha habilitado una pantalla específica para el registro de usuarios. Solo podrán registrarse aquellos que hayan tenido experiencia previa en viajes a aeropuertos y cuyos datos estén almacenados en las bases de datos del aeropuerto. Para este propósito, hemos simulado la base de datos utilizando la API de Random Users y almacenando los datos en una estructura tipo Redux. Cuando el usuario seleccione un correo electrónico registrado, el resto de los campos se completarán automáticamente. Únicamente se requerirá que el usuario agregue una contraseña de su elección en el formulario.
+Los usuarios pueden registrarse utilizando un correo electrónico previamente almacenado en la base de datos simulada del aeropuerto. Los campos del formulario se completan automáticamente con los datos correspondientes.
 
 ![Interfaz de Usuarios No Registrados](https://i.postimg.cc/tJjpgkBm/Screenshot-from-2023-12-27-23-05-06.png)
 
@@ -70,6 +77,17 @@ Al hacer clic en la tarjeta, el usuario puede acceder al chat para comunicarse c
 
 <div align="center">
  <a href="https://ibb.co/P5Vwh1S"><img src="https://i.ibb.co/zStGRPk/Screenshot-from-2023-12-28-12-16-46.png" alt="Screenshot-from-2023-12-28-12-16-46" border="0"></a>
+</div>
+
+### Diseño Responsive
+
+<div align="center">
+<a href="https://ibb.co/DWNzrst"><img src="https://i.ibb.co/1Q37zhL/Screenshot-from-2024-03-20-12-22-06.png" alt="Screenshot-from-2024-03-20-12-22-06" border="0"></a>
+</div>
+ 
+</div>
+<div align="center">
+<a href="https://ibb.co/4JGX4SZ"><img src="https://i.ibb.co/52ySsjW/Screenshot-from-2024-03-20-10-47-20.png" alt="Screenshot-from-2024-03-20-10-47-20" border="0"></a>
 </div>
 
 ### Tecnologías Utilizadas
@@ -124,16 +142,39 @@ Las tecnologías utilizadas para el desarrollo de esta web app fueron:
 
 ##### Frameworks React de producción
 
-- vite
+- Vite
 
 ### Desarrolladores Contribuyentes
 
-##### Desarrollado por:
+### Tecnologías Utilizadas
 
-Leandro Oviedo, Junior, Front-End Developer.
-[Perfil de LinkedIn](https://www.linkedin.com/in/leandro-oviedo-418b3b2a4/)
+- JavaScript
+- React
+- TypeScript
+- React-Router
+- Material UI
+- Axios
+- Formik
+- Redux Toolkit
+- Google Map React
+- Vite
 
-##### Code-Review a cargo de:
+### Instalación
 
-Fernando A. González, Software Lead Engineer.
-[Perfil de LinkedIn](https://www.linkedin.com/in/fernando-a-gonzalez/)
+1. Clona el repositorio: `git clone https://github.com/tuusuario/nombre-del-repositorio.git`
+2. Instala las dependencias: `npm install`
+3. Inicia la aplicación: `npm start`
+
+### Uso
+
+1. Regístrate utilizando un correo electrónico válido.
+2. Explora la plataforma y reporta objetos perdidos o encontrados.
+3. Utiliza el buscador para encontrar objetos específicos.
+4. Comunícate con otros usuarios para coordinar la devolución de objetos.
+
+
+### Desarrolladores Contribuyentes
+
+- **Desarrollado por:** Leandro Oviedo, Junior, Front-End Developer. [Perfil de LinkedIn](https://www.linkedin.com/in/leandro-oviedo-418b3b2a4/)
+- **Code-Review a cargo de:** Fernando A. González, Software Lead Engineer. [Perfil de LinkedIn](https://www.linkedin.com/in/fernando-a-gonzalez/)
+
