@@ -14,19 +14,29 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Badge,
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
+import MaiIcon from "@mui/icons-material/Mail";
 import CustomNavbar from "./CustomNavbar";
 import { v4 as uuidv4 } from "uuid";
 import { useParams } from "react-router-dom";
 import dayjs from "dayjs";
-import { addMessage, selectMenssage } from "../redux/slices/ChatSlices";
+import {
+  addMessage,
+  markMessageAsRead,
+  selectMenssage,
+} from "../redux/slices/ChatSlices";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { updateLostObjectStatus } from "../redux/slices/LostObjectSlice";
+import {
+  selectLostObjects,
+  updateLostObjectStatus,
+} from "../redux/slices/LostObjectSlice";
 import { UserData } from "../model/interface";
 
 const FoundObjects = () => {
   const messages = useAppSelector(selectMenssage);
+  const lostObjects = useAppSelector(selectLostObjects);
   const dispatch = useAppDispatch();
   const [isReclaimed, setIsReclaimed] = useState(false);
   const [inputMessage, setInputMessage] = useState("");
@@ -36,6 +46,7 @@ const FoundObjects = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedMessageId, setSelectedMessageId] = useState(null);
   const [storedUser, setStoredUser] = useState<UserData | null>(null);
+  const [showNewMessageAlert, setShowNewMessageAlert] = useState(false);
   useEffect(() => {
     const storedUserData = localStorage.getItem("userData");
     if (storedUserData) {
@@ -43,6 +54,14 @@ const FoundObjects = () => {
       setStoredUser(parsedUserData);
     }
   }, []);
+  const userSender = lostObjects.find(
+    (userReport) => userReport.userReport?.id?.value
+  );
+  console.log(userSender, "otra vez");
+  const recipientUser = lostObjects.find(
+    (userReport) => userReport.userReclamed?.id?.value
+  );
+  // console.log(recipientUser,"volve a buscar")
   const selectedUser = storedUser;
   const handleMessageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputMessage(e.target.value);
@@ -67,15 +86,42 @@ const FoundObjects = () => {
           likes: 0,
           likedBy: [],
           lostObjectId: id,
+          messageRead: false,
+          userSender: userSender?.userReport,
+          recipientUser: recipientUser?.userReclamed
         };
-
+        dispatch(markMessageAsRead(newMessage.id));
         dispatch(addMessage(newMessage));
         setInputMessage("");
         setImageUrl("");
+
+        console.log("estoy en componente");
+        if (recipientUser?.id===selectedUser.email) {
+         
+        }
       }
     }
   };
 
+  useEffect(() => {
+    if (messages.length) {
+      const hasNewMessage = messages.some(
+        (msg, index) =>
+          msg.lostObjectId === id &&
+          index === messages.length - 1 &&
+          msg.user.email !== storedUser?.email &&
+          !msg.messageRead
+      );
+      setShowNewMessageAlert(hasNewMessage);
+      if (hasNewMessage) {
+        const timer = setTimeout(() => {
+          setShowNewMessageAlert(false);
+          console.log("asldkjsalkdjslakj")
+        }, 4 * 1000);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [messages, storedUser, id]);
   const handleOpenDialog = (messageId: any) => {
     setSelectedMessageId(messageId);
     setIsDialogOpen(true);
@@ -91,6 +137,7 @@ const FoundObjects = () => {
         const dataToReclaim = {
           userReclamed: selectedUser!,
           idLostObject: id,
+          messageRead: true,
           status: "enviado",
         };
         dispatch(updateLostObjectStatus(dataToReclaim));
@@ -137,7 +184,6 @@ const FoundObjects = () => {
         <Typography variant="h5" gutterBottom margin={2}>
           Bienvenido/a {selectedUser?.name.first}
         </Typography>
-
         <Box
           display="flex"
           flexDirection="column"
@@ -159,17 +205,27 @@ const FoundObjects = () => {
                       {msg.user.name.first} {msg.user.name.last}
                     </Typography>
                   </Box>
-                  <Typography>{msg.message}</Typography>
-                  {msg.image && (
-                    <img
-                      src={msg.image}
-                      alt="Mensaje con imagen"
-                      style={{ maxWidth: "100%" }}
-                    />
-                  )}
-                  <Typography variant="caption" color="textSecondary" mt={1}>
-                    Enviado: {new Date(msg.timestamp).toLocaleTimeString()}
-                  </Typography>
+                  <Box>
+                    <Typography>{msg.message}</Typography>
+                    {msg.image && (
+                      <img
+                        src={msg.image}
+                        alt="Mensaje con imagen"
+                        style={{ maxWidth: "100%" }}
+                      />
+                    )}
+                    <Typography variant="caption" color="textSecondary" mt={1}>
+                      Enviado: {new Date(msg.timestamp).toLocaleTimeString()}
+                    </Typography>
+                  </Box>
+                  {index === filteredMessages.length - 1 &&
+                    showNewMessageAlert && (
+                      <Box mt={1}>
+                        <Badge badgeContent="Nuevo" color="secondary">
+                          <MaiIcon color="action" />
+                        </Badge>
+                      </Box>
+                    )}
                 </CardContent>
               </Card>
             ))
@@ -201,6 +257,7 @@ const FoundObjects = () => {
             sx={{ mb: "2" }}
           />
         </Paper>
+
         <Box sx={{ display: "flex" }} mt={2}>
           <Button
             variant="contained"
