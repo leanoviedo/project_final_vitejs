@@ -10,6 +10,7 @@ import {
   MenuItem,
   Avatar,
   Grid,
+  Badge,
 } from "@mui/material";
 import AirplanemodeActiveOutlinedIcon from "@mui/icons-material/AirplanemodeActiveOutlined";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -20,6 +21,8 @@ import OutputIcon from "@mui/icons-material/Output";
 import { Link, useNavigate } from "react-router-dom";
 import { UserData } from "../model/interface";
 import { useMediaQuery } from "@mui/material";
+import { selectMenssage } from "../redux/slices/ChatSlices";
+import { useAppSelector } from "../redux/hooks";
 
 const CustomNavbar = () => {
   const [storedUser, setStoredUser] = useState<UserData | null>(null);
@@ -31,6 +34,12 @@ const CustomNavbar = () => {
   );
   const isMobile = useMediaQuery("(max-width:600px)");
   const navigate = useNavigate();
+  const messageData = useAppSelector(selectMenssage);
+  const unreadMessagesCount = messageData.filter(
+    (message) =>
+      !message.messageRead && message.user.email !== storedUser?.email
+  ).length;
+
   useEffect(() => {
     const storedUserData = localStorage.getItem("userData");
     if (storedUserData) {
@@ -101,6 +110,11 @@ const CustomNavbar = () => {
             to="/LostAndFoundList"
             onClick={handleMainMenuOpen}
           >
+            <Badge
+              badgeContent={unreadMessagesCount}
+              color="secondary"
+              sx={{ m: 1 }}
+            ></Badge>
             <ListAltIcon />
             Lista de reportes
           </Button>
@@ -191,10 +205,14 @@ const CustomNavbar = () => {
                 onClick={handleMainMenuClose}
                 component={Link}
                 to="/LostAndFoundList"
+                sx={{ p: 1 }}
               >
-                <ListAltIcon />
-                Mis reportes
+                <Badge badgeContent={unreadMessagesCount} color="secondary">
+                  <ListAltIcon />
+                  Mis reportes
+                </Badge>
               </MenuItem>
+
               <MenuItem onClick={handleLogout} component={Link} to="/">
                 <OutputIcon />
                 Cerrar sesión

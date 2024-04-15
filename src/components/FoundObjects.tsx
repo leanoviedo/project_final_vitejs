@@ -47,6 +47,7 @@ const FoundObjects = () => {
   const [selectedMessageId, setSelectedMessageId] = useState(null);
   const [storedUser, setStoredUser] = useState<UserData | null>(null);
   const [showNewMessageAlert, setShowNewMessageAlert] = useState(false);
+
   useEffect(() => {
     const storedUserData = localStorage.getItem("userData");
     if (storedUserData) {
@@ -54,18 +55,27 @@ const FoundObjects = () => {
       setStoredUser(parsedUserData);
     }
   }, []);
-  const userSender = lostObjects.find(
-    (userReport) => userReport.userReport?.id?.value
-  );
-  console.log(userSender, "otra vez");
-  const recipientUser = lostObjects.find(
-    (userReport) => userReport.userReclamed?.id?.value
-  );
-  // console.log(recipientUser,"volve a buscar")
+  const userSender = lostObjects.find((item) => item.userReport?.email);
+
+  const userRecipient = lostObjects.find((item) => item.userReclamed?.email);
+  const markMessagesAsRead = () => {
+    const unreadMessages = messages.filter(
+      (msg) =>
+        msg.lostObjectId === id &&
+        msg.user.email !== storedUser?.email &&
+        !msg.messageRead.length
+    );
+
+    unreadMessages.forEach((msg) => {
+      dispatch(markMessageAsRead(msg.id));
+    });
+  };
+
   const selectedUser = storedUser;
   const handleMessageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputMessage(e.target.value);
   };
+
   const handleImageUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setImageUrl(e.target.value);
   };
@@ -88,17 +98,13 @@ const FoundObjects = () => {
           lostObjectId: id,
           messageRead: false,
           userSender: userSender?.userReport,
-          recipientUser: recipientUser?.userReclamed
+          userRecipient: userRecipient?.userReclamed,
         };
         dispatch(markMessageAsRead(newMessage.id));
         dispatch(addMessage(newMessage));
         setInputMessage("");
         setImageUrl("");
-
         console.log("estoy en componente");
-        if (recipientUser?.id===selectedUser.email) {
-         
-        }
       }
     }
   };
@@ -116,7 +122,7 @@ const FoundObjects = () => {
       if (hasNewMessage) {
         const timer = setTimeout(() => {
           setShowNewMessageAlert(false);
-          console.log("asldkjsalkdjslakj")
+          markMessagesAsRead();
         }, 4 * 1000);
         return () => clearTimeout(timer);
       }

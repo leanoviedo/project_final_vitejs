@@ -17,16 +17,21 @@ const chatSlice = createSlice({
     addMessage: (state, action: PayloadAction<Message>) => {
       state.messages.push({ ...action.payload });
     },
-    markMessageAsRead: (state, action: PayloadAction<String>) => {
+    markMessageAsRead: (state, action: PayloadAction<string>) => {
       const messageId = action.payload;
-      console.log(messageId);
-      const messageToMark = state.messages.find(message => message.id === messageId);
+      const messageToMark = state.messages.find(
+        (message) => message.id === messageId
+      );
       if (messageToMark) {
         messageToMark.messageRead = true;
       }
     },
   },
 });
+
+export const selectUnreadMessages = (state: RootState) =>
+  state.chat.messages.filter((message) => !message.messageRead);
+
 export const { addMessage, markMessageAsRead } = chatSlice.actions;
 export const selectMenssage = (state: RootState) => state.chat.messages;
 export default chatSlice.reducer;

@@ -54,6 +54,7 @@ interface UserData {
 }
 
 interface LostObjectData {
+  hasNewMessages: any;
   id: string;
   country: Country;
   city: City;
@@ -121,9 +122,8 @@ interface Message {
   timestamp: string;
   image?: string;
   lostObjectId?: string | null;
-  // userReport:LostObjectData
-  // userReclamed:LostObjectData
-
+  userReport?: LostObjectData;
+  userReclamed?: LostObjectData;
 }
 
 interface MessageState {
