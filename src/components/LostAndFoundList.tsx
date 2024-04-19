@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Typography,
   Grid,
@@ -18,19 +18,20 @@ import { selectLostObjects } from "../redux/slices/LostObjectSlice";
 import CustomNavbar from "./CustomNavbar";
 import { useNavigate } from "react-router-dom";
 import { UserData, LostObjectData } from "../model/interface";
-import { markMessageAsRead, selectMessages } from "../redux/slices/ChatSlices";
+import { markMessageAsRead, selectMenssage } from "../redux/slices/ChatSlices";
 import MailIcon from "@mui/icons-material/Mail";
 
 const LostAndFoundList = () => {
   const lostObjects = useAppSelector(selectLostObjects);
   const [storedUser, setStoredUser] = useState<UserData | null>(null);
   const navigate = useNavigate();
-  const messageData = useAppSelector(selectMessages);
+  const messageData = useAppSelector(selectMenssage);
   const dispatch = useAppDispatch();
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [hasNewMessagesForThisObject, setHasNewMessagesForThisObject] =
-    useState(false);
+  const [messageNotice, setmessageNotice] = useState("");
+  const [newMessagesObjects, setNewMessagesObjects] = useState<string[]>([]);
+  const [hasNewMessages, setHasNewMessages] = useState(false); // Variable para controlar si hay nuevos mensajes
 
   useEffect(() => {
     const storedUserData = localStorage.getItem("userData");
@@ -41,36 +42,38 @@ const LostAndFoundList = () => {
   }, []);
 
   useEffect(() => {
-    const hasNewMessagesForAnyObject = lostObjects.some((item) =>
-      messageData.some(
-        (message) =>
-          message.lostObjectId === item.id &&
-          message.hasNewMessage === item.hasNewMessages &&
-          message.sender !== storedUser?.email
-      )
+    const newMessages = messageData.filter(
+      (message) =>
+        message.messageRead === false &&
+        message.user.email !== storedUser?.email
     );
 
-    if (!hasNewMessagesForAnyObject === snackbarOpen) {
-      setSnackbarMessage("¡Tienes un nuevo mensaje!");
-      setHasNewMessagesForThisObject(hasNewMessagesForAnyObject);
-    } else if (!hasNewMessagesForAnyObject && !snackbarMessage) {
+    const newMessagesIds = newMessages.map((message) => message.lostObjectId);
+    setNewMessagesObjects(newMessagesIds.filter((id): id is string => !!id));
+    const hasNewMessagesForAnyObject = newMessagesIds.length > 0;
+    setHasNewMessages(hasNewMessagesForAnyObject); 
+    if (hasNewMessagesForAnyObject && !snackbarOpen) {
+      console.log("Abriendo Snackbar...");
+      setmessageNotice("¡Tienes un nuevo mensaje!");
+      setSnackbarOpen(true);
       handleCloseSnackbar();
-    } else {
+    } else if (!hasNewMessagesForAnyObject && snackbarOpen) {
+      console.log("Cerrando Snackbar...");
     }
-  }, [lostObjects, messageData, storedUser, snackbarOpen]);
-  const handleChangeTab = (_event: React.SyntheticEvent, newValue: number) => {
-    setTabValue(newValue);
-  };
+  }, [messageData, storedUser, snackbarOpen]);
 
   const handleLinkClick = (item: LostObjectData) => {
+    console.log("Se hizo clic en un objeto:", item);
     if (item.status !== "reclamado") {
       console.log("Reporte No Reclamado:", item);
       setSnackbarMessage("Reporte No Reclamado...!!!");
       setSnackbarOpen(true);
+      dispatch(markMessageAsRead(item.id));
     } else {
-      console.log("Reporte Reclamado:", item);
+      setNewMessagesObjects(
+        newMessagesObjects.filter((objectId) => objectId !== item.id)
+      );
       navigate(`/FoundObjects/${item.id}`);
-      handleCloseSnackbar();
     }
   };
 
@@ -78,22 +81,34 @@ const LostAndFoundList = () => {
     setSnackbarOpen(false);
     dispatch(markMessageAsRead);
   };
-  const renderLostObject = (item: LostObjectData) => {
-    const isClaimed = item.status === "reclamado";
 
+  const renderLostObject = (item: LostObjectData) => {
+    const hasUnreadMessages = messageData.some(
+      (message) =>
+        message.lostObjectId === item.id &&
+        message.messageRead === false &&
+        message.user.email !== storedUser?.email
+    );
     return (
       <Grid item xs={12} sm={6} md={4} lg={3} key={item.id}>
         <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
-          <CardActionArea onClick={() => handleLinkClick(item)}>
+          <CardActionArea
+            onClick={() => handleLinkClick(item)}
+            disabled={
+              newMessagesObjects.includes(item.id) !== hasUnreadMessages
+            }
+          >
             <Box mt={1}>
-              <Badge
-                badgeContent="Nuevo"
-                color="secondary"
-                invisible={hasNewMessagesForThisObject}
-                sx={{ position: "absolute", top: 20, right: 20 }}
-              >
-                <MailIcon color="info" />
-              </Badge>
+              {newMessagesObjects.includes(item.id) && (
+                <Badge
+                  badgeContent="Nuevo"
+                  color="secondary"
+                  sx={{ position: "absolute", top: 20, right: 20 }}
+                  component="span"
+                >
+                  <MailIcon color="info" />
+                </Badge>
+              )}
             </Box>
             <CardHeader title={item.description} />
             <CardContent
@@ -140,23 +155,10 @@ const LostAndFoundList = () => {
             </CardContent>
           </CardActionArea>
         </Card>
-        <Snackbar
-          open={snackbarOpen}
-          autoHideDuration={6000}
-          onClose={handleCloseSnackbar}
-          anchorOrigin={{ vertical: "top", horizontal: "right" }}
-        >
-          <Alert
-            onClose={() => setSnackbarOpen(false)}
-            severity={isClaimed ? "success" : "error"}
-            sx={{ width: "100%" }}
-          >
-            {snackbarMessage}
-          </Alert>
-        </Snackbar>
       </Grid>
     );
   };
+
   const userReports = lostObjects.filter(
     (item) => item.userReport?.email === storedUser?.email
   );
@@ -177,7 +179,7 @@ const LostAndFoundList = () => {
         <Tabs
           selectionFollowsFocus
           value={tabValue}
-          onChange={handleChangeTab}
+          onChange={(_event, newValue) => setTabValue(newValue)}
           variant="fullWidth"
           aria-label="basic tabs example"
         >
@@ -195,6 +197,17 @@ const LostAndFoundList = () => {
           </Grid>
         </Box>
       </Grid>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert onClose={() => setSnackbarOpen(false)} sx={{ width: "100%" }}>
+          {snackbarMessage}
+          {hasNewMessages && messageNotice} {/* Utiliza hasNewMessages aquí */}
+        </Alert>
+      </Snackbar>
     </Grid>
   );
 };

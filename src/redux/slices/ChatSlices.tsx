@@ -1,6 +1,7 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState } from "../Store";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { Message } from "../../model/interface";
+import { RootState } from "../Store";
+
 interface ChatState {
   messages: Message[];
 }
@@ -14,20 +15,23 @@ const chatSlice = createSlice({
   initialState,
   reducers: {
     addMessage: (state, action: PayloadAction<Message>) => {
-      state.messages.push(action.payload);
+      state.messages.push({ ...action.payload });
     },
     markMessageAsRead: (state, action: PayloadAction<string>) => {
-      state.messages = state.messages.map((message) =>
-        message.id === action.payload
-          ? { ...message, hasNewMessage: false }
-          : message
+      const messageId = action.payload;
+      const messageToMark = state.messages.find(
+        (message) => message.id === messageId
       );
+      if (messageToMark) {
+        messageToMark.messageRead = true;
+      }
     },
   },
 });
 
+export const selectUnreadMessages = (state: RootState) =>
+  state.chat.messages.filter((message) => !message.messageRead);
+
 export const { addMessage, markMessageAsRead } = chatSlice.actions;
-
-export const selectMessages = (state: RootState) => state.chat.messages;
-
+export const selectMenssage = (state: RootState) => state.chat.messages;
 export default chatSlice.reducer;

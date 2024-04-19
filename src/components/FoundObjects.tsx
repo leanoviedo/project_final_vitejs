@@ -17,19 +17,27 @@ import {
   Badge,
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
+import MaiIcon from "@mui/icons-material/Mail";
 import CustomNavbar from "./CustomNavbar";
 import { v4 as uuidv4 } from "uuid";
 import { useParams } from "react-router-dom";
 import dayjs from "dayjs";
-import { addMessage, markMessageAsRead, selectMessages } from "../redux/slices/ChatSlices";
+import {
+  addMessage,
+  markMessageAsRead,
+  selectMenssage,
+} from "../redux/slices/ChatSlices";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { updateLostObjectStatus } from "../redux/slices/LostObjectSlice";
+import {
+  selectLostObjects,
+  updateLostObjectStatus,
+} from "../redux/slices/LostObjectSlice";
 import { UserData } from "../model/interface";
-import MailIcon from "@mui/icons-material/Mail";
 
 const FoundObjects = () => {
+  const messages = useAppSelector(selectMenssage);
+  const lostObjects = useAppSelector(selectLostObjects);
   const dispatch = useAppDispatch();
-  const messages = useAppSelector(selectMessages,);
   const [isReclaimed, setIsReclaimed] = useState(false);
   const [inputMessage, setInputMessage] = useState("");
   const [imageUrl, setImageUrl] = useState("");
@@ -47,29 +55,23 @@ const FoundObjects = () => {
       setStoredUser(parsedUserData);
     }
   }, []);
+  const userSender = lostObjects.find((item) => item.userReport?.email);
 
-  useEffect(() => {
-    if (messages.length) {
-      const hasNewMessage = messages.some(
-        (msg, index) =>
-          msg.lostObjectId === id &&
-          index === messages.length - 1 &&
-          msg.user.email !== storedUser?.email
-      );
-      setShowNewMessageAlert(hasNewMessage);
-      if (hasNewMessage) {
-        const timer = setTimeout(() => {
-          setShowNewMessageAlert(false);
-          dispatch(markMessageAsRead);
-        }, 4 * 1000);
-        return () => clearTimeout(timer);
-        
-      }
-    }
-  }, [messages, storedUser, id]);
+  const userRecipient = lostObjects.find((item) => item.userReclamed?.email);
+  const markMessagesAsRead = () => {
+    const unreadMessages = messages.filter(
+      (msg) =>
+        msg.lostObjectId === id &&
+        msg.user.email !== storedUser?.email &&
+        !msg.messageRead.length
+    );
+
+    unreadMessages.forEach((msg) => {
+      dispatch(markMessageAsRead(msg.id));
+    });
+  };
 
   const selectedUser = storedUser;
-
   const handleMessageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputMessage(e.target.value);
   };
@@ -89,22 +91,43 @@ const FoundObjects = () => {
           user: selectedUser!,
           message: inputMessage,
           timestamp: dateAsString,
-          image: imageUrl && (imageUrl.startsWith("http") ? imageUrl : undefined),
+          image:
+            imageUrl && (imageUrl.startsWith("http") ? imageUrl : undefined),
           likes: 0,
           likedBy: [],
           lostObjectId: id,
-          hasNewMessage: false, 
-          sender:"enviado"
+          messageRead: false,
+          userSender: userSender?.userReport,
+          userRecipient: userRecipient?.userReclamed,
         };
-        
-
+        dispatch(markMessageAsRead(newMessage.id));
         dispatch(addMessage(newMessage));
         setInputMessage("");
         setImageUrl("");
+        console.log("estoy en componente");
       }
     }
   };
 
+  useEffect(() => {
+    if (messages.length) {
+      const hasNewMessage = messages.some(
+        (msg, index) =>
+          msg.lostObjectId === id &&
+          index === messages.length - 1 &&
+          msg.user.email !== storedUser?.email &&
+          !msg.messageRead
+      );
+      setShowNewMessageAlert(hasNewMessage);
+      if (hasNewMessage) {
+        const timer = setTimeout(() => {
+          setShowNewMessageAlert(false);
+          markMessagesAsRead();
+        }, 4 * 1000);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [messages, storedUser, id]);
   const handleOpenDialog = (messageId: any) => {
     setSelectedMessageId(messageId);
     setIsDialogOpen(true);
@@ -114,13 +137,13 @@ const FoundObjects = () => {
     setSelectedMessageId(null);
     setIsDialogOpen(false);
   };
-
   const handleReportSent = () => {
     if (selectedMessageId && status !== "finalizado") {
       if (selectedUser && id) {
         const dataToReclaim = {
           userReclamed: selectedUser!,
           idLostObject: id,
+          messageRead: true,
           status: "enviado",
         };
         dispatch(updateLostObjectStatus(dataToReclaim));
@@ -132,7 +155,6 @@ const FoundObjects = () => {
       handleCloseDialog();
     }
   };
-
   const handleReportReceived = () => {
     if (selectedMessageId && status !== "finalizado") {
       if (selectedUser && id) {
@@ -206,7 +228,7 @@ const FoundObjects = () => {
                     showNewMessageAlert && (
                       <Box mt={1}>
                         <Badge badgeContent="Nuevo" color="secondary">
-                          <MailIcon color="action" />
+                          <MaiIcon color="action" />
                         </Badge>
                       </Box>
                     )}

@@ -54,7 +54,7 @@ interface UserData {
 }
 
 interface LostObjectData {
-  hasNewMessages: boolean;
+  
   id: string;
   country: Country;
   city: City;
@@ -72,6 +72,10 @@ interface DataToReclaim {
   userReclamed: UserData;
   idLostObject: string | undefined;
   status: string;
+  id?: {
+    name: string;
+    value: string;
+  };
 }
 
 interface Country {
@@ -110,18 +114,18 @@ interface UserLoginState {
 interface LostObjectState {
   lostObjects: LostObjectData[];
 }
-
 interface Message {
-  sender: string | undefined;
-  id: string;
+
+  messageRead: any;
+  id: number | any;
   user: UserData;
   message: string;
   timestamp: string;
   image?: string;
-  lostObjectId?: string;
-  hasNewMessage: boolean; 
+  lostObjectId?: string | null;
+  userReport?: LostObjectData;
+  userReclamed?: LostObjectData;
 }
-
 
 interface MessageState {
   messages: Message[];

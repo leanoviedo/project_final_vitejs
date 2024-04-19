@@ -81,12 +81,20 @@ const FormLogin = () => {
       }
     },
   });
-// Establecer valores en el formulario
+  // Establecer valores en el formulario
   const toggleRegisteredUsersDialog = () => {
     setRegisteredUsersDialogOpen(!isRegisteredUsersDialogOpen);
   };
   const handleUserSelection = (user: UserData) => {
     setSelectedUser(user);
+    formik.setValues(
+      {
+        email: user.email,
+        password: user.login.password,
+      },
+      false
+    );
+    setRegisteredUsersDialogOpen(false);
     formik.setValues(
       {
         email: user.email,
@@ -114,7 +122,7 @@ const FormLogin = () => {
           width: "100%",
           maxWidth: 360,
           margin: "auto",
-          padding: 2,
+          padding:"auto",
           textAlign: "center",
         }}
       >
@@ -127,11 +135,11 @@ const FormLogin = () => {
               <ListItem
                 onClick={() => handleUserSelection(user)}
                 style={{
-                  padding: 8,
                   cursor: "pointer",
-                  transition: "background-color 0.3s",
+                  transition: "background-color 0.5s",
                   backgroundColor:
                     selectedUser === user ? "rgb(25,118,210)" : "transparent",
+                    padding:8
                 }}
               >
                 <div style={{ textAlign: "center" }}>
