@@ -95,7 +95,6 @@ const FormLogin = () => {
       false
     );
     setRegisteredUsersDialogOpen(false);
-  };
 
   useEffect(() => {
     if (selectedUser) {

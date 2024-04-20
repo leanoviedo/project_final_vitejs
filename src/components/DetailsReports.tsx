@@ -20,6 +20,8 @@ import {
   ListItem,
   ListItemAvatar,
   Grid,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import CustomNavbar from "./CustomNavbar";
@@ -67,6 +69,8 @@ const DetailsReports = () => {
   };
 
   const [isDialogOpen, setDialogOpen] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
 
   useEffect(() => {
     handleAddressDataReceived();
@@ -107,11 +111,14 @@ const DetailsReports = () => {
       if (
         lostObject.status === "reclamado" ||
         lostObject.status === "enviado" ||
-        lostObject.status === "finalizado"
+        lostObject.status === "finalizado" ||
+        lostObject.status === "reclamado"
       ) {
-        console.log(
+        setSnackbarMessage(
           "Este objeto ya ha sido reclamado o tiene un estado final."
         );
+        setSnackbarOpen(true);
+        handleCloseDialog();
       } else {
         const dataToReclaim: DataToReclaim = {
           userReclamed: dataReclamed.userRelamed!,
@@ -458,6 +465,16 @@ const DetailsReports = () => {
               objectFit: "cover",
             }}
           />
+          <Snackbar
+            open={snackbarOpen}
+            autoHideDuration={6000}
+            onClose={() => setSnackbarOpen(false)}
+            anchorOrigin={{ vertical: "top", horizontal: "right" }}
+          >
+            <Alert severity="warning" onClose={() => setSnackbarOpen(false)}>
+              {snackbarMessage}
+            </Alert>
+          </Snackbar>
 
           <Dialog open={isDialogOpen} onClose={handleCloseDialog}>
             <DialogTitle>Confirmar reclamo</DialogTitle>
