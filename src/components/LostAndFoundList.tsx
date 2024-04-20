@@ -29,9 +29,10 @@ const LostAndFoundList = () => {
   const dispatch = useAppDispatch();
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [messageNotice, setmessageNotice] = useState("");
+  const [messageNotice, setMessageNotice] = useState("");
   const [newMessagesObjects, setNewMessagesObjects] = useState<string[]>([]);
-  const [hasNewMessages, setHasNewMessages] = useState(false); // Variable para controlar si hay nuevos mensajes
+  const [hasNewMessages, setHasNewMessages] = useState(false);
+  const [snackbarShown, setSnackbarShown] = useState(false); // Nuevo estado
 
   useEffect(() => {
     const storedUserData = localStorage.getItem("userData");
@@ -45,41 +46,44 @@ const LostAndFoundList = () => {
     const newMessages = messageData.filter(
       (message) =>
         message.messageRead === false &&
-        message.user.email !== storedUser?.email
+        message.user.email !== storedUser?.email &&
+        lostObjects.some(
+          (item) =>
+            item.id === message.lostObjectId &&
+            (item.userReport?.email === storedUser?.email ||
+              item.userReclamed?.email === storedUser?.email)
+        )
     );
 
     const newMessagesIds = newMessages.map((message) => message.lostObjectId);
     setNewMessagesObjects(newMessagesIds.filter((id): id is string => !!id));
+
     const hasNewMessagesForAnyObject = newMessagesIds.length > 0;
-    setHasNewMessages(hasNewMessagesForAnyObject); 
-    if (hasNewMessagesForAnyObject && !snackbarOpen) {
-      console.log("Abriendo Snackbar...");
-      setmessageNotice("¡Tienes un nuevo mensaje!");
+    setHasNewMessages(hasNewMessagesForAnyObject);
+    if (hasNewMessagesForAnyObject && !snackbarShown) {
+      setMessageNotice("¡Tienes un nuevo mensaje!");
       setSnackbarOpen(true);
-      handleCloseSnackbar();
-    } else if (!hasNewMessagesForAnyObject && snackbarOpen) {
-      console.log("Cerrando Snackbar...");
+      setSnackbarShown(true); 
     }
-  }, [messageData, storedUser, snackbarOpen]);
+  }, [messageData, storedUser, lostObjects, snackbarShown]); 
 
   const handleLinkClick = (item: LostObjectData) => {
     console.log("Se hizo clic en un objeto:", item);
     if (item.status !== "reclamado") {
       console.log("Reporte No Reclamado:", item);
-      setSnackbarMessage("Reporte No Reclamado...!!!");
-      setSnackbarOpen(true);
-      dispatch(markMessageAsRead(item.id));
+      setSnackbarMessage("Este reporte aún no ha sido reclamado.");
+      setSnackbarOpen(true); 
     } else {
       setNewMessagesObjects(
         newMessagesObjects.filter((objectId) => objectId !== item.id)
       );
+      dispatch(markMessageAsRead(item.id));
       navigate(`/FoundObjects/${item.id}`);
     }
   };
 
   const handleCloseSnackbar = () => {
     setSnackbarOpen(false);
-    dispatch(markMessageAsRead);
   };
 
   const renderLostObject = (item: LostObjectData) => {
@@ -87,8 +91,12 @@ const LostAndFoundList = () => {
       (message) =>
         message.lostObjectId === item.id &&
         message.messageRead === false &&
-        message.user.email !== storedUser?.email
+        storedUser && 
+        message.user.email !== storedUser.email &&
+        (item.userReport?.email === storedUser.email ||
+          item.userReclamed?.email === storedUser.email)
     );
+
     return (
       <Grid item xs={12} sm={6} md={4} lg={3} key={item.id}>
         <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
@@ -196,18 +204,19 @@ const LostAndFoundList = () => {
             {userClaims.map(renderLostObject)}
           </Grid>
         </Box>
+
+        <Snackbar
+          open={snackbarOpen && hasNewMessages}
+          autoHideDuration={6000}
+          onClose={handleCloseSnackbar}
+          anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        >
+          <Alert onClose={handleCloseSnackbar} sx={{ width: "100%" }}>
+            {snackbarMessage}
+            {hasNewMessages && messageNotice}
+          </Alert>
+        </Snackbar>
       </Grid>
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={6000}
-        onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-      >
-        <Alert onClose={() => setSnackbarOpen(false)} sx={{ width: "100%" }}>
-          {snackbarMessage}
-          {hasNewMessages && messageNotice} {/* Utiliza hasNewMessages aquí */}
-        </Alert>
-      </Snackbar>
     </Grid>
   );
 };

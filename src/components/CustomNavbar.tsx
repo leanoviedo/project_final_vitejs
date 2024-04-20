@@ -19,10 +19,11 @@ import ListAltIcon from "@mui/icons-material/ListAlt";
 import ReportIcon from "@mui/icons-material/Report";
 import OutputIcon from "@mui/icons-material/Output";
 import { Link, useNavigate } from "react-router-dom";
-import { UserData } from "../model/interface";
+import { UserData, LostObjectData, Message } from "../model/interface";
 import { useMediaQuery } from "@mui/material";
 import { selectMenssage } from "../redux/slices/ChatSlices";
 import { useAppSelector } from "../redux/hooks";
+import { selectLostObjects } from "../redux/slices/LostObjectSlice";
 
 const CustomNavbar = () => {
   const [storedUser, setStoredUser] = useState<UserData | null>(null);
@@ -35,10 +36,7 @@ const CustomNavbar = () => {
   const isMobile = useMediaQuery("(max-width:600px)");
   const navigate = useNavigate();
   const messageData = useAppSelector(selectMenssage);
-  const unreadMessagesCount = messageData.filter(
-    (message) =>
-      !message.messageRead && message.user.email !== storedUser?.email
-  ).length;
+  const lostObjects = useAppSelector(selectLostObjects);
 
   useEffect(() => {
     const storedUserData = localStorage.getItem("userData");
@@ -71,6 +69,27 @@ const CustomNavbar = () => {
   const handleAvatarMenuClose = () => {
     setAvatarMenuAnchor(null);
   };
+
+  // Verificar si el usuario actual está relacionado con algún objeto perdido
+  const isUserRelatedToLostObject = (lostObject: LostObjectData) => {
+    return (
+      lostObject.userReport?.email === storedUser?.email ||
+      lostObject.userReclamed?.email === storedUser?.email
+    );
+  };
+
+  // Contar el número de mensajes no leídos relacionados con el objeto perdido del usuario actual
+  const unreadMessagesCount = messageData.filter((message: Message) => {
+    const relatedLostObject = lostObjects.find(
+      (lostObject: LostObjectData) => lostObject.id === message.lostObjectId
+    );
+    return (
+      !message.messageRead &&
+      message.user.email !== storedUser?.email &&
+      relatedLostObject &&
+      isUserRelatedToLostObject(relatedLostObject)
+    );
+  }).length;
 
   return (
     <AppBar position="static" sx={{ margin: 1, padding: 1 }}>
@@ -224,4 +243,5 @@ const CustomNavbar = () => {
     </AppBar>
   );
 };
+
 export default CustomNavbar;
