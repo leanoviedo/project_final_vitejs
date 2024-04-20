@@ -95,15 +95,6 @@ const FormLogin = () => {
       false
     );
     setRegisteredUsersDialogOpen(false);
-    formik.setValues(
-      {
-        email: user.email,
-        password: user.login.password,
-      },
-      false
-    );
-    setRegisteredUsersDialogOpen(false);
-  };
 
   useEffect(() => {
     if (selectedUser) {
