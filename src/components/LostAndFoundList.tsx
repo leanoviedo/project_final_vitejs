@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Typography,
   Grid,
@@ -11,19 +11,28 @@ import {
   CardActionArea,
   Snackbar,
   Alert,
+  Badge,
 } from "@mui/material";
-import { useAppSelector } from "../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { selectLostObjects } from "../redux/slices/LostObjectSlice";
 import CustomNavbar from "./CustomNavbar";
 import { useNavigate } from "react-router-dom";
-import { UserData } from "../model/interface";
+import { UserData, LostObjectData } from "../model/interface";
+import { markMessageAsRead, selectMenssage } from "../redux/slices/ChatSlices";
+import MailIcon from "@mui/icons-material/Mail";
 
 const LostAndFoundList = () => {
   const lostObjects = useAppSelector(selectLostObjects);
   const [storedUser, setStoredUser] = useState<UserData | null>(null);
+  const navigate = useNavigate();
+  const messageData = useAppSelector(selectMenssage);
+  const dispatch = useAppDispatch();
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
-  const navigate = useNavigate();
+  const [messageNotice, setMessageNotice] = useState("");
+  const [newMessagesObjects, setNewMessagesObjects] = useState<string[]>([]);
+  const [hasNewMessages, setHasNewMessages] = useState(false);
+  const [snackbarShown, setSnackbarShown] = useState(false); // Nuevo estado
 
   useEffect(() => {
     const storedUserData = localStorage.getItem("userData");
@@ -33,41 +42,82 @@ const LostAndFoundList = () => {
     }
   }, []);
 
-  const userReports = lostObjects.filter(
-    (item) => item.userReport?.email === storedUser?.email
-  );
+  useEffect(() => {
+    const newMessages = messageData.filter(
+      (message) =>
+        message.messageRead === false &&
+        message.user.email !== storedUser?.email &&
+        lostObjects.some(
+          (item) =>
+            item.id === message.lostObjectId &&
+            (item.userReport?.email === storedUser?.email ||
+              item.userReclamed?.email === storedUser?.email)
+        )
+    );
 
-  const userClaims = lostObjects.filter(
-    (item) => item.userReclamed?.email === storedUser?.email
-  );
+    const newMessagesIds = newMessages.map((message) => message.lostObjectId);
+    setNewMessagesObjects(newMessagesIds.filter((id): id is string => !!id));
 
-  const [tabValue, setTabValue] = useState(0);
+    const hasNewMessagesForAnyObject = newMessagesIds.length > 0;
+    setHasNewMessages(hasNewMessagesForAnyObject);
+    if (hasNewMessagesForAnyObject && !snackbarShown) {
+      setMessageNotice("¡Tienes un nuevo mensaje!");
+      setSnackbarOpen(true);
+      setSnackbarShown(true); 
+    }
+  }, [messageData, storedUser, lostObjects, snackbarShown]); 
+
+  const handleLinkClick = (item: LostObjectData) => {
+    console.log("Se hizo clic en un objeto:", item);
+    if (item.status !== "reclamado") {
+      console.log("Reporte No Reclamado:", item);
+      setSnackbarMessage("Este reporte aún no ha sido reclamado.");
+      setSnackbarOpen(true); 
+    } else {
+      setNewMessagesObjects(
+        newMessagesObjects.filter((objectId) => objectId !== item.id)
+      );
+      dispatch(markMessageAsRead(item.id));
+      navigate(`/FoundObjects/${item.id}`);
+    }
+  };
 
   const handleCloseSnackbar = () => {
     setSnackbarOpen(false);
   };
 
-  const handleChangeTab = (_event: React.SyntheticEvent, newValue: number) => {
-    setTabValue(newValue);
-  };
-
-  const handleLinkClick = (item: any) => {
-    if (item.status !== "reclamado") {
-      setSnackbarMessage("Reporte No Reclamado...!!!");
-      setSnackbarOpen(true);
-    } else {
-      setSnackbarOpen(false);
-      navigate(`/FoundObjects/${item.id}`);
-    }
-  };
-
-  const renderLostObject = (item: any) => {
-    const isClaimed = item.status === "reclamado";
+  const renderLostObject = (item: LostObjectData) => {
+    const hasUnreadMessages = messageData.some(
+      (message) =>
+        message.lostObjectId === item.id &&
+        message.messageRead === false &&
+        storedUser && 
+        message.user.email !== storedUser.email &&
+        (item.userReport?.email === storedUser.email ||
+          item.userReclamed?.email === storedUser.email)
+    );
 
     return (
       <Grid item xs={12} sm={6} md={4} lg={3} key={item.id}>
         <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
-          <CardActionArea onClick={() => handleLinkClick(item)}>
+          <CardActionArea
+            onClick={() => handleLinkClick(item)}
+            disabled={
+              newMessagesObjects.includes(item.id) !== hasUnreadMessages
+            }
+          >
+            <Box mt={1}>
+              {newMessagesObjects.includes(item.id) && (
+                <Badge
+                  badgeContent="Nuevo"
+                  color="secondary"
+                  sx={{ position: "absolute", top: 20, right: 20 }}
+                  component="span"
+                >
+                  <MailIcon color="info" />
+                </Badge>
+              )}
+            </Box>
             <CardHeader title={item.description} />
             <CardContent
               sx={{
@@ -103,34 +153,28 @@ const LostAndFoundList = () => {
                   {item.country.name}
                 </Typography>
                 <Typography variant="body1" color="textPrimary" gutterBottom>
-                  <strong>Nombre:</strong> {item.userReport.name.first}{" "}
-                  {item.userReport.name.last}
+                  <strong>Nombre:</strong> {item.userReport?.name.first}{" "}
+                  {item.userReport?.name.last}
                 </Typography>
                 <Typography variant="body1" color="textPrimary" gutterBottom>
-                  <strong>Email:</strong> {item.userReport.email}
+                  <strong>Email:</strong> {item.userReport?.email}
                 </Typography>
               </div>
             </CardContent>
           </CardActionArea>
         </Card>
-        <Snackbar
-          open={snackbarOpen}
-          autoHideDuration={6000}
-          onClose={handleCloseSnackbar}
-          anchorOrigin={{ vertical: "top", horizontal: "right" }}
-        >
-          <Alert
-            onClose={() => setSnackbarOpen(false)}
-            severity={isClaimed ? "success" : "error"}
-            sx={{ width: "100%" }}
-          >
-            {snackbarMessage}
-          </Alert>
-        </Snackbar>
       </Grid>
     );
   };
 
+  const userReports = lostObjects.filter(
+    (item) => item.userReport?.email === storedUser?.email
+  );
+  const userClaims = lostObjects.filter(
+    (item) => item.userReclamed?.email === storedUser?.email
+  );
+
+  const [tabValue, setTabValue] = useState(0);
   return (
     <Grid container spacing={2}>
       <CustomNavbar />
@@ -143,7 +187,7 @@ const LostAndFoundList = () => {
         <Tabs
           selectionFollowsFocus
           value={tabValue}
-          onChange={handleChangeTab}
+          onChange={(_event, newValue) => setTabValue(newValue)}
           variant="fullWidth"
           aria-label="basic tabs example"
         >
@@ -160,6 +204,18 @@ const LostAndFoundList = () => {
             {userClaims.map(renderLostObject)}
           </Grid>
         </Box>
+
+        <Snackbar
+          open={snackbarOpen && hasNewMessages}
+          autoHideDuration={6000}
+          onClose={handleCloseSnackbar}
+          anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        >
+          <Alert onClose={handleCloseSnackbar} sx={{ width: "100%" }}>
+            {snackbarMessage}
+            {hasNewMessages && messageNotice}
+          </Alert>
+        </Snackbar>
       </Grid>
     </Grid>
   );
