@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import {
   Typography,
@@ -81,7 +82,6 @@ const FormLogin = () => {
       }
     },
   });
-  // Establecer valores en el formulario
   const toggleRegisteredUsersDialog = () => {
     setRegisteredUsersDialogOpen(!isRegisteredUsersDialogOpen);
   };
@@ -95,6 +95,7 @@ const FormLogin = () => {
       false
     );
     setRegisteredUsersDialogOpen(false);
+  };
 
   useEffect(() => {
     if (selectedUser) {
@@ -113,7 +114,7 @@ const FormLogin = () => {
           width: "100%",
           maxWidth: 360,
           margin: "auto",
-          padding:"auto",
+          padding: "auto",
           textAlign: "center",
         }}
       >
@@ -130,7 +131,7 @@ const FormLogin = () => {
                   transition: "background-color 0.5s",
                   backgroundColor:
                     selectedUser === user ? "rgb(25,118,210)" : "transparent",
-                    padding:8
+                  padding: 8,
                 }}
               >
                 <div style={{ textAlign: "center" }}>
